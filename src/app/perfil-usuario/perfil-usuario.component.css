@@ -1,0 +1,248 @@
+/* General Layout */
+.perfil-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Header */
+.header {
+  width: 100%;
+  background-color: #3261a8;
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+}
+
+.logo {
+  height: 50px;
+  cursor: pointer;
+}
+
+/* Back Button */
+.back-btn {
+  background-color: #f9a826;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: absolute;
+  left: -100px; 
+  top: 0px;
+  margin: 25px 100px 100px 120px; 
+}
+
+.back-btn:hover {
+  background-color: #e5941e;
+}
+
+.btn-orange {
+  background-color: #f9a826;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-orange:hover {
+  background-color: #e5941e;
+}
+
+/* Content Layout */
+.content {
+  display: flex;
+  flex: 1;
+  background-color: #f4f4f9;
+}
+
+/* Side Panel */
+.side-panel {
+  background-color: #fff;
+  width: 200px;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.side-panel h2 {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+
+.side-panel ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.side-panel ul li {
+  margin-bottom: 10px;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  color: #333;
+}
+
+.side-panel ul li.active,
+.side-panel ul li:hover {
+  background-color: #e3f2fd;
+  color: #3261a8;
+}
+
+.side-panel button {
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Main Panel */
+.main-panel {
+  flex: 1;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  border-left: 1px solid #ddd;
+}
+
+.main-panel h1 {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/* Course Cards Container */
+.course-cards-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 20px; 
+  justify-items: center; 
+}
+
+/* Course Cards */
+.course-card {
+  width: 90%; 
+  max-width: 300px; 
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  text-align: center;
+  background-color: #fff;
+}
+
+.course-card img {
+  width: 100%;
+  height: auto; 
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.course-card h3 {
+  font-size: 1.1em;
+  margin-bottom: 8px;
+}
+
+.course-card p {
+  color: #555;
+  font-size: 0.9em;
+}
+
+
+
+/* User Data */
+.user-data p {
+  margin-bottom: 10px;
+  font-size: 1em;
+}
+
+.user-data p strong {
+  color: #3261a8;
+}
+
+/* Loading State */
+.loading {
+  font-size: 1.2em;
+  color: #666;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal Box */
+.modal {
+  background-color: #fff; /* Dark background to match theme */
+  padding: 30px;
+  border-radius: 10px;
+  width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  position: relative;
+}
+
+/* Modal Close Button */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 1.5em;
+  color: #000; /* Orange theme */
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #e5941e;
+}
+
+/* Modal Form */
+.modal h2 {
+  color: #000;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 95%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background: #e2e2e2; /* Matches the modal */
+  color: #6b6b6b; /* White text */
+  font-size: 1em;
+}
+
+.form-group input::placeholder {
+  color: #6b6b6b;
+}

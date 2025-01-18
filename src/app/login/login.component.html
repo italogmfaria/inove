@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <button class="back-btn" (click)="navigateTo('/inicial')">Voltar</button>
+        <img (click)="navigateTo('/inicial')" src="assets/logowhite.png" alt="Logotipo" class="logo">
+    </header>
+
+    <!-- Login Form Section -->
+    <section class="login-container">
+        <div class="login-box">
+            <h1>Login</h1>
+          <form (submit)="onLogin($event)">
+            <input type="email" placeholder="E-mail" name="email" [(ngModel)]="email" required>
+            <input type="password" placeholder="Senha" name="password" [(ngModel)]="password" required>
+            <button type="submit">Entrar</button>
+          </form>
+            <p class="footer-text">
+                Não tem acesso?  <a (click)="navigateTo('/acesso-plataforma')" class="btn-link">Clique aqui!</a>
+            </p>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,369 @@
+/* General Layout */
+.secao-panel {
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    height: 100vh;
+}
+  
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #3261a8;
+    padding: 20px;
+    position: relative;
+}
+  
+.logo {
+    height: 50px;
+}
+  
+.back-btn {
+    position: absolute;
+    left: 20px;
+    background-color: #f9a826;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+  
+.back-btn:hover {
+    background-color: #e5941e;
+}
+  
+/* Main Content */
+.main-content {
+    margin-top: 30px;
+    padding: 20px;
+    text-align: center;
+}
+  
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #333;
+}
+  
+/* Sections List */
+.sections-list {
+    margin: 20px auto;
+    width: 90%;
+    max-width: 800px;
+}
+  
+.section-item {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+  
+/* Section Header */
+.section-header {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f4f4f4;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+  
+.section-header:hover {
+    background-color: #e3f2fd;
+}
+  
+.section-header span {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+  
+/* Expand Button */
+.expand-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: #666;
+    cursor: pointer;
+    transform: rotate(0deg);
+    transition: transform 0.3s;
+}
+  
+.expand-btn.expanded {
+    transform: rotate(180deg);
+    color: #3261a8;
+}
+  
+/* Section Details */
+.section-details {
+    padding: 15px;
+    background-color: white;
+}
+  
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+  
+table th, table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+  
+table th {
+    background-color: #f4f4f4;
+}
+  
+/* Contêiner dos botões */
+.button-group {
+    display: flex;
+    gap: 10px; /* Espaçamento entre os botões */
+}
+  
+.btn-blue,
+.btn-red {
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+}
+  
+.btn-blue {
+    background-color: #3261a8;
+    color: #fff;
+}
+  
+.btn-blue:hover {
+    background-color: #274f88;
+}
+  
+.btn-red {
+    background-color: #e53935;
+    color: #fff;
+}
+  
+.btn-red:hover {
+    background-color: #b71c1c;
+}
+  
+.btn-orange {
+    background-color: #f9a826;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+  
+.btn-large-orange {
+    margin-top: 20px;
+    background-color: #f9a826;
+    color: white;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+  
+.btn-orange:hover, .btn-large-orange:hover {
+    background-color: #e5941e;
+}
+  
+/* Section Actions */
+.section-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+  
+.section-actions .btn-blue {
+    background-color: #3261a8;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+  
+.section-actions .btn-blue:hover {
+    background-color: #274f88;
+}
+  
+.section-actions .btn-red {
+    background-color: #e53935;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+  
+.section-actions .btn-red:hover {
+    background-color: #b71c1c;
+}
+  
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+  
+/* Modal */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    width: 400px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    padding: 20px;
+}
+  
+/* Modal Header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+  
+.modal-header h2 {
+    font-size: 1.5em;
+}
+  
+.close-btn {
+    font-size: 1.5em;
+    color: #f9a826;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+  
+.close-btn:hover {
+    color: #e5941e;
+}
+  
+/* Modal Body */
+.modal-body input,
+.modal-body select {
+    width: 95%;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+}
+  
+.modal-body .content-type {
+    display: flex;
+    justify-content: flex-start;
+    margin: 15px;
+    margin-left: 100px;
+}
+  
+.modal-body .content-type label {
+    font-size: 1em;
+    color: #555;
+}
+  
+/* Modal Footer */
+.modal-footer {
+    display: flex;
+    justify-content: center;
+}
+  
+.modal-footer .btn-orange {
+    background-color: #f9a826;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+  
+.modal-footer .btn-orange:hover {
+    background-color: #e5941e;
+}
+
+
+/* Container para os radio buttons */
+.content-type {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 15px; /* Espaçamento entre os botões */
+    margin: 15px 0; /* Margem acima e abaixo do grupo */
+  }
+  
+  /* Estilização dos labels dos radio buttons */
+  .content-type label {
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+    color: #555;
+    font-weight: bold;
+    cursor: pointer;
+    gap: 10px; /* Espaçamento entre o botão e o texto */
+    transition: color 0.3s ease;
+  }
+  
+  .content-type label:hover {
+    color: #3261a8; /* Cor azul ao passar o mouse */
+  }
+  
+  /* Esconder o radio button padrão */
+  .content-type input[type="radio"] {
+    display: none;
+  }
+  
+  /* Customização do radio button */
+  .content-type input[type="radio"] + span {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+  }
+  
+  /* Quando o botão estiver selecionado */
+  .content-type input[type="radio"]:checked + span {
+    border-color: #3261a8; /* Cor azul para o círculo */
+    background-color: #3261a8;
+  }
+  
+  .content-type input[type="radio"]:checked + span::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background-color: #fff; /* Círculo interno branco */
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  

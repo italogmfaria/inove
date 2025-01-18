@@ -1,0 +1,30 @@
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
+        </div>
+        <div class="header-center">
+            <button class="search-btn">
+                <img src="assets/flaticons/search-icon.png" alt="Ícone de lupa">
+            </button>
+            <input type="text" class="search-bar" placeholder="Pesquisar Cursos">
+        </div>
+        <div class="header-right" (click)="navigateTo('/perfil-usuario')">
+            <button class="profile-btn">Perfil</button>
+        </div>
+    </header>
+
+    <!-- Course Gallery -->
+    <main class="gallery">
+      <div class="course-row">
+        <div *ngFor="let curso of cursos" class="course-card">
+          <img src="assets/placeholder.png" alt="Imagem do Curso" class="course-image" (click)="navigateToPreview(curso.id)">
+          <h3 class="course-title">{{ curso.name }}</h3>
+          <p class="course-description">{{ curso.description }}</p>
+          <p><strong>Última Atualização:</strong> {{ curso.lastUpdateDate | date: 'dd/MM/yyyy' }}</p>
+        </div>
+      </div>
+    </main>
+
+</body>

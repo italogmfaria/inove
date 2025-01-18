@@ -1,0 +1,113 @@
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #3261a8;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+}
+
+.logo {
+    height: 50px;
+    cursor: pointer;
+}
+
+/* Form Container */
+.form-container {
+    max-width: 600px;
+    width: 100%;
+    margin: 120px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.form-container h1 {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Form Box */
+.form-box {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #555;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+    font-family: Arial, sans-serif;
+    width: 95%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    resize: vertical;
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 50%;
+    padding: 15px;
+    background-color: #f9a826;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.submit-btn:hover {
+    background-color: #e5941e;
+}
+
+/* Back Button */
+.back-btn {
+    background-color: #f9a826;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    position: absolute;
+    left: -100px; 
+    top: 0px;
+    margin: 25px 100px 100px 120px; 
+}
+
+.back-btn:hover {
+    background-color: #e5941e;
+}

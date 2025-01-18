@@ -1,0 +1,117 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f9;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #3261a8;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+}
+
+.logo {
+    height: 50px;
+    cursor: pointer;
+}
+
+/* Main Content */
+.content {
+    max-width: 800px;
+    margin: 150px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.content h1 {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Info Sections */
+.info-section {
+    margin-bottom: 20px;
+    text-align: justify;
+}
+
+.info-section h2 {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #3261a8;
+    margin-bottom: 10px;
+}
+
+.info-section p {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+/* Call to Action Section */
+.cta-section {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.cta-text {
+    font-size: 1em;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* CTA Button */
+.cta-btn {
+    background-color: #f9a826;
+    color: #fff;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.cta-btn:hover {
+    background-color: #e5941e;
+}
+
+/* Back Button */
+.back-btn {
+    background-color: #f9a826;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    position: absolute;
+    left: -100px; 
+    top: 0px;
+    margin: 25px 100px 100px 120px; 
+}
+
+.back-btn:hover {
+    background-color: #e5941e;
+}

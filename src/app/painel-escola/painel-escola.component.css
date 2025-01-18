@@ -1,0 +1,273 @@
+/* General Layout */
+.escola-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
+/* Header */
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #3261a8;
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.logo {
+  height: 50px;
+  cursor: pointer;
+}
+
+/* Side Menu */
+.side-menu {
+  width: 250px;
+  background-color: #fff;
+  padding: 20px;
+  height: calc(100vh - 80px);
+  margin-top: 80px;
+  position: fixed;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.side-menu h2 {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.side-menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.side-menu ul li {
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.side-menu ul li.active,
+.side-menu ul li:hover {
+  background-color: #e3f2fd;
+  color: #3261a8;
+}
+
+.btn-logout {
+  position: absolute;
+  bottom: 50px;
+  left: 10px;
+  background-color: #f9a826;
+  color: white;
+  border: none;
+  padding: 10px 120px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-logout:hover {
+  background-color: #e5941e;
+}
+
+/* Main Content */
+.main-content {
+  margin-left: 300px;
+  margin-top: 80px;
+  padding: 20px;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+thead th,
+tbody td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+tbody tr {
+  border: 1px solid #ccc;
+}
+
+tbody tr:hover {
+  background-color: #f9f9f9; /* Mantém um hover leve para usabilidade */
+
+}
+
+/* Button Group */
+.button-group {
+  display: flex;
+  gap: 10px; /* Espaço de 10px entre os botões */
+}
+
+
+/* Buttons */
+.btn-blue {
+  background-color: #2b4a8b;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s ease;
+}
+
+.btn-blue:hover {
+  background-color: #1e3671;
+}
+
+.btn-red {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s ease;
+}
+
+.btn-red:hover {
+  background-color: #a52825;
+}
+
+.btn-orange {
+  background-color: #f9a826;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.btn-orange:hover {
+  background-color: #e5941e;
+}
+
+/* Dados da Escola */
+.dados-escola {
+  background-color: #f8f9fd;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.dados-escola p {
+  margin: 10px 0;
+}
+
+.dados-escola button {
+  margin-top: 20px;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  width: 400px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  padding: 20px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.modal-header h2 {
+  font-size: 1.5em;
+}
+
+.close-btn {
+  font-size: 1.5em;
+  color: #f9a826;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close-btn:hover {
+  color: #e5941e;
+}
+
+.modal-body input,
+.modal-body textarea {
+  width: 95%;
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1em;
+}
+
+.modal-body textarea {
+  resize: none;
+  font-family: Arial, sans-serif;
+  height: 80px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: center;
+}
+
+.modal-footer .btn-orange {
+  padding: 10px 20px;
+}
+
+/* Estilo do botão expand */
+.expand-btn {
+  background-color: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #555;
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 50%;
+}
+
+.expand-btn:hover {
+  color: #3261a8;
+  background-color: #f1f1f1;
+}
+
+.expand-btn.expanded {
+  transform: rotate(180deg);
+}

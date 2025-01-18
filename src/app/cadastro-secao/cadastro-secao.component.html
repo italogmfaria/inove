@@ -1,0 +1,123 @@
+<div class="secao-panel">
+    <!-- Header -->
+    <header class="header">
+      <button class="back-btn" onclick="window.history.back();">Voltar</button>
+      <img src="assets/logowhite.png" alt="Logotipo INOVE" class="logo">
+    </header>
+  
+    <!-- Main Content -->
+    <main class="main-content">
+      <h1>Seções do Curso</h1>
+  
+      <!-- Lista de Seções -->
+      <div class="sections-list">
+        <div class="section-item" *ngFor="let secao of secoes; let i = index">
+          <!-- Header da Seção -->
+          <div class="section-header">
+            <span>Seção {{ i + 1 }}: {{ secao.nome }}</span>
+            <div class="section-actions">
+              <button class="btn-blue" (click)="editarSecao(i)">Atualizar Seção</button>
+              <button class="btn-red" (click)="excluirSecao(i)">Excluir Seção</button>
+              <button class="expand-btn" [class.expanded]="secao.expanded" (click)="toggleSection(i)">&#9662;</button>
+            </div>
+          </div>
+  
+
+          <!-- Detalhes da Seção -->
+          <div class="section-details" *ngIf="secao.expanded">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Tipo</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let conteudo of secao.conteudos; let j = index">
+                  <td>{{ conteudo.nome }}</td>
+                  <td>{{ conteudo.tipo }}</td>
+                  <td>
+                    <div class="button-group">
+                      <button class="btn-blue" (click)="editarConteudo(i, j)">Atualizar</button>
+                      <button class="btn-red" (click)="excluirConteudo(i, j)">Excluir</button>
+                    </div>
+                  </td>                  
+                </tr>
+              </tbody>
+            </table>
+            <button class="btn-orange" (click)="adicionarConteudo(i)">Novo Conteúdo</button>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Botão Criar Nova Seção -->
+      <button class="btn-large-orange" (click)="criarNovaSecao()">Criar Nova Seção</button>
+    </main>
+
+        <!-- Modal para Atualizar Seção -->
+    <div class="modal-overlay" *ngIf="showEditSecaoModal" (click)="closeEditSecaoModal()"></div>
+    <div class="modal" *ngIf="showEditSecaoModal">
+      <header class="modal-header">
+        <h2>Atualizar Seção</h2>
+        <span class="close-btn" (click)="closeEditSecaoModal()">&#10005;</span>
+      </header>
+      <div class="modal-body">
+        <input type="text" [(ngModel)]="secaoEdit.nome" placeholder="Nome da Seção" />
+      </div>
+      <footer class="modal-footer">
+        <button class="btn-orange" (click)="salvarEdicaoSecao()">Salvar</button>
+      </footer>
+    </div>
+
+  
+    <div class="modal-overlay" *ngIf="showContentModal" (click)="closeContentModal()"></div>
+    <div class="modal-overlay" *ngIf="showContentModal" (click)="closeContentModal()"></div>
+    <div class="modal" *ngIf="showContentModal">
+      <header class="modal-header">
+        <h2>Conteúdo da Seção</h2>
+        <span class="close-btn" (click)="closeContentModal()">&#10005;</span>
+      </header>
+      <div class="modal-body">
+        <!-- Nome do Conteúdo -->
+        <input type="text" [(ngModel)]="currentContent.nome" placeholder="Nome" />
+    
+        <!-- Tipo de Conteúdo -->
+        <div class="content-type">
+            <label>
+              <input 
+                type="radio" 
+                name="contentType" 
+                [(ngModel)]="currentContent.tipo" 
+                value="Vídeo" 
+              />
+              <span></span>
+              Vídeo
+            </label>
+            <label>
+              <input 
+                type="radio" 
+                name="contentType" 
+                [(ngModel)]="currentContent.tipo" 
+                value="Teórico" 
+              />
+              <span></span>
+              Teórico
+            </label>
+          </div>
+        <br>
+        <!-- Upload -->
+        <div>
+          <input type="file" (change)="handleFileUpload($event)" placeholder="Upload" />
+        </div>
+      </div><br>
+      <footer class="modal-footer">
+        <button class="btn-orange" (click)="saveContent()">
+          {{ editingContent ? 'Atualizar Conteúdo' : 'Criar Conteúdo' }}
+        </button>
+      </footer>
+    </div>
+    
+    
+  </div>
+  

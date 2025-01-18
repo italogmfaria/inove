@@ -1,0 +1,160 @@
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #f4f4f9, #e0ecff);
+    background-attachment: fixed;
+    margin: 0;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #3261a8;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+}
+
+.logo {
+    height: 50px;
+    cursor: pointer;
+}
+
+/* Decorative Elements */
+.decorative-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.1;
+    z-index: 0;
+}
+
+.circle-top-left {
+    width: 250px;
+    height: 250px;
+    background-color: #3261a8;
+    top: -100px;
+    left: -100px;
+}
+
+.circle-bottom-right {
+    width: 200px;
+    height: 200px;
+    background-color: #f9a826;
+    bottom: -80px;
+    right: -80px;
+}
+
+/* Login Form Container */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    margin-top: 100px; 
+    position: relative;
+    z-index: 1; 
+}
+
+/* Login Box */
+.login-box {
+    background-color: #fff;
+    padding: 40px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Login Title */
+.login-box h1 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Form Inputs */
+.login-box input[type="email"],
+.login-box input[type="password"] {
+    width: 90%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+/* Submit Button */
+.login-box button {
+    width: 100%;
+    padding: 15px;
+    background-color: #f9a826;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.login-box button:hover {
+    background-color: #e5941e;
+}
+
+/* Footer Text in Login Box */
+.footer-text {
+    margin-top: 15px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.footer-text a {
+    color: #3261a8;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.footer-text a:hover {
+    text-decoration: underline;
+}
+
+.btn-link {
+    display: inline-block;
+    padding: 5px 5px;
+    margin-top: 10px;
+    color: #ffffff;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Back Button */
+.back-btn {
+    background-color: #f9a826;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    position: absolute;
+    left: -100px; 
+    top: 0px;
+    margin: 25px 100px 100px 120px; 
+}
+
+.back-btn:hover {
+    background-color: #e5941e;
+}

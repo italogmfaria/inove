@@ -1,0 +1,39 @@
+   <body>
+   <!-- Header Section -->
+    <header class="header">
+        <button class="back-btn" onclick="window.history.back();">Voltar</button>
+        <img (click)="navigateTo('/inicial')" src="assets/logowhite.png" alt="Logotipo INOVE" class="logo">
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+        <h1>Seja um instrutor!</h1>
+
+        <section class="info-section">
+            <h2>O que significa ser um Instrutor?</h2>
+            <p>Ser um instrutor na nossa plataforma significa ser parte de uma rede de educadores comprometidos em transformar o ensino por meio de metodologias inovadoras e tecnologias educacionais. Você terá a oportunidade de criar cursos que capacitam professores a implementarem práticas pedagógicas mais dinâmicas e eficazes.</p>
+        </section>
+
+        <section class="info-section">
+            <h2>Por que ser um Instrutor?</h2>
+            <p>Como instrutor, você desempenhará um papel essencial no fortalecimento da educação, compartilhando seu conhecimento e ajudando professores a evoluírem em suas práticas. Além disso, será uma oportunidade para expandir sua rede de contatos e contribuir para a democratização da educação.</p>
+        </section>
+
+        <section class="info-section">
+            <h2>Acesso à plataforma</h2>
+            <p>Os instrutores recebem acesso exclusivo a ferramentas de criação de seções de um determinado curso e incluir seu conteúdo com suporte contínuo para desenvolver conteúdos de alta qualidade. Nossa plataforma facilita o compartilhamento de suas ideias com educadores de todo o país.</p>
+        </section>
+
+        <section class="info-section">
+            <h2>Termos e Condições</h2>
+            <p>Ao se tornar um instrutor, você concorda em seguir nossos princípios de ética educacional, criando conteúdos inclusivos e que promovam um ambiente de aprendizado colaborativo e respeitoso. Consulte os termos completos antes de prosseguir.</p>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section class="cta-section">
+            <p class="cta-text">Preencha seus dados e sua motivação com o que deseja ensinar e envie ao nosso e-mail:</p>
+            <button class="cta-btn" (click)="navigateTo('/cadastro-instrutor')">Preencher</button>
+        </section><br>
+    </main>
+</body>
+

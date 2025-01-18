@@ -1,0 +1,89 @@
+    <div class="inicial-container">
+    
+    <!-- Header Section -->
+    <header class="header">
+        <img src="assets/logowhite.png" alt="Inove Logo" class="logo">
+        <button id="top" class="login-btn" (click)="navigateTo('/login')">Login</button>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Melhore seu conhecimento com a tecnologia</h1>
+        <button class="cta-btn" (click)="navigateTo('/cursos')">Veja os cursos</button>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="feature-grid">
+            <div class="feature-item">
+                <img src="assets/flaticons/icone1.png" alt="Ícone Seguro Acesso">
+                <p>Acesso Seguro</p>
+            </div>
+            <div class="feature-item">
+                <img src="assets/flaticons/icone2.png" alt="Ícone Plataforma Gratuita">
+                <p>Plataforma Gratuita</p>
+            </div>
+            <div class="feature-item">
+                <img src="assets/flaticons/icone3.png" alt="Ícone Apoio ao Conhecimento">
+                <p>Apoio ao Conhecimento</p>
+            </div>
+            <div class="feature-item">
+                <img src="assets/flaticons/icone4.png" alt="Ícone Melhor Aprendizado">
+                <p>Melhor Aprendizado</p>
+            </div>
+        </div>
+        <div class="feature-text">
+            <h2>Juntamente com sua escola</h2>
+            <p>Comece sua jornada de aprendizado hoje! Entre em contato com a gente a partir de sua instituição de ensino.</p>
+            <a class="btn-link" (click)="navigateTo('/acesso-plataforma')">Mais sobre →</a>
+        </div>
+    </section>
+
+    <!-- Image Gallery Section -->
+    <section class="gallery">
+        <img src="assets/mask-group.png" alt="Galeria de Imagens">
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <h2>Como acessar a plataforma?</h2>
+        <button class="cta-btn-secondary" (click)="navigateTo('/acesso-plataforma')">Clique aqui!</button><br>
+    </section>
+<br><br>
+    <!-- About Section -->
+    <section class="about">
+        <h2>Sobre o projeto:</h2>
+        <p>
+            O projeto <strong>INOVE</strong> foi desenvolvido para transformar o cenário educacional, oferecendo uma plataforma inovadora destinada a professores. Nosso objetivo é capacitar educadores com ferramentas e metodologias modernas, promovendo um ensino mais dinâmico, inclusivo e personalizado.
+        </p>
+        <p>
+            Além de democratizar o acesso à educação, a plataforma <strong>INOVE</strong> busca melhorar a experiência de ensino e aprendizado, com foco na interação colaborativa e significativa entre alunos e professores. Nossa missão é proporcionar um ambiente onde a inovação impulsiona a educação.
+        </p>
+        <br>
+        <button class="cta-btn-secondary" (click)="navigateTo('/seja-instrutor')">Deseja ser um instrutor?</button>
+    </section>
+    
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <img src="assets/logowhite.png" alt="Inove Logo" class="footer-logo">
+        <div class="footer-links">
+            <div>
+                <h3>Suporte</h3>
+                <ul>
+                    <li><a class="btn-link" href="tel:+5564992827727">Telefone</a></li>
+                    <li><a class="btn-link" href="mailto:inoveprojetointegrador@gmail.com">E-Mail</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Dúvidas</h3>
+                <ul>
+                    <li><a class="btn-link" (click)="navigateTo('/cursos')">Ver Cursos</a></li>
+                    <li><a class="btn-link" (click)="navigateTo('/acesso-plataforma')">Acesso à Plataforma</a></li>
+                    <li><a class="btn-link" (click)="navigateTo('/seja-instrutor')">Seja um Instrutor</a></li>
+                </ul>
+            </div>
+        </div>
+          </footer>
+
+</div>
