@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import {LoginService} from '../common/service/login.service';
 import {LoginResponseDTO} from "../common/dto/LoginResponseDTO";
+import {AuthService} from "../common/service/auth.service";
 
 @Component({
   selector: 'app-login',
@@ -9,34 +10,29 @@ import {LoginResponseDTO} from "../common/dto/LoginResponseDTO";
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  email: string = '';
-  password: string = '';
+  email = '';
+  password = '';
 
-  constructor(private router: Router,
-              private loginService: LoginService) {}
-
-  navigateTo(path: string) {
-    this.router.navigate([path]);
-  }
+  constructor(private authService: AuthService, private router: Router) {}
 
   onLogin(event: Event) {
     event.preventDefault();
-    if (this.email && this.password) {
-      this.loginService.login(this.email, this.password).subscribe(
-        (response: LoginResponseDTO) => {
-          console.log('Login bem-sucedido!', response);
 
-          localStorage.setItem('authToken', response.token);
+    this.authService.login(this.email, this.password).subscribe({
+      next: (response: LoginResponseDTO) => {
+        this.authService.saveTokens(response.token, response.refreshToken);
+        this.router.navigate(['/cursos']);
+      },
+      error: (error) => {
+        console.error('Erro ao autenticar', error);
+        alert('Credenciais inválidas');
+      }
+    });
+  }
 
-          this.router.navigate(['/cursos']);
-        },
-        (error) => {
-          console.error('Erro no login:', error);
-          alert('Credenciais inválidas. Verifique e tente novamente.');
-        }
-      );
-    } else {
-      alert('Por favor, preencha todos os campos.');
-    }
+  navigateTo(route: string) {
+    this.router.navigate([route]);
   }
 }
+
+

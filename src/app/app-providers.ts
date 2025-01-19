@@ -1,10 +1,9 @@
-import {HTTP_INTERCEPTORS} from "@angular/common/http";
-import {AuthInterceptor} from "./common/interceptors/AuthInterceptor";
+import {LoginService} from "./common/service/login.service";
+import {CourseService} from "./common/service/course.service";
+import {AuthService} from "./common/service/auth.service";
 
 export const APP_PROVIDERS = [
-  {
-    provide: HTTP_INTERCEPTORS,
-    useClass: AuthInterceptor,
-    multi: true
-  }
+  LoginService,
+  CourseService,
+  AuthService
 ];

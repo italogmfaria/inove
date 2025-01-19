@@ -33,8 +33,8 @@
   <section class="comments-section">
     <h2 class="comments-title">Comentários:</h2><br>
 
-    <div class="comment" *ngFor="let feedback of courseId?.feedbacks">
-      <p class="comment-user"><strong>{{ feedback.student.name }}</strong></p>
+    <div class="comment" *ngFor="let feedback of course?.feedBacks">
+      <p class="comment-user"><strong>{{ feedback.student }}</strong></p>
       <p class="comment-text">{{ feedback.comment }}</p>
     </div>
   </section>
