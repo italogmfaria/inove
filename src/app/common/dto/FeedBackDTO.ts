@@ -1,5 +1,4 @@
-class UserDTO {
-}
+import {UserDTO} from "./UserDTO";
 
 export interface FeedBackDTO {
   id: number;

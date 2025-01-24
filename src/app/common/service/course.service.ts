@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {environment} from "../../../environments/environment";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {catchError, Observable, throwError} from "rxjs";
 import {CursoDTO} from "../dto/CursoDTO";
 
 
@@ -14,23 +14,31 @@ export class CourseService {
 
   constructor(private http: HttpClient) {}
 
-  getCourses(): Observable<CursoDTO[]> {
+  private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
+    return new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     });
+  }
 
-    return this.http.get<CursoDTO[]>(this.baseUrl, { headers });
+  getCourses(): Observable<CursoDTO[]> {
+    return this.http.get<CursoDTO[]>(this.baseUrl, { headers: this.getHeaders() })
+      .pipe(
+        catchError(error => {
+          console.error('Erro ao buscar cursos:', error);
+          return throwError(error);
+        })
+      );
   }
 
   getCourseById(courseId: number): Observable<CursoDTO> {
-    const token = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-
-    return this.http.get<CursoDTO>(`${this.baseUrl}/${courseId}`, { headers });
+    return this.http.get<CursoDTO>(`${this.baseUrl}/${courseId}`, { headers: this.getHeaders() })
+      .pipe(
+        catchError(error => {
+          console.error(`Erro ao buscar curso com ID ${courseId}:`, error);
+          return throwError(error);
+        })
+      );
   }
 }

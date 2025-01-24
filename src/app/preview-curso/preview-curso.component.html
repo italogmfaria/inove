@@ -1,40 +1,46 @@
-    <!-- Header -->
-    <header class="header">
-        <div class="header-left">
-            <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
-        </div>
-        <div class="header-center">
-            <button class="search-btn">
-                <img src="assets/flaticons/search-icon.png" alt="Ícone de lupa">
-            </button>
-            <input type="text" class="search-bar" placeholder="Pesquisar Cursos">
-        </div>
-        <div class="header-right" (click)="navigateTo('/cursos')">
-            <button class="voltar-btn">Voltar</button>
-        </div>
-        <div class="header-right" (click)="navigateTo('/perfil-usuario')">
-            <button class="profile-btn">Perfil</button>
-        </div>
-    </header>
+<!-- Header -->
+<header class="header">
+  <div class="header-left">
+    <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
+  </div>
+  <div class="header-center">
+    <button class="search-btn">
+      <img src="assets/flaticons/search-icon.png" alt="Ícone de lupa">
+    </button>
+    <input type="text" class="search-bar" placeholder="Pesquisar Cursos">
+  </div>
+  <div class="header-right" (click)="navigateTo('/cursos')">
+    <button class="voltar-btn">Voltar</button>
+  </div>
+  <div class="header-right" (click)="navigateTo('/perfil-usuario')">
+    <button class="profile-btn">Perfil</button>
+  </div>
+</header>
 
 <!-- Main Content -->
 <main class="main-content">
   <!-- Course Info -->
   <div class="course-info">
-    <h1 class="course-title">{{ course?.name}}</h1>
-    <p><strong>Descrição do curso:</strong> {{course?.description}}</p>
-    <p><strong>Instrutor:</strong> {{ course?.instructors }}</p>
+    <h1 class="course-title">{{ course?.name }}</h1>
+    <p><strong>Descrição do curso:</strong> {{ course?.description }}</p>
+    <p><strong>Instrutores:</strong>
+      <span *ngFor="let instructor of course?.instructors; let last = last">
+    {{ instructor.name }}<span *ngIf="!last">, </span>
+  </span>
+    </p>
     <p><strong>Data da criação:</strong> {{ course?.creationDate | date: 'dd/MM/yyyy' }}</p>
     <p><strong>Última atualização:</strong> {{ course?.lastUpdateDate | date: 'dd/MM/yyyy' }}</p><br>
     <button class="btn-subscribe" (click)="navigateTo('/painel-curso')">Inscreva-se</button>
-  </div><br>
+  </div>
+  <br>
 
   <!-- Comments Section -->
   <section class="comments-section">
     <h2 class="comments-title">Comentários:</h2><br>
 
     <div class="comment" *ngFor="let feedback of course?.feedBacks">
-      <p class="comment-user"><strong>{{ feedback.student }}</strong></p>
+      <p class="comment-user"></p>
+      <p class="comment-user"><strong>{{ feedback.student.name }}</strong></p>
       <p class="comment-text">{{ feedback.comment }}</p>
     </div>
   </section>
