@@ -7,7 +7,7 @@ import {HttpClientModule} from "@angular/common/http";
 
 
 export const APP_IMPORTS = [
-  RouterModule.forRoot(routes, {useHash: true}),
+  RouterModule.forRoot(routes, {useHash: false}),
   BrowserModule,
   CommonModule,
   FormsModule,

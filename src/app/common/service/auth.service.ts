@@ -33,5 +33,20 @@ export class AuthService {
   logout() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
+
   }
+  getRole(): string | null {
+    const token = this.getToken();
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1])); 
+        return payload.role; 
+      } catch (e) {
+        console.error('Erro ao decodificar o token:', e);
+        return null;
+      }
+    }
+    return null;
+  }
+  
 }

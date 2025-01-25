@@ -40,4 +40,12 @@ export class PreviewCursoComponent implements OnInit {
   navigateTo(path: string) {
     this.router.navigate([path]);
   }
+
+  navigateToCurso(path: string): void {
+    if (this.course) {
+      this.router.navigate([`${path}/${this.course.id}`]);
+    } else {
+      console.error('Nenhum curso carregado para navegar.');
+    }
+  }  
 }
