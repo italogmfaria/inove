@@ -1,9 +1,8 @@
-import { CommonModule } from '@angular/common';
-import {Component, OnInit} from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
-import {CursoDTO} from "../common/dto/CursoDTO";
-import {CourseService} from "../common/service/course.service";
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CursoDTO } from "../common/dto/CursoDTO";
+import { CourseService } from "../common/service/course.service";
+import { AuthService } from "../common/service/auth.service";
 
 @Component({
   selector: 'app-preview-curso',
@@ -12,14 +11,17 @@ import {CourseService} from "../common/service/course.service";
 })
 export class PreviewCursoComponent implements OnInit {
   course: CursoDTO | null = null;
+  isLoggedIn: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private courseService: CourseService
+    private courseService: CourseService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    this.isLoggedIn = !!this.authService.getToken(); // Verifica login
     const courseId = this.route.snapshot.paramMap.get('id');
     if (courseId) {
       this.loadCourseDetails(parseInt(courseId, 10));
@@ -37,15 +39,16 @@ export class PreviewCursoComponent implements OnInit {
     );
   }
 
+  navigateToCurso() {
+    if (this.isLoggedIn) {
+      this.router.navigate([`/painel-curso/${this.course?.id}`]);
+    } else {
+      alert('Você precisa estar logado para se inscrever no curso.');
+      this.router.navigate(['/login']);
+    }
+  }
+
   navigateTo(path: string) {
     this.router.navigate([path]);
   }
-
-  navigateToCurso(path: string): void {
-    if (this.course) {
-      this.router.navigate([`${path}/${this.course.id}`]);
-    } else {
-      console.error('Nenhum curso carregado para navegar.');
-    }
-  }  
 }
