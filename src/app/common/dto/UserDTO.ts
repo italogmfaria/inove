@@ -6,6 +6,7 @@ export interface UserDTO {
   name: string;
   cpf: string;
   email: string;
+  password: string;
   birthDate: Date;
   schoolId: number;
   studentCourses: CursoDTO[];

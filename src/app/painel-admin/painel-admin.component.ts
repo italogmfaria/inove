@@ -1,7 +1,12 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UserService } from '../common/service/user.service';
+import { SchoolDTO } from '../common/dto/SchoolDTO';
+import { UserDTO } from '../common/dto/UserDTO';
+import { CursoDTO } from '../common/dto/CursoDTO';
+import { SchoolService } from '../common/service/school.service';
+import { CourseService } from '../common/service/course.service';
+import { UserRole } from '../common/dto/UserRole';
 
 @Component({
   selector: 'app-painel-admin',
@@ -11,7 +16,9 @@ import { Router } from '@angular/router';
 export class PainelAdminComponent {
   activeTab: 'usuarios' | 'escolas' | 'cursos' = 'usuarios';
 
-  // Modal states
+  public UserRole = UserRole;
+
+  // Modal status
   showAddUserModal: boolean = false;
   showUpdateUserModal: boolean = false;
   showSchoolModal: boolean = false;
@@ -20,52 +27,39 @@ export class PainelAdminComponent {
   showUpdateCourseModal: boolean = false;
   originalCourseTitle: string = '';
 
+  newUser: UserDTO = this.resetNewUser();
+  selectedUser: UserDTO = this.resetNewUser();
 
-  // Form data for modals
-  newUser = { nome: '', email: '', cpf: '', tipo: '', senha: '' };
-  selectedUser = { nome: '', email: '', cpf: '', tipo: '' };
+  newSchool: SchoolDTO = this.resetNewSchool();
+  selectedSchool: SchoolDTO = this.resetNewSchool();
 
-  selectedSchool = { nome: '', email: '', cidade: '', estado: '' };
-  newSchool = { nome: '', email: '', cidade: '', estado: '', senha: '' };
+  newCourse: CursoDTO = this.resetNewCourse();
+  selectedCourse: CursoDTO = this.resetNewCourse();
 
-  newCourse = { titulo: '', descricao: '', instrutor: '' };
-  selectedCourse = { titulo: '', descricao: '', instrutor: '' };
-
-  // Data samples
-  usuarios = [
-    { nome: 'João Silva', email: 'joao.silva@example.com', cpf: '123.456.789-00', tipo: 'Instrutor' },
-    { nome: 'Maria Oliveira', email: 'maria.oliveira@example.com', cpf: '987.654.321-00', tipo: 'Estudante' },
-    { nome: 'Carlos Almeida', email: 'carlos.almeida@example.com', cpf: '111.222.333-44', tipo: 'Admin' },
-  ];
-
-  escolas = [
-    { nome: 'Escola Municipal Maria Cândida de Jesus', email: 'contato@escolammcj.com', cidade: 'São Paulo', estado: 'SP' },
-    { nome: 'Escola XYZ', email: 'contato@escolaxyz.com', cidade: 'Rio de Janeiro', estado: 'RJ' },
-  ];
-
-  cursos = [
-    {
-      titulo: 'Curso 1',
-      descricao: 'Descrição do Curso 1',
-      instrutor: 'João Silva',
-      dataCriacao: new Date('2023-11-01'),
-      ultimaAtualizacao: new Date('2023-11-02'),
-    },
-    {
-      titulo: 'Curso 2',
-      descricao: 'Descrição do Curso 2',
-      instrutor: 'Maria Oliveira',
-      dataCriacao: new Date('2023-11-03'),
-      ultimaAtualizacao: new Date('2023-11-03'),
-    },
-  ];
+  usuarios: UserDTO[] = [];
+  escolas: SchoolDTO[] = [];
+  cursos: CursoDTO[] = [];
+  instrutores: UserDTO[] = [];
 
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private schoolService: SchoolService,
+    private courseService: CourseService
+  ) {
+    this.loadAllData();
+  }
 
-  // Getter
-  get instrutores() {
-    return this.usuarios.filter((user) => user.tipo === 'Instrutor');
+  loadAllData(): void {
+    this.getUsers();
+    this.getSchools();
+    this.getCourses();
+    this.getInstructors();
+  }
+
+  navigateTo(path: string): void {
+    this.router.navigate([path]);
   }
 
   // Tabs
@@ -73,236 +67,304 @@ export class PainelAdminComponent {
     this.activeTab = tab;
   }
 
-  // User Management
-  toggleAddUserModal(): void {
-    this.resetNewUser();
-    this.showAddUserModal = true;
-    this.showUpdateUserModal = false;
+  
+
+  // Usuários
+
+  getUsers(): void {
+    this.userService.getUsers().subscribe((response) => {
+      this.usuarios = response;
+    });
   }
 
-  toggleUpdateUserModal(user: any): void {
+  updateUserRole(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    this.newUser.role = target.value as UserRole;
+  }
+
+  addUser(): void {
+    if (!this.newUser.role) {
+      alert('Por favor, selecione o tipo de usuário.');
+      return;
+    }
+  
+    if (this.newUser.role === 'STUDENT' && !this.newUser.schoolId) {
+      alert('Por favor, selecione uma escola para o estudante.');
+      return;
+    }
+  
+    const userPayload = {
+      ...this.newUser,
+      role: this.newUser.role, 
+      school: this.newUser.role === 'STUDENT' ? { id: this.newUser.schoolId } : null, 
+    };
+  
+    let addUserObservable;
+    if (this.newUser.role === 'ADMINISTRATOR' || this.newUser.role === 'INSTRUCTOR') {
+      addUserObservable = this.userService.addUser(userPayload); 
+    } else if (this.newUser.role === 'STUDENT') {
+      addUserObservable = this.userService.addUser(userPayload); 
+    } else {
+      alert('Papel do usuário inválido.');
+      return;
+    }
+  
+    addUserObservable.subscribe(
+      () => {
+        this.getUsers();
+        this.closeUserModals();
+        alert('Usuário adicionado com sucesso.');
+      },
+      (error) => {
+        console.error('Erro ao adicionar usuário:', error);
+        alert('Erro ao adicionar usuário.');
+      }
+    );
+  }
+  
+
+  toggleAddUserModal(): void {
+    this.newUser = this.resetNewUser();
+    this.showAddUserModal = true;
+  }
+
+  resetNewUser(): UserDTO {
+    return {
+      id: 0,
+      name: '',
+      email: '',
+      cpf: '',
+      password: '',
+      role: UserRole.STUDENT,
+      schoolId: 0,
+      birthDate: new Date(),
+      adminCourses: [],
+      instructorCourses: [],
+      studentCourses: [],
+    };
+  }
+
+  updateUser(): void {
+    if (this.selectedUser.role === UserRole.STUDENT && !this.selectedUser.schoolId) {
+      alert('Por favor, selecione uma escola para o estudante.');
+      return;
+    }
+  
+    const userPayload = {
+      ...this.selectedUser,
+      school: this.selectedUser.role === UserRole.STUDENT ? { id: this.selectedUser.schoolId } : null,
+    };
+  
+    this.userService.updateUser(userPayload).subscribe(
+      () => {
+        this.getUsers();
+        this.closeUserModals();
+        alert('Usuário atualizado com sucesso.');
+      },
+      (error) => {
+        console.error('Erro ao atualizar usuário:', error);
+        alert('Erro ao atualizar usuário.');
+      }
+    );
+  }
+  
+
+  toggleUpdateUserModal(user: UserDTO): void {
     this.selectedUser = { ...user };
     this.showAddUserModal = false;
     this.showUpdateUserModal = true;
   }
 
   closeUserModals(): void {
-    this.resetNewUser();
-    this.selectedUser = { nome: '', email: '', cpf: '', tipo: '' };
+    this.newUser = this.resetNewUser();
     this.showAddUserModal = false;
     this.showUpdateUserModal = false;
   }
 
-  addUser(): void {
-    if (
-      this.newUser.nome &&
-      this.newUser.email &&
-      this.newUser.cpf &&
-      this.newUser.tipo &&
-      this.newUser.senha
-    ) {
-      const exists = this.usuarios.some((u) => u.cpf === this.newUser.cpf);
-      if (!exists) {
-        this.usuarios.push({ ...this.newUser });
-        this.closeUserModals();
-      } else {
-        alert('CPF já cadastrado. Atualize o usuário existente.');
+
+
+
+// Escola
+
+  getSchools(): void {
+    this.schoolService.getSchools().subscribe((response) => {
+      this.escolas = response;
+    });
+  }
+
+  addNewSchool(): void {
+    if (!this.newSchool.name || !this.newSchool.email) {   //if (!this.newSchool.name || !this.newSchool.email || !this.newSchool.password) {
+
+      alert('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+  
+    this.schoolService.addSchool(this.newSchool).subscribe(
+      () => {
+        this.getSchools();
+        this.toggleNewSchoolModal();
+        alert('Escola cadastrada com sucesso!');
+      },
+      (error) => {
+        console.error('Erro ao cadastrar escola:', error);
+        alert('Erro ao cadastrar escola.');
       }
-    } else {
-      alert('Por favor, preencha todos os campos.');
+    );
+  }
+  
+  updateSchool(): void {
+    if (!this.selectedSchool.name || !this.selectedSchool.city || !this.selectedSchool.federativeUnit) {
+      alert('Por favor, preencha todos os campos obrigatórios.');
+      return;
     }
+  
+    this.schoolService.updateSchool(this.selectedSchool).subscribe(
+      () => {
+        this.getSchools();
+        this.closeSchoolModal();
+        alert('Escola atualizada com sucesso!');
+      },
+      (error) => {
+        console.error('Erro ao atualizar escola:', error);
+        alert('Erro ao atualizar escola.');
+      }
+    );
   }
-
-  updateUser(): void {
-    const index = this.usuarios.findIndex((u) => u.cpf === this.selectedUser.cpf);
-    if (index >= 0) {
-      this.usuarios[index] = { ...this.selectedUser };
-      alert('Usuário atualizado com sucesso!');
-      this.closeUserModals();
-    } else {
-      alert('Erro ao atualizar usuário.');
-    }
+  
+  resetNewSchool(): SchoolDTO {
+    return { 
+      id: 0, 
+      name: '', 
+      email: '', 
+      city: '', 
+      federativeUnit: '', 
+      // password: '', 
+      students: [] 
+    };
   }
-
-  toggleSchoolModalForNew(): void {
-    this.selectedSchool = { nome: '', email: '', cidade: '', estado: '' };
-    this.showSchoolModal = true;
-  }
-
-
-  toggleSchoolModal(school?: any): void {
-    if (school) {
-      this.selectedSchool = { ...school };
-    } else {
-      this.selectedSchool = { nome: '', email: '', cidade: '', estado: '' }; // Reseta os campos
-    }
-    this.showSchoolModal = true;
-  }
-
-
-  closeSchoolModal(): void {
-    this.selectedSchool = { nome: '', email: '', cidade: '', estado: '' };
-    this.showSchoolModal = false;
-  }
-
-  // Alternar modal de adicionar nova escola
+  
   toggleNewSchoolModal(): void {
-    this.newSchool = { nome: '', email: '', cidade: '', estado: '', senha: '' };
+    this.newSchool = this.resetNewSchool();
     this.showNewSchoolModal = !this.showNewSchoolModal;
   }
 
-  // Adicionar nova escola
-  addNewSchool(): void {
-    if (
-      this.newSchool.nome &&
-      this.newSchool.email &&
-      this.newSchool.cidade &&
-      this.newSchool.estado &&
-      this.newSchool.senha
-    ) {
-      const exists = this.escolas.some((e) => e.nome === this.newSchool.nome);
-      if (!exists) {
-        this.escolas.push({ ...this.newSchool });
-        this.toggleNewSchoolModal(); // Fechar modal
-      } else {
-        alert('Uma escola com este nome já está cadastrada.');
-      }
-    } else {
-      alert('Por favor, preencha todos os campos.');
-    }
+  toggleSchoolModal(school: SchoolDTO): void {
+    this.selectedSchool = { ...school };
+    this.showSchoolModal = true;
   }
 
-  addSchool(): void {
-    if (
-      this.selectedSchool.nome &&
-      this.selectedSchool.email &&
-      this.selectedSchool.cidade &&
-      this.selectedSchool.estado
-    ) {
-      const exists = this.escolas.some((e) => e.nome === this.selectedSchool.nome);
-      if (!exists) {
-        this.escolas.push({ ...this.selectedSchool });
-      } else {
-        alert('Já existe uma escola com esse nome.');
-      }
-      this.closeSchoolModal();
-    } else {
-      alert('Por favor, preencha todos os campos.');
-    }
+  closeSchoolModal(): void {
+    this.selectedSchool = this.resetNewSchool();
+    this.showSchoolModal = false;
   }
 
-  updateSchool(): void {
-    const index = this.escolas.findIndex(
-      (e) => e.email === this.selectedSchool.email
+
+
+
+
+// Cursos
+
+
+getCourses(): void {
+  this.courseService.getCourses().subscribe(
+    (response) => {
+      this.cursos = response.map((course) => ({
+        ...course,
+        description: course.description || 'Descrição não disponível', // Preenche com uma descrição padrão
+        instructors: course.instructors || [], // Garante que instrutores seja uma lista vazia se estiver ausente
+      }));
+    },
+    (error) => {
+      console.error('Erro ao buscar cursos:', error);
+      alert('Erro ao buscar cursos.');
+    }
+  );
+}
+
+
+  getInstructors(): void {
+    this.userService.getInstructors().subscribe((response) => {
+      this.instrutores = response;
+    });
+  }
+
+  addCourse(): void {
+    if (!this.newCourse.name || !this.newCourse.description || this.newCourse.instructors.length === 0) {
+      alert('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    this.courseService.addCourse(this.newCourse).subscribe(
+      () => {
+        this.getCourses();
+        this.closeAddCourseModal();
+        alert('Curso adicionado com sucesso!');
+      },
+      (error) => {
+        console.error('Erro ao adicionar curso:', error);
+        alert('Erro ao adicionar curso.');
+      }
     );
-
-    if (index !== -1) {
-      this.escolas[index] = {
-        ...this.escolas[index],
-        nome: this.selectedSchool.nome.trim(),
-        cidade: this.selectedSchool.cidade.trim(),
-        estado: this.selectedSchool.estado.trim(),
-      };
-
-      alert('Escola atualizada com sucesso!');
-      this.closeSchoolModal();
-    } else {
-      alert('Erro: Escola não encontrada.');
-    }
   }
 
+  updateCourse(): void {
+    if (!this.selectedCourse.name || !this.selectedCourse.description || this.selectedCourse.instructors.length === 0) {
+      alert('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+  
+    const coursePayload = {
+      name: this.selectedCourse.name,
+      description: this.selectedCourse.description,
+      instructors: this.selectedCourse.instructors.map((instructor) => ({ id: instructor.id })), // Mapeia apenas os IDs dos instrutores
+    };
+  
+    this.courseService.updateCourse(this.selectedCourse.id, coursePayload).subscribe(
+      () => {
+        this.getCourses();
+        this.closeUpdateCourseModal();
+        alert('Curso atualizado com sucesso!');
+      },
+      (error) => {
+        console.error('Erro ao atualizar curso:', error);
+        alert('Erro ao atualizar curso.');
+      }
+    );
+  }
+  
 
-    // Abrir modal para adicionar novo curso
   openAddCourseModal(): void {
-    this.newCourse = { titulo: '', descricao: '', instrutor: '' };
+    this.newCourse = this.resetNewCourse();
     this.showAddCourseModal = true;
   }
 
-  // Fechar modal de adicionar curso
   closeAddCourseModal(): void {
-    this.newCourse = { titulo: '', descricao: '', instrutor: '' };
+    this.newCourse = this.resetNewCourse();
     this.showAddCourseModal = false;
   }
 
-  // Abrir modal para atualizar curso
-  openUpdateCourseModal(curso: any): void {
-    this.selectedCourse = { ...curso };
-    this.originalCourseTitle = curso.titulo;
+  openUpdateCourseModal(course: CursoDTO): void {
+    this.selectedCourse = { ...course };
     this.showUpdateCourseModal = true;
   }
 
-
-  // Fechar modal de atualizar curso
   closeUpdateCourseModal(): void {
-    this.selectedCourse = { titulo: '', descricao: '', instrutor: '' };
+    this.selectedCourse = this.resetNewCourse();
     this.showUpdateCourseModal = false;
   }
 
-
-  deleteItem(category: 'usuarios' | 'escolas' | 'cursos', index: number): void {
-    const confirmDelete = confirm('Tem certeza que deseja excluir este item?');
-    if (confirmDelete) {
-      if (category === 'usuarios') {
-        this.usuarios.splice(index, 1);
-      } else if (category === 'escolas') {
-        this.escolas.splice(index, 1);
-      } else if (category === 'cursos') {
-        this.cursos.splice(index, 1);
-      }
-    }
-  }
-
-    // Adicionar curso
-  addCourse(): void {
-    if (this.newCourse.titulo && this.newCourse.descricao && this.newCourse.instrutor) {
-      const exists = this.cursos.some((c) => c.titulo === this.newCourse.titulo);
-      if (!exists) {
-        this.cursos.push({
-          ...this.newCourse,
-          dataCriacao: new Date(),
-          ultimaAtualizacao: new Date(),
-        });
-        alert('Curso adicionado com sucesso!');
-        this.closeAddCourseModal();
-      } else {
-        alert('Já existe um curso com esse título.');
-      }
-    } else {
-      alert('Por favor, preencha todos os campos.');
-    }
-  }
-
-  // Atualizar curso
-  updateCourse(): void {
-    const index = this.cursos.findIndex(
-      (c) => c.titulo === this.originalCourseTitle
-    );
-
-    if (index !== -1) {
-      this.cursos[index] = {
-        ...this.cursos[index],
-        titulo: this.selectedCourse.titulo.trim(),
-        descricao: this.selectedCourse.descricao.trim(),
-        instrutor: this.selectedCourse.instrutor,
-        ultimaAtualizacao: new Date(),
-      };
-
-      alert('Curso atualizado com sucesso!');
-      this.closeUpdateCourseModal();
-    } else {
-      alert('Erro: Curso não encontrado.');
-    }
-  }
-
-
-
-  // Utility
-  private resetNewUser(): void {
-    this.newUser = { nome: '', email: '', cpf: '', tipo: '', senha: '' };
-  }
-
-  // Navigate
-  navigateTo(path: string): void {
-      this.router.navigate([path]);
+  resetNewCourse(): CursoDTO {
+    return {
+      id: 0,
+      name: '',
+      description: '',
+      creationDate: '',
+      lastUpdateDate: '',
+      students: [],
+      admins: [],
+      instructors: [],
+      feedBacks: [],
+      sections: [],
+    };
   }
 }

@@ -94,9 +94,10 @@
   
   /* Tables */
   table {
-    width: 100%;
+    width: 75%;
     border-collapse: collapse;
     margin-top: 20px;
+    margin-left: 17%;
     text-align: left;
 
   }
