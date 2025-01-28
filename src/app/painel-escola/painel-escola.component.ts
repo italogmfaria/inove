@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../common/service/auth.service';
 
 @Component({
   selector: 'app-painel-escola',
@@ -35,7 +36,10 @@ export class PainelEscolaComponent {
   escolaEdit: any = { nome: '', email: '', cidade: '', estado: '' };
 
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   // Abrir modal para adicionar usuário
   openAddUserModal(): void {
@@ -76,7 +80,8 @@ export class PainelEscolaComponent {
   }
 
   logout(): void {
-    this.router.navigate(['/login']);
+    this.authService.logout();
+    this.router.navigate(['/login']); 
   }
 
   // User Management

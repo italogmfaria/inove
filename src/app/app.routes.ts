@@ -35,3 +35,4 @@ export const routes: Routes = [
   { path: 'seja-instrutor', component: SejaInstrutorComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
+

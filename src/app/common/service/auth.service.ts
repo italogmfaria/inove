@@ -33,8 +33,8 @@ export class AuthService {
   logout() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
-
   }
+
   getRole(): string | null {
     const token = this.getToken();
     if (token) {

@@ -31,12 +31,45 @@ export class PreviewCursoComponent implements OnInit {
   loadCourseDetails(courseId: number) {
     this.courseService.getCourseById(courseId).subscribe(
       (course) => {
-        this.course = course;
+        if (course) {
+          // Verifica se os instrutores e feedbacks contêm objetos esperados
+          course.instructors = course.instructors.map(instructor => ({
+            ...instructor,
+            name: instructor.name || 'Desconhecido'
+          }));
+  
+          course.feedBacks = course.feedBacks.map(feedback => ({
+            ...feedback,
+            student: {
+              ...feedback.student,
+              name: feedback.student?.name || 'Anônimo'
+            }
+          }));
+  
+          this.course = course;
+        }
       },
       (error) => {
         console.error('Erro ao carregar detalhes do curso:', error);
       }
     );
+  }
+  
+
+  subscribeToCourse() {
+    if (this.isLoggedIn && this.course) {
+      this.courseService.subscribeToCourse(this.course.id).subscribe(
+        () => {
+          alert('Inscrição realizada com sucesso!');
+        },
+        (error) => {
+          console.error('Erro ao se inscrever no curso:', error);
+        }
+      );
+    } else {
+      alert('Você precisa estar logado para se inscrever no curso.');
+      this.router.navigate(['/login']);
+    }
   }
 
   navigateToCurso() {

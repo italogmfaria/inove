@@ -13,7 +13,7 @@
         <li (click)="switchPanel('cursos')" [class.active]="activePanel === 'cursos'">Meus Cursos</li>
         <li (click)="switchPanel('dados')" [class.active]="activePanel === 'dados'">Meus Dados</li>
       </ul>
-      <button class="btn-orange" (click)="navigateTo('/login')">Sair</button>
+      <button class="btn-logout" (click)="logout()">Sair</button>
     </aside>
 
     <!-- Main Content -->

@@ -39,25 +39,23 @@ export class UserService {
   addUser(user: UserDTO): Observable<void> {
     const headers = this.createHeaders();
     let endpoint: string;
-  
-    if (user.role === 'ADMINISTRATOR' || user.role === 'INSTRUCTOR') {
-      endpoint = `${this.baseUrl}/admin`;
+
+    if (['ADMINISTRATOR', 'INSTRUCTOR'].includes(user.role)) {
+        endpoint = `${this.baseUrl}/admin`;
     } else if (user.role === 'STUDENT') {
-      endpoint = `${this.baseUrl}/discente`; 
+        endpoint = `${this.baseUrl}/discente`;
     } else {
-      throw new Error('Papel do usuário inválido');
+        throw new Error('Papel do usuário inválido');
     }
-  
+
     return this.http.post<void>(endpoint, user, { headers });
-  }
+}
+
   
-  
-  
-  
-  updateUser(user: UserDTO): Observable<void> {
-    const headers = this.createHeaders();
-    return this.http.put<void>(`${this.baseUrl}/${user.id}`, user, { headers });
-  }
+updateUser(user: { id: number; name: string; email: string }): Observable<void> {
+  const headers = this.createHeaders();
+  return this.http.put<void>(`${this.baseUrl}/${user.id}`, user, { headers });
+}
 
   deleteUser(userId: number): Observable<void> {
     const headers = this.createHeaders();

@@ -14,3 +14,4 @@ export interface UserDTO {
   instructorCourses: CursoDTO[];
   role: UserRole;
 }
+

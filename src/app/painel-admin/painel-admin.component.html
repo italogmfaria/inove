@@ -2,7 +2,7 @@
   <!-- Header -->
   <header class="header">
     <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
-    <button class="btn-logout" (click)="navigateTo('/login')">Sair</button>
+    <button class="btn-logout" (click)="logout()">Sair</button>
   </header>
 
   <div class="content">
@@ -123,22 +123,22 @@
     <input type="text" [(ngModel)]="newUser.cpf" placeholder="CPF" />
     <input type="password" [(ngModel)]="newUser.password" placeholder="Senha" />
 
-    <label for="role">Tipo</label>
+    <label for="role">Tipo  </label>
     <select id="role" [(ngModel)]="newUser.role">
-      <option [value]="'STUDENT'">Estudante</option>
-      <option [value]="'INSTRUCTOR'">Instrutor</option>
-      <option [value]="'ADMINISTRATOR'">Administrador</option>
+      <option [value]="UserRole.STUDENT">Estudante</option>
+      <option [value]="UserRole.INSTRUCTOR">Instrutor</option>
+      <option [value]="UserRole.ADMINISTRATOR">Administrador</option>
     </select>
 
     <!-- Escolha da Escola -->
     <div *ngIf="newUser.role === 'STUDENT'">
       <br />
-      <label for="school">Escola</label>
+      <label for="school">Escola  </label>
       <select id="school" [(ngModel)]="newUser.schoolId">
         <option *ngFor="let escola of escolas" [value]="escola.id">{{ escola.name }}</option>
       </select>
     </div>
-  </div>
+  </div><br>
   <footer class="modal-footer">
     <button class="btn-orange" (click)="addUser()">Salvar</button>
   </footer>
@@ -157,22 +157,6 @@
   <div class="modal-body">
     <input type="text" [(ngModel)]="selectedUser.name" placeholder="Nome" />
     <input type="email" [(ngModel)]="selectedUser.email" placeholder="Email" />
-    <input type="text" [(ngModel)]="selectedUser.cpf" placeholder="CPF" />
-    <label for="role">Tipo  </label>
-    <select id="role" [(ngModel)]="selectedUser.role">
-      <option [value]="UserRole.STUDENT">Estudante</option>
-      <option [value]="UserRole.INSTRUCTOR">Instrutor</option>
-      <option [value]="UserRole.ADMINISTRATOR">Administrador</option>
-    </select>
-  
-    <!-- Escolha da Escola -->
-    <div *ngIf="selectedUser.role === UserRole.STUDENT">
-      <br>
-      <label for="school">Escola  </label>
-      <select id="school" [(ngModel)]="selectedUser.schoolId">
-        <option *ngFor="let escola of escolas" [value]="escola.id">{{ escola.name }}</option>
-      </select>
-    </div>
   </div>
   <footer class="modal-footer">
     <button class="btn-orange" (click)="updateUser()">Salvar</button>
@@ -253,14 +237,6 @@
   <div class="modal-body">
     <input type="text" [(ngModel)]="selectedCourse.name" placeholder="Título" />
     <textarea [(ngModel)]="selectedCourse.description" placeholder="Descrição"></textarea>
-    <div class="custom-select">
-      <label for="instructorsSelect">Instrutores</label>
-      <select id="instructorsSelect" [(ngModel)]="selectedCourse.instructors" multiple>
-        <option *ngFor="let instrutor of instrutores" [value]="instrutor">
-          {{ instrutor.name }}
-        </option>
-      </select>
-    </div>
   </div>
   <footer class="modal-footer">
     <button class="btn-orange" (click)="updateCourse()">Salvar</button>

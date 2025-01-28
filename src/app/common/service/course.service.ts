@@ -22,15 +22,22 @@ export class CourseService {
     return this.http.get<CursoDTO>(`${this.baseUrl}/${courseId}`, { headers });
   }
 
+
+  subscribeToCourse(courseId: number): Observable<void> {
+    const userId = localStorage.getItem('userId'); 
+    return this.http.post<void>(`api/inove/usuarios/${userId}/inscreverse/${courseId}`, {});
+  }
+
   addCourse(course: CursoDTO): Observable<void> {
     const headers = this.createHeaders();
     return this.http.post<void>(this.baseUrl, course, { headers });
   }
 
-  updateCourse(id: number, coursePayload: { name: string; description: string; instructors: { id: number }[] }): Observable<void> {
+  updateCourse(id: number, coursePayload: { name: string; description: string }): Observable<void> {
     const headers = this.createHeaders();
     return this.http.put<void>(`${this.baseUrl}/${id}`, coursePayload, { headers });
   }
+  
   
   deleteCourse(courseId: number): Observable<void> {
     const headers = this.createHeaders();

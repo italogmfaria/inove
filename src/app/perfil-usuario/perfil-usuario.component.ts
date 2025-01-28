@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../common/service/auth.service';
 
 
 @Component({
@@ -20,10 +21,18 @@ export class PerfilUsuarioComponent {
     escola:"Escola Municipal Maria Cândida de Jesus",
   };
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   navigateTo(path: string): void {
     this.router.navigate([path]);
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']); 
   }
 
   switchPanel(panel: 'cursos' | 'dados'): void {

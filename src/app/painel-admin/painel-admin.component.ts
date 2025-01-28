@@ -7,6 +7,7 @@ import { CursoDTO } from '../common/dto/CursoDTO';
 import { SchoolService } from '../common/service/school.service';
 import { CourseService } from '../common/service/course.service';
 import { UserRole } from '../common/dto/UserRole';
+import { AuthService } from '../common/service/auth.service';
 
 @Component({
   selector: 'app-painel-admin',
@@ -46,7 +47,8 @@ export class PainelAdminComponent {
     private router: Router,
     private userService: UserService,
     private schoolService: SchoolService,
-    private courseService: CourseService
+    private courseService: CourseService,
+    private authService: AuthService
   ) {
     this.loadAllData();
   }
@@ -60,6 +62,11 @@ export class PainelAdminComponent {
 
   navigateTo(path: string): void {
     this.router.navigate([path]);
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']); 
   }
 
   // Tabs
@@ -84,43 +91,39 @@ export class PainelAdminComponent {
 
   addUser(): void {
     if (!this.newUser.role) {
-      alert('Por favor, selecione o tipo de usuário.');
-      return;
+        alert('Por favor, selecione o tipo de usuário.');
+        return;
     }
-  
-    if (this.newUser.role === 'STUDENT' && !this.newUser.schoolId) {
-      alert('Por favor, selecione uma escola para o estudante.');
-      return;
-    }
-  
+
     const userPayload = {
-      ...this.newUser,
-      role: this.newUser.role, 
-      school: this.newUser.role === 'STUDENT' ? { id: this.newUser.schoolId } : null, 
+        ...this.newUser,
+        role: this.newUser.role, 
+        school: this.newUser.role === 'STUDENT' ? { id: this.newUser.schoolId } : null,
     };
-  
+
     let addUserObservable;
-    if (this.newUser.role === 'ADMINISTRATOR' || this.newUser.role === 'INSTRUCTOR') {
-      addUserObservable = this.userService.addUser(userPayload); 
+    if (['ADMINISTRATOR', 'INSTRUCTOR'].includes(this.newUser.role)) {
+        addUserObservable = this.userService.addUser(userPayload);
     } else if (this.newUser.role === 'STUDENT') {
-      addUserObservable = this.userService.addUser(userPayload); 
+        addUserObservable = this.userService.addUser(userPayload);
     } else {
-      alert('Papel do usuário inválido.');
-      return;
+        alert('Papel do usuário inválido.');
+        return;
     }
-  
+
     addUserObservable.subscribe(
-      () => {
-        this.getUsers();
-        this.closeUserModals();
-        alert('Usuário adicionado com sucesso.');
-      },
-      (error) => {
-        console.error('Erro ao adicionar usuário:', error);
-        alert('Erro ao adicionar usuário.');
-      }
+        () => {
+            this.getUsers();
+            this.closeUserModals();
+            alert('Usuário adicionado com sucesso.');
+        },
+        (error) => {
+            console.error('Erro ao adicionar usuário:', error);
+            alert('Erro ao adicionar usuário.');
+        }
     );
-  }
+}
+
   
 
   toggleAddUserModal(): void {
@@ -145,21 +148,22 @@ export class PainelAdminComponent {
   }
 
   updateUser(): void {
-    if (this.selectedUser.role === UserRole.STUDENT && !this.selectedUser.schoolId) {
-      alert('Por favor, selecione uma escola para o estudante.');
+    if (!this.selectedUser.name || !this.selectedUser.email) {
+      alert('Por favor, preencha os campos obrigatórios.');
       return;
     }
   
     const userPayload = {
-      ...this.selectedUser,
-      school: this.selectedUser.role === UserRole.STUDENT ? { id: this.selectedUser.schoolId } : null,
+      id: this.selectedUser.id,
+      name: this.selectedUser.name,
+      email: this.selectedUser.email,
     };
   
     this.userService.updateUser(userPayload).subscribe(
       () => {
-        this.getUsers();
+        this.getUsers(); 
         this.closeUserModals();
-        alert('Usuário atualizado com sucesso.');
+        alert('Usuário atualizado com sucesso!');
       },
       (error) => {
         console.error('Erro ao atualizar usuário:', error);
@@ -167,6 +171,8 @@ export class PainelAdminComponent {
       }
     );
   }
+  
+  
   
 
   toggleUpdateUserModal(user: UserDTO): void {
@@ -270,8 +276,8 @@ getCourses(): void {
     (response) => {
       this.cursos = response.map((course) => ({
         ...course,
-        description: course.description || 'Descrição não disponível', // Preenche com uma descrição padrão
-        instructors: course.instructors || [], // Garante que instrutores seja uma lista vazia se estiver ausente
+        description: course.description || 'Descrição não disponível', 
+        instructors: course.instructors || [], 
       }));
     },
     (error) => {
@@ -308,20 +314,19 @@ getCourses(): void {
   }
 
   updateCourse(): void {
-    if (!this.selectedCourse.name || !this.selectedCourse.description || this.selectedCourse.instructors.length === 0) {
-      alert('Por favor, preencha todos os campos obrigatórios.');
+    if (!this.selectedCourse.name || !this.selectedCourse.description) {
+      alert('Por favor, preencha os campos obrigatórios.');
       return;
     }
   
     const coursePayload = {
       name: this.selectedCourse.name,
       description: this.selectedCourse.description,
-      instructors: this.selectedCourse.instructors.map((instructor) => ({ id: instructor.id })), // Mapeia apenas os IDs dos instrutores
     };
   
     this.courseService.updateCourse(this.selectedCourse.id, coursePayload).subscribe(
       () => {
-        this.getCourses();
+        this.getCourses(); 
         this.closeUpdateCourseModal();
         alert('Curso atualizado com sucesso!');
       },
@@ -331,6 +336,7 @@ getCourses(): void {
       }
     );
   }
+  
   
 
   openAddCourseModal(): void {
