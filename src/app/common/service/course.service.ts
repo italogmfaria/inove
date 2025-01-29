@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { CursoDTO } from '../dto/CursoDTO';
 
 @Injectable({
@@ -10,11 +10,12 @@ import { CursoDTO } from '../dto/CursoDTO';
 export class CourseService {
   private baseUrl = `${environment.apiBaseUrl}/cursos`;
 
+
   constructor(private http: HttpClient) {}
 
-  getCourses(): Observable<CursoDTO[]> {
+  getCourses(): Observable<any[]> {
     const headers = this.createHeaders();
-    return this.http.get<CursoDTO[]>(this.baseUrl, { headers });
+    return this.http.get<any[]>(this.baseUrl, { headers });
   }
   
   getCourseById(courseId: number): Observable<CursoDTO> {
@@ -22,12 +23,24 @@ export class CourseService {
     return this.http.get<CursoDTO>(`${this.baseUrl}/${courseId}`, { headers });
   }
 
-
-  subscribeToCourse(courseId: number): Observable<void> {
-    const userId = localStorage.getItem('userId'); 
-    return this.http.post<void>(`api/inove/usuarios/${userId}/inscreverse/${courseId}`, {});
+  subscribeToCourse(courseId: number): Observable<any> {
+    const userId = localStorage.getItem('userId');
+    
+    if (!userId) {
+      return new Observable((observer) => {
+        observer.error(new Error('Usuário não está logado.'));
+      });
+    }
+      return this.http.post<any>(`${environment.apiBaseUrl}/usuarios/${userId}/inscreverse/${courseId}`, {})
+      .pipe(
+        catchError((err) => {
+          console.error('Erro ao se inscrever no curso:', err);
+          return throwError(() => new Error('Erro ao se inscrever no curso.'));
+        })
+      );
   }
-
+  
+  
   addCourse(course: CursoDTO): Observable<void> {
     const headers = this.createHeaders();
     return this.http.post<void>(this.baseUrl, course, { headers });

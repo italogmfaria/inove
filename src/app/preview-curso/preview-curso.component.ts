@@ -56,22 +56,37 @@ export class PreviewCursoComponent implements OnInit {
   }
   
 
-  subscribeToCourse() {
-    if (this.isLoggedIn && this.course) {
-      this.courseService.subscribeToCourse(this.course.id).subscribe(
-        () => {
-          alert('Inscrição realizada com sucesso!');
-        },
-        (error) => {
-          console.error('Erro ao se inscrever no curso:', error);
-        }
-      );
-    } else {
+  subscribeAndNavigate(): void {
+    if (!this.isLoggedIn) {
       alert('Você precisa estar logado para se inscrever no curso.');
       this.router.navigate(['/login']);
+      return;
     }
-  }
-
+  
+    if (!this.course) {
+      console.error('Curso não encontrado.');
+      alert('Curso não encontrado.');
+      return;
+    }
+  
+    this.courseService.subscribeToCourse(this.course.id).subscribe({
+      next: () => {
+        alert('Inscrição realizada com sucesso!');
+        this.navigateToCurso(); 
+      },
+      error: (error) => {
+        console.error('Erro ao se inscrever no curso:', error);
+        if (error.message === 'Usuário não está logado.') {
+          alert('Você precisa estar logado para se inscrever no curso.');
+          this.router.navigate(['/login']);
+        } else {
+          alert('Você já está inscrito neste curso.');
+          this.router.navigate([`/painel-curso/${this.course?.id}`]);
+        }
+      },
+    });
+  }  
+  
   navigateToCurso() {
     if (this.isLoggedIn) {
       this.router.navigate([`/painel-curso/${this.course?.id}`]);

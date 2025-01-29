@@ -15,16 +15,21 @@ export class UserService {
 
   private createHeaders(): HttpHeaders {
     const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error("Erro: Token de autenticação não encontrado.");
+    }
+  
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
-
+  
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
-
+  
     return headers;
   }
+  
 
   getUsers(): Observable<UserDTO[]> {
     const headers = this.createHeaders();
@@ -51,14 +56,28 @@ export class UserService {
     return this.http.post<void>(endpoint, user, { headers });
 }
 
-  
-updateUser(user: { id: number; name: string; email: string }): Observable<void> {
-  const headers = this.createHeaders();
-  return this.http.put<void>(`${this.baseUrl}/${user.id}`, user, { headers });
-}
-
-  deleteUser(userId: number): Observable<void> {
+  getUserById(userId: number): Observable<UserDTO> {
     const headers = this.createHeaders();
-    return this.http.delete<void>(`${this.baseUrl}/${userId}`, { headers });
+    return this.http.get<UserDTO>(`${this.baseUrl}/${userId}`, { headers });
   }
-}
+
+  getUserCourses(userId: number): Observable<any[]> {
+    const headers = this.createHeaders();
+    return this.http.get<any[]>(`${this.baseUrl}/${userId}/cursos`, { headers });
+  }
+
+  removeUserCourse(userId: number, courseId: number): Observable<void> {
+    const headers = this.createHeaders();
+    return this.http.delete<void>(`${this.baseUrl}/${userId}/cursos/${courseId}`, { headers });
+  }
+      
+  updateUser(user: { id: number; name: string; email: string }): Observable<void> {
+    const headers = this.createHeaders();
+    return this.http.put<void>(`${this.baseUrl}/${user.id}`, user, { headers });
+  }
+
+    deleteUser(userId: number): Observable<void> {
+      const headers = this.createHeaders();
+      return this.http.delete<void>(`${this.baseUrl}/${userId}`, { headers });
+    }
+  }

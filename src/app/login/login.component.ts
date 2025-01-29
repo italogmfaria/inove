@@ -16,11 +16,21 @@ export class LoginComponent {
 
   onLogin(event: Event) {
     event.preventDefault();
-  
+
     this.authService.login(this.email, this.password).subscribe({
       next: (response: LoginResponseDTO) => {
+        console.log('Resposta do login:', response);
+    
         this.authService.saveTokens(response.token, response.refreshToken);
-  
+    
+        if (response.userId) {
+          this.authService.saveUserId(response.userId);
+        } else {
+          console.error('Erro: userId não encontrado na resposta do login.');
+          alert('Erro ao recuperar informações do usuário. Tente novamente mais tarde.');
+          return;
+        }
+    
         const role = this.authService.getRole();
         switch (role) {
           case 'STUDENT':
@@ -34,20 +44,18 @@ export class LoginComponent {
             break;
           default:
             console.error('Papel desconhecido:', role);
-            alert('Erro ao determinar o papel do usuário');
+            alert('Erro ao determinar o papel do usuário.');
             this.router.navigate(['/']);
         }
       },
       error: (error) => {
         console.error('Erro ao autenticar', error);
         alert('Credenciais inválidas');
-      }
+      },
     });
-  }  
+  }    
 
   navigateTo(route: string) {
     this.router.navigate([route]);
   }
 }
-
-

@@ -22,6 +22,15 @@ export class AuthService {
     localStorage.setItem('refreshToken', refreshToken);
   }
 
+  saveUserId(userId: number | undefined) {
+    if (userId !== undefined && userId !== null) {
+      localStorage.setItem('userId', userId.toString());
+    } else {
+      console.error('Erro: userId está indefinido ou nulo.');
+    }
+  }
+  
+
   getToken(): string | null {
     return localStorage.getItem('authToken');
   }

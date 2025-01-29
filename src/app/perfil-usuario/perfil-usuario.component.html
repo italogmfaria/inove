@@ -1,12 +1,10 @@
 <div class="perfil-container">
-  <!-- Top Bar -->
   <header class="header">
     <img src="assets/logowhite.png" alt="Logotipo INOVE" class="logo">
     <button class="back-btn" onclick="window.history.back();">Voltar</button>
   </header>
 
   <div class="content">
-    <!-- Left Panel -->
     <aside class="side-panel">
       <h2>Painel do Usuário</h2>
       <ul>
@@ -16,48 +14,29 @@
       <button class="btn-logout" (click)="logout()">Sair</button>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-panel">
-      <!-- Courses Panel -->
       <div *ngIf="activePanel === 'cursos'">
         <h1>Meus Cursos</h1>
         <div class="course-cards-container">
-          <div class="course-card" (click)="navigateTo('/painel-curso')">
-            <img src="assets/placeholder.png" alt="Curso 1">
-            <h3>Nome do Curso</h3>
-            <p>Descrição do curso</p>
-          </div>
-          <div class="course-card" (click)="navigateTo('/painel-curso')">
-            <img src="assets/placeholder.png" alt="Curso 2">
-            <h3>Nome do Curso</h3>
-            <p>Descrição do curso</p>
-          </div>
-          <div class="course-card" (click)="navigateTo('/painel-curso')">
-            <img src="assets/placeholder.png" alt="Curso 3">
-            <h3>Nome do Curso</h3>
-            <p>Descrição do curso</p>
-          </div>
-          <div class="course-card" (click)="navigateTo('/painel-curso')">
-            <img src="assets/placeholder.png" alt="Curso 4">
-            <h3>Nome do Curso</h3>
-            <p>Descrição do curso</p>
+          <div *ngFor="let course of userCourses" class="course-card" (click)="navigateToCourse(course.id)">
+            <img src="assets/placeholder.png" alt="{{ course.name }}">
+            <h3>{{ course.name }}</h3>
+            <p>{{ course.description }}</p>
+            <button class="btn-remover" (click)="removeCourse(course.id); $event.stopPropagation();">Remover</button>
           </div>
         </div>
       </div>
 
-      <!-- User Data Panel -->
       <div *ngIf="activePanel === 'dados'">
         <h1>Meus Dados</h1>
-        <p><strong>Nome:</strong> {{ user.nome }}</p>
+        <p><strong>Nome:</strong> {{ user.name }}</p>
         <p><strong>Email:</strong> {{ user.email }}</p>
         <p><strong>CPF:</strong> {{ user.cpf }}</p>
-        <p><strong>Escola:</strong> {{ user.escola }}</p>
         <button class="btn-orange" (click)="toggleEdit()">Editar dados</button>
       </div>
     </main>
   </div>
 
-  <!-- Modal Fragment -->
   <div class="modal-overlay" *ngIf="isEditing">
     <div class="modal">
       <button class="close-btn" (click)="toggleEdit()">×</button>
@@ -65,18 +44,18 @@
       <form>
         <div class="form-group">
           <label for="edit-nome">Nome:</label>
-          <input id="edit-nome" type="text" [(ngModel)]="user.nome" placeholder="Atualize seu nome" />
+          <input id="edit-nome" type="text" name="name" [(ngModel)]="user.name" />
         </div>
         <div class="form-group">
           <label for="edit-email">Email:</label>
-          <input id="edit-email" type="email" [(ngModel)]="user.email" placeholder="Atualize seu email" />
+          <input id="edit-email" type="email" name="email" [(ngModel)]="user.email" />
         </div>
         <div class="form-group">
-          <label for="edit-email">CPF:</label>
-          <input id="edit-email" type="email" [(ngModel)]="user.cpf" placeholder="Atualize seu CPF" />
+          <label for="edit-cpf">CPF:</label>
+          <input id="edit-cpf" type="text" name="cpf" [(ngModel)]="user.cpf" />
         </div>
-        <button type="button" class="btn-orange" (click)="toggleEdit()">Salvar</button>
-      </form>
+        <button type="button" class="btn-orange" (click)="saveUserData()">Salvar</button>
+      </form>      
     </div>
   </div>
 </div>

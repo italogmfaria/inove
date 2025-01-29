@@ -30,7 +30,7 @@
     </p>
         <p><strong>Data da criação:</strong> {{ course?.creationDate | date: 'dd/MM/yyyy' }}</p>
     <p><strong>Última atualização:</strong> {{ course?.lastUpdateDate | date: 'dd/MM/yyyy' }}</p><br>
-    <button class="btn-subscribe" (click)="navigateToCurso()">Inscreva-se</button>
+    <button class="btn-subscribe" (click)="subscribeAndNavigate()">Inscreva-se</button>
   </div><br>
 
   <!-- Comments Section -->
