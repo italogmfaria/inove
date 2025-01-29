@@ -1,6 +1,6 @@
-import {UserDTO} from "./UserDTO";
-import {FeedBackDTO} from "./FeedBackDTO";
-import {SectionDTO} from "./SectionDTO";
+import { UserDTO } from "./UserDTO";
+import { FeedBackDTO } from "./FeedBackDTO";
+import { SectionDTO } from "./SectionDTO";
 
 export interface CursoDTO {
   id: number;
@@ -10,7 +10,7 @@ export interface CursoDTO {
   lastUpdateDate: string;
   students: UserDTO[];
   admins: UserDTO[];
-  instructors: UserDTO[];
+  instructors: UserDTO[];  // ✅ Certifica que instrutores são do tipo UserDTO
   feedBacks: FeedBackDTO[];
   sections: SectionDTO[];
 }

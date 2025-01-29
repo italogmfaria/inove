@@ -1,44 +1,72 @@
 import { Injectable } from '@angular/core';
-import {environment} from "../../../environments/environment";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {catchError, Observable, throwError} from "rxjs";
-import {CursoDTO} from "../dto/CursoDTO";
-
+import { environment } from '../../../environments/environment';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
+import { CursoDTO } from '../dto/CursoDTO';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CourseService {
-
   private baseUrl = `${environment.apiBaseUrl}/cursos`;
+
 
   constructor(private http: HttpClient) {}
 
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('authToken');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-  }
-
-  getCourses(): Observable<CursoDTO[]> {
-    return this.http.get<CursoDTO[]>(this.baseUrl, { headers: this.getHeaders() })
-      .pipe(
-        catchError(error => {
-          console.error('Erro ao buscar cursos:', error);
-          return throwError(error);
-        })
-      );
+  getCourses(): Observable<any[]> {
+    const headers = this.createHeaders();
+    return this.http.get<any[]>(this.baseUrl, { headers });
   }
 
   getCourseById(courseId: number): Observable<CursoDTO> {
-    return this.http.get<CursoDTO>(`${this.baseUrl}/${courseId}`, { headers: this.getHeaders() })
+    const headers = this.createHeaders();
+    return this.http.get<CursoDTO>(`${this.baseUrl}/${courseId}`, { headers });
+  }
+
+  subscribeToCourse(courseId: number): Observable<any> {
+    const userId = localStorage.getItem('userId');
+
+    if (!userId) {
+      return new Observable((observer) => {
+        observer.error(new Error('Usuário não está logado.'));
+      });
+    }
+      return this.http.post<any>(`${environment.apiBaseUrl}/usuarios/${userId}/inscreverse/${courseId}`, {})
       .pipe(
-        catchError(error => {
-          console.error(`Erro ao buscar curso com ID ${courseId}:`, error);
-          return throwError(error);
+        catchError((err) => {
+          console.error('Erro ao se inscrever no curso:', err);
+          return throwError(() => new Error('Erro ao se inscrever no curso.'));
         })
       );
+  }
+
+
+  addCourse(course: CursoDTO): Observable<void> {
+    const headers = this.createHeaders();
+    return this.http.post<void>(this.baseUrl, course, { headers });
+  }
+
+  updateCourse(id: number, coursePayload: { name: string; description: string }): Observable<void> {
+    const headers = this.createHeaders();
+    return this.http.put<void>(`${this.baseUrl}/${id}`, coursePayload, { headers });
+  }
+
+
+  deleteCourse(courseId: number): Observable<void> {
+    const headers = this.createHeaders();
+    return this.http.delete<void>(`${this.baseUrl}/${courseId}`, { headers });
+  }
+
+  private createHeaders(): HttpHeaders {
+    const token = localStorage.getItem('authToken');
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return headers;
   }
 }

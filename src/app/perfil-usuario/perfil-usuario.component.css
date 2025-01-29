@@ -238,11 +238,36 @@
   padding: 10px;
   border: none;
   border-radius: 5px;
-  background: #e2e2e2; /* Matches the modal */
-  color: #6b6b6b; /* White text */
+  background: #e2e2e2;
+  color: #6b6b6b;
   font-size: 1em;
 }
 
 .form-group input::placeholder {
   color: #6b6b6b;
+}
+
+.btn-logout {
+  background-color: #f9a826;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
+  top: 70%;
+}
+
+.btn-remover {
+  background-color: #f9a826;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
 }

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../common/service/auth.service';
 
 @Component({
   selector: 'app-painel-instrutor',
@@ -9,7 +10,10 @@ import { Router } from '@angular/router';
   styleUrls: ['./painel-instrutor.component.css']
 })
 export class PainelInstrutorComponent {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   activeTab: 'cursos' | 'dadosInstrutor' = 'cursos';
 
@@ -136,9 +140,9 @@ export class PainelInstrutorComponent {
     }
   }
 
-  // Logout
   logout(): void {
-    this.router.navigate(['/login']);
+    this.authService.logout();
+    this.router.navigate(['/login']); 
   }
 
   // Navegar para outra rota

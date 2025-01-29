@@ -6,4 +6,5 @@ export interface SectionDTO {
   description: string;
   courseId: number;
   contents: ContentDTO[];
+  isOpen?: boolean; // destinado ao tratamento das seções abertas e fechadas
 }

@@ -1,86 +1,106 @@
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Component, Pipe, PipeTransform } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-
-@Pipe({
-  name: 'safeUrl'
-})
-export class SafeUrlPipe implements PipeTransform {
-  constructor(private sanitizer: DomSanitizer) {}
-
-  transform(value: string): SafeResourceUrl {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(value);
-  }
-}
-
-// Define a specific type for content
-type ContentType = 'video' | 'pdf';
-
-interface Content {
-  title: string;
-  type: ContentType;
-  url: string;
-}
-
-interface Section {
-  title: string;
-  contents: Content[];
-  isOpen: boolean;
-}
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CourseService } from '../common/service/course.service';
+import { SectionService } from '../common/service/section.service';
+import { ContentService } from '../common/service/content.service';
+import { CursoDTO } from '../common/dto/CursoDTO';
+import { SectionDTO } from '../common/dto/SectionDTO';
+import { ContentDTO } from '../common/dto/ContentDTO';
 
 @Component({
   selector: 'app-painel-curso',
   templateUrl: './painel-curso.component.html',
-  styleUrls: ['./painel-curso.component.css'],
+  styleUrls: ['./painel-curso.component.css']
 })
-export class PainelCursoComponent {
-  constructor(private router: Router) {}
+export class PainelCursoComponent implements OnInit {
+  courseId!: number;
+  courseTitle: string = '';
+  description: string = '';
+  instructor: string = 'Instrutor Não Informado';
+  courseCreationDate!: Date;
+  lastUpdateDate!: Date;
+  sections: (SectionDTO & { isOpen: boolean })[] = [];
+  currentContentUrl: string = '';
+  currentContentType: string = '';
+  comments: { user: string; text: string }[] = [];
+  newComment: string = '';
+  showCommentBox: boolean = false;
 
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private courseService: CourseService,
+    private sectionService: SectionService,
+    private contentService: ContentService
+  ) {}
 
-  courseTitle = 'NOME DO CURSO';
-  description = 'Este é um exemplo de uma descrição de um curso.';
-  instructor = 'João Silva';
-  courseCreationDate: Date = new Date('2024-11-26');
-  lastUpdateDate: Date = new Date('2024-11-27');
+  ngOnInit(): void {
+    const courseIdParam = this.route.snapshot.paramMap.get('courseId');
+    if (courseIdParam) {
+      this.courseId = +courseIdParam;
+      this.loadCourseDetails();
+      this.loadSections();
+    } else {
+      console.error('Nenhum courseId foi fornecido na URL.');
+      this.router.navigate(['/cursos']);
+    }
+  }
 
+  loadCourseDetails(): void {
+    this.courseService.getCourseById(this.courseId).subscribe(
+      (course) => {
+        this.courseTitle = course.name;
+        this.description = course.description;
+        this.instructor = course.instructors?.[0]?.name || 'Instrutor Não Informado'; 
+        this.courseCreationDate = new Date(course.creationDate);
+        this.lastUpdateDate = new Date(course.lastUpdateDate);
+      },
+      (error) => {
+        console.error('Erro ao carregar detalhes do curso:', error);
+        this.router.navigate(['/cursos']);
+      }
+    );
+  }
+  
+  loadSections(): void {
+    this.sectionService.getSections(this.courseId).subscribe(
+      (sections) => {
+        this.sections = sections.map((section) => ({
+          ...section,
+          isOpen: false,
+          contents: [],
+        }));
+      },
+      (error) => {
+        console.error('Erro ao carregar seções:', error);
+      }
+    );
+  }
 
-  currentContentUrl: string = 'https://www.youtube.com/embed/kQxQQOj2Wg8';
-  currentContentType: ContentType = 'video';
+  toggleSection(index: number): void {
+    const section = this.sections[index];
+    section.isOpen = !section.isOpen;
 
+    if (section.isOpen && section.contents.length === 0) {
+      this.loadContents(section.id, index);
+    }
+  }
 
-  sections: Section[] = [
-    {
-      title: 'Seção 1: Introdução',
-      contents: [
-        { title: 'Conteúdo 1: Introdução', type: 'video', url: 'https://www.youtube.com/embed/kQxQQOj2Wg8' },
-        { title: 'Conteúdo 2: PDF Introdução', type: 'pdf', url: 'https://eppg.fgv.br/sites/default/files/teste.pdf' },
-        { title: 'Conteúdo 3: Introdução', type: 'video', url: 'https://www.youtube.com/embed/l73dA-A0Si4' },
-      ],
-      isOpen: true,
-    },
-    {
-      title: 'Seção 2: Fundamentos',
-      contents: [
-        { title: 'Conteúdo 1: Fundamentos', type: 'video', url: 'https://www.youtube.com/embed/l73dA-A0Si4' },
-        { title: 'Conteúdo 2: PDF Fundamentos', type: 'pdf', url: 'https://eppg.fgv.br/sites/default/files/teste.pdf' },
-      ],
-      isOpen: false,
-    },
-  ];
+  loadContents(sectionId: number, sectionIndex: number): void {
+    this.contentService.getContents(this.courseId, sectionId).subscribe(
+      (contents) => {
+        this.sections[sectionIndex].contents = contents;
+      },
+      (error) => {
+        console.error('Erro ao carregar conteúdos:', error);
+      }
+    );
+  }
 
-
-  comments = [
-    { user: 'Usuário 1', text: 'Comentário do usuário 1' },
-    { user: 'Usuário 2', text: 'Comentário do usuário 2' },
-    { user: 'Usuário 3', text: 'Comentário do usuário 3' },
-  ];
-
-
-  showCommentBox = false;
-  newComment = '';
-
+  changeContent(content: ContentDTO): void {
+    this.currentContentUrl = content.fileUrl;
+    this.currentContentType = content.contentType;
+  }
 
   toggleCommentBox(): void {
     this.showCommentBox = !this.showCommentBox;
@@ -88,25 +108,20 @@ export class PainelCursoComponent {
 
   addComment(): void {
     if (this.newComment.trim()) {
-      this.comments.push({ user: 'Novo Usuário', text: this.newComment });
+      this.comments.push({
+        user: 'Usuário Atual',
+        text: this.newComment.trim(),
+      });
       this.newComment = '';
       this.showCommentBox = false;
     }
   }
 
-
-  toggleSection(index: number): void {
-    this.sections[index].isOpen = !this.sections[index].isOpen;
-  }
-
-
-  changeContent(content: Content): void {
-    this.currentContentType = content.type;
-    this.currentContentUrl = content.url;
-  }
-
-
   navigateTo(path: string): void {
     this.router.navigate([path]);
+  }
+
+  navigateToPreview(courseId: number) {
+    this.router.navigate(['/preview-curso', courseId]);
   }
 }

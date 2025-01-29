@@ -3,44 +3,42 @@
   <header class="top-bar">
     <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
     <h1>{{ courseTitle }}</h1>
-    <button class="btn-orange" (click)="navigateTo('/cursos')">Voltar</button>
+    <button class="btn-orange" (click)="navigateToPreview(courseId)">Voltar</button>
   </header>
 
   <div class="content">
     <!-- Content Area (Video or PDF Viewer) -->
-    <div class="video-area" *ngIf="currentContentType === 'video'">
+    <div class="video-area" *ngIf="currentContentType === 'VIDEO'">
       <iframe
         width="100%"
         height="650px"
         [src]="currentContentUrl | safeUrl"
-        title="YouTube video player"
+        title="Video Player"
         frameborder="0"
         allowfullscreen
       ></iframe>
     </div>
-  
-    <div class="pdf-area" *ngIf="currentContentType === 'pdf'">
+
+    <div class="pdf-area" *ngIf="currentContentType === 'PDF'">
       <iframe
         [src]="currentContentUrl | safeUrl"
-        title="PDF viewer"
+        title="PDF Viewer"
       ></iframe>
     </div>
-  
+
     <!-- Course Content Panel -->
     <aside class="content-panel">
       <h2>Conteúdos do curso:</h2>
       <div class="section" *ngFor="let section of sections; let i = index">
-        <!-- Section Toggle -->
         <button class="section-toggle" (click)="toggleSection(i)">
           {{ section.title }} <span [innerHTML]="section.isOpen ? '&#9660;' : '&#9658;'"></span>
         </button>
-  
-        <!-- Contents (Video or PDF Selectors) -->
+
         <ul *ngIf="section.isOpen">
           <li *ngFor="let content of section.contents">
             <button class="content-btn" (click)="changeContent(content)">
               <img
-                [src]="content.type === 'video' ? 'assets/flaticons/video.png' : 'assets/flaticons/pdf.png'"
+                [src]="content.contentType === 'VIDEO' ? 'assets/flaticons/video.png' : 'assets/flaticons/pdf.png'"
                 alt="Content Type Icon"
                 class="content-icon"
               />
@@ -51,7 +49,6 @@
       </div>
     </aside>
   </div>
-  
 
   <!-- Footer -->
   <footer class="footer">
@@ -59,26 +56,26 @@
     <p><strong>Instrutor:</strong> {{ instructor }}</p>
     <p><strong>Data de Criação:</strong> {{ courseCreationDate | date: 'dd/MM/yyyy' }}</p>
     <p><strong>Última Atualização:</strong> {{ lastUpdateDate | date: 'dd/MM/yyyy' }}</p>
+  </footer>
 
   <!-- Comments Section -->
   <section class="comments-section">
-    <h2 class="comments-title">Comentários:</h2><br>
+    <h2 class="comments-title">Comentários:</h2>
     <div class="comment" *ngFor="let comment of comments">
       <p class="comment-user"><strong>{{ comment.user }}</strong></p>
       <p class="comment-text">{{ comment.text }}</p>
     </div>
-  </section>
 
-  <!-- Comment Section -->
-  <div class="comment-section">
-    <button class="btn-orange" (click)="toggleCommentBox()">Inserir comentário</button>
+    <div class="comment-section">
+      <button class="btn-orange" (click)="toggleCommentBox()">Inserir comentário</button>
 
-    <div *ngIf="showCommentBox" class="comment-box">
-      <textarea
-        [(ngModel)]="newComment"
-        placeholder="Escreva seu comentário aqui..."
-      ></textarea>
-      <button class="btn-submit" (click)="addComment()">Enviar</button>
+      <div *ngIf="showCommentBox" class="comment-box">
+        <textarea
+          [(ngModel)]="newComment"
+          placeholder="Escreva seu comentário aqui..."
+        ></textarea>
+        <button class="btn-submit" (click)="addComment()">Enviar</button>
+      </div>
     </div>
-    <br><br>
-  </div>
+  </section>
+</div>

@@ -22,6 +22,15 @@ export class AuthService {
     localStorage.setItem('refreshToken', refreshToken);
   }
 
+  saveUserId(userId: number | undefined) {
+    if (userId !== undefined && userId !== null) {
+      localStorage.setItem('userId', userId.toString());
+    } else {
+      console.error('Erro: userId está indefinido ou nulo.');
+    }
+  }
+  
+
   getToken(): string | null {
     return localStorage.getItem('authToken');
   }
@@ -34,4 +43,19 @@ export class AuthService {
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
   }
+
+  getRole(): string | null {
+    const token = this.getToken();
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1])); 
+        return payload.role; 
+      } catch (e) {
+        console.error('Erro ao decodificar o token:', e);
+        return null;
+      }
+    }
+    return null;
+  }
+  
 }
