@@ -5,7 +5,6 @@ export interface SchoolDTO {
   name: string;
   city: string;
   email: string;
-  // password: string;
   federativeUnit: string;
   students: UserDTO[];
 }

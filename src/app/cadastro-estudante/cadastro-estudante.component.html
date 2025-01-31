@@ -1,0 +1,51 @@
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <button class="back-btn" onclick="window.history.back();">Voltar</button>
+        <img (click)="navigateTo('/inicial')" src="assets/logowhite.png" alt="Logotipo INOVE" class="logo">
+    </header>
+
+    <!-- Registration Form Section -->
+    <section class="form-container">
+        <div class="form-box">
+            <h1>Cadastre-se</h1>
+            <form (submit)="cadastrarEstudante()">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome</label>
+                        <input type="text" id="nome" [(ngModel)]="newUser.name" name="name" placeholder="Digite seu nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" [(ngModel)]="newUser.email" name="email" placeholder="Digite seu email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cpf">CPF</label>
+                        <input type="text" id="cpf" [(ngModel)]="newUser.cpf" name="cpf" placeholder="Digite seu CPF" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="senha">Senha</label>
+                        <input type="password" id="senha" [(ngModel)]="newUser.password" name="password" placeholder="Digite sua senha" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="school">Escola</label>
+                        <select id="school" [(ngModel)]="newUser.schoolId" name="schoolId">
+                            <option *ngFor="let escola of escolas" [value]="escola.id">{{ escola.name }}</option>
+                        </select>
+                        <p class="footer-text">
+                            Não encontrou sua escola? <a class="btn-link" (click)="navigateTo('/cadastro-escola')">Cadastre sua escola aqui!</a> 
+                        </p>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">Cadastrar</button>
+            </form>
+            <p class="footer-text">
+                Já tem acesso? <a class="btn-link" (click)="navigateTo('/login')">Clique aqui!</a>
+            </p>
+        </div>
+    </section>
+</body>

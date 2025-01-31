@@ -9,12 +9,12 @@ import {InicialComponent} from "./inicial/inicial.component";
 import {LoginComponent} from "./login/login.component";
 import {PainelAdminComponent} from "./painel-admin/painel-admin.component";
 import {PainelCursoComponent} from "./painel-curso/painel-curso.component";
-import {PainelEscolaComponent} from "./painel-escola/painel-escola.component";
 import {PainelInstrutorComponent} from "./painel-instrutor/painel-instrutor.component";
 import {PerfilUsuarioComponent} from "./perfil-usuario/perfil-usuario.component";
 import {PreviewCursoComponent} from "./preview-curso/preview-curso.component";
 import {SejaInstrutorComponent} from "./seja-instrutor/seja-instrutor.component";
 import { SafeUrlPipe } from "./common/pipes/safe-url.pipe";
+import { CadastroEstudanteComponent } from "./cadastro-estudante/cadastro-estudante.component";
 
 export const APP_DECLARATIONS = [
   AppComponent,
@@ -28,10 +28,10 @@ export const APP_DECLARATIONS = [
   LoginComponent,
   PainelAdminComponent,
   PainelCursoComponent,
-  PainelEscolaComponent,
   PainelInstrutorComponent,
   PerfilUsuarioComponent,
   PreviewCursoComponent,
   SejaInstrutorComponent,
+  CadastroEstudanteComponent,
   SafeUrlPipe
 ];

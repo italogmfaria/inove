@@ -1,10 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Escola</title>
-</head>
 <body>
     <!-- Header Section -->
     <header class="header">
@@ -16,33 +9,29 @@
     <section class="form-container">
         <div class="form-box">
             <h1>Cadastro de Escola</h1>
-            <form>
+            <form (ngSubmit)="registerSchool()">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="nome">Nome</label>
-                        <input type="text" id="nome" placeholder="Nome da Escola" required>
+                        <input type="text" id="nome" [(ngModel)]="school.name" name="nome" placeholder="Nome da Escola" required>
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" id="email" placeholder="Email de Contato" required>
+                        <input type="email" id="email" [(ngModel)]="school.email" name="email" placeholder="Email de Contato" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="cidade">Cidade</label>
-                        <input type="text" id="cidade" placeholder="Cidade" required>
+                        <input type="text" id="cidade" [(ngModel)]="school.city" name="cidade" placeholder="Cidade" required>
                     </div>
                     <div class="form-group">
                         <label for="estado">Estado</label>
-                        <input type="text" id="estado" placeholder="Estado" required>
+                        <input type="text" id="estado" [(ngModel)]="school.federativeUnit" name="estado" placeholder="Estado" required>
                     </div>
                 </div>
-                <button (click)="navigateTo('/aguarde')" type="submit" class="submit-btn">Cadastrar</button>
+                <button type="submit" class="submit-btn">Cadastrar</button>
             </form>
-            <p class="footer-text">
-                Já tem acesso? <a class="btn-link" (click)="navigateTo('/login')">Clique aqui!</a>
-            </p>
         </div>
     </section>
 </body>
-</html>

@@ -9,13 +9,12 @@ import { PainelAdminComponent } from "./painel-admin/painel-admin.component";
 import { PainelInstrutorComponent } from "./painel-instrutor/painel-instrutor.component";
 import { CadastroEscolaComponent } from "./cadastro-escola/cadastro-escola.component";
 import { CadastroSecaoComponent } from "./cadastro-secao/cadastro-secao.component";
-import { PainelEscolaComponent } from "./painel-escola/painel-escola.component";
 import { CadastroInstrutorComponent } from "./cadastro-instrutor/cadastro-instrutor.component";
 import { AcessoPlataformaComponent } from "./acesso-plataforma/acesso-plataforma.component";
 import { AguardeComponent } from "./aguarde/aguarde.component";
 import { SejaInstrutorComponent } from "./seja-instrutor/seja-instrutor.component";
+import { CadastroEstudanteComponent } from './cadastro-estudante/cadastro-estudante.component';
 import { AuthGuard } from './common/guards/auth.guard';
-
 
 export const routes: Routes = [
   { path: '', component: InicialComponent },
@@ -28,8 +27,8 @@ export const routes: Routes = [
   { path: 'painel-instrutor', component: PainelInstrutorComponent, canActivate: [AuthGuard], data: { role: 'INSTRUCTOR' } },
   { path: 'cadastro-escola', component: CadastroEscolaComponent },
   { path: 'cadastro-secao', component: CadastroSecaoComponent, canActivate: [AuthGuard], data: { role: 'INSTRUCTOR' } },
-  { path: 'painel-escola', component: PainelEscolaComponent, canActivate: [AuthGuard], data: { role: 'ADMINISTRATOR' } },
   { path: 'cadastro-instrutor', component: CadastroInstrutorComponent },
+  { path: 'cadastro-estudante', component: CadastroEstudanteComponent },
   { path: 'acesso-plataforma', component: AcessoPlataformaComponent },
   { path: 'aguarde', component: AguardeComponent },
   { path: 'seja-instrutor', component: SejaInstrutorComponent },

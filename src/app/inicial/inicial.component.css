@@ -23,9 +23,10 @@
     background-color: #f9a826;
     color: #fff;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 30px;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 1em;
 }
 
 /* Hero Section */
