@@ -15,7 +15,7 @@
             (input)="filterCourses()">
       </div>
       <div class="header-right">
-          <button class="profile-btn" (click)="navigateTo('/perfil-usuario')">Perfil</button>
+          <button class="profile-btn" (click)="navigateToPerfil()">Perfil</button>
       </div>
   </header>
 
@@ -26,7 +26,7 @@
     <!-- Exibição dos cursos -->
     <div *ngIf="!errorMessage && filteredCursos.length > 0" class="course-row">
       <div *ngFor="let curso of filteredCursos" class="course-card">
-        <img src="assets/placeholder.png" alt="Imagem do Curso" class="course-image" (click)="navigateToPreview(curso.id)">
+        <img [src]="curso.imageUrl || 'assets/placeholder.png'" alt="Imagem do Curso" class="course-image" (click)="navigateToPreview(curso.id)"/>        
         <h3 class="course-title">{{ curso.name }}</h3>
         <p class="course-description">{{ curso.description }}</p>
       </div>

@@ -8,9 +8,10 @@ export interface CursoDTO {
   description: string;
   creationDate: string;
   lastUpdateDate: string;
+  imageUrl?: string; 
   students: UserDTO[];
   admins: UserDTO[];
-  instructors: UserDTO[];  // ✅ Certifica que instrutores são do tipo UserDTO
+  instructors: UserDTO[];  
   feedBacks: FeedBackDTO[];
   sections: SectionDTO[];
 }

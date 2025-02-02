@@ -51,6 +51,16 @@ export class CourseService {
     return this.http.put<void>(`${this.baseUrl}/${id}`, coursePayload, { headers });
   }
 
+  updateCourseInstructor(id: number, coursePayload: { name: string; description: string; imageUrl?: string }): Observable<void> {
+    const headers = this.createHeaders();
+    return this.http.put<void>(`${this.baseUrl}/${id}`, coursePayload, { headers });
+  }
+  
+  getInstructorCourses(instructorId: number): Observable<any[]> {
+    const headers = this.createHeaders();
+    return this.http.get<any[]>(`${this.baseUrl}/instrutor/${instructorId}`, { headers });
+  }
+  
 
   deleteCourse(courseId: number): Observable<void> {
     const headers = this.createHeaders();

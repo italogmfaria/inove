@@ -19,12 +19,12 @@
         <h1>Meus Cursos</h1>
         <div class="course-cards-container">
           <div *ngFor="let course of userCourses" class="course-card" (click)="navigateToCourse(course.id)">
-            <img src="assets/placeholder.png" alt="{{ course.name }}">
+            <img [src]="courseImages[course.id] || 'assets/placeholder.png'" alt="{{ course.name }}">
             <h3>{{ course.name }}</h3>
             <p>{{ course.description }}</p>
             <button class="btn-remover" (click)="removeCourse(course.id); $event.stopPropagation();">Remover</button>
           </div>
-        </div>
+        </div>        
       </div>
 
       <div *ngIf="activePanel === 'dados'">

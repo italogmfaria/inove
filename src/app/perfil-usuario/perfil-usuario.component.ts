@@ -5,6 +5,7 @@ import { UserService } from '../common/service/user.service';
 import { UserDTO } from '../common/dto/UserDTO';
 import { CourseService } from '../common/service/course.service';
 import { UserRole } from '../common/dto/UserRole';
+import { FileService } from '../common/service/file.service';
 
 @Component({
   selector: 'app-perfil-usuario',
@@ -16,32 +17,53 @@ export class PerfilUsuarioComponent implements OnInit {
   isEditing: boolean = false;
   user: any = {};
   userCourses: any[] = [];
+  courseImages: { [key: number]: string } = {};
 
   constructor(
     private router: Router,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private fileService: FileService
   ) {}
 
   ngOnInit(): void {
     const userId = Number(localStorage.getItem('userId'));
     if (!userId || userId === 0) {
       console.error("Erro: Usuário não autenticado.");
-      this.router.navigate(['/login']); 
+      this.router.navigate(['/login']);
       return;
     }
-    
+
+    // Buscar dados do usuário
     this.userService.getUserById(userId).subscribe({
       next: (user) => (this.user = user),
-      error: (err) => console.error("Erro ao buscar usuário:", err)
+      error: (err) => console.error("Erro ao buscar usuário:", err),
     });
-  
+
+    // Buscar os cursos do usuário e carregar as imagens
     this.userService.getUserCourses(userId).subscribe({
-      next: (courses) => (this.userCourses = courses),
-      error: (err) => console.error("Erro ao buscar cursos:", err)
+      next: (courses) => {
+        this.userCourses = courses;
+        this.userCourses.forEach((course) => {
+          this.loadCourseImage(course.id);
+        });
+      },
+      error: (err) => console.error("Erro ao buscar cursos:", err),
     });
   }
-  
+
+  // Método para buscar a imagem do curso e armazená-la no `courseImages`
+  loadCourseImage(courseId: number): void {
+    this.fileService.getCourseImage(courseId).subscribe({
+      next: (response) => {
+        this.courseImages[courseId] = response.imageUrl;
+      },
+      error: (err) => {
+        console.error(`Erro ao carregar imagem do curso ${courseId}:`, err);
+        this.courseImages[courseId] = 'assets/placeholder.png'; // Imagem padrão caso não consiga carregar
+      },
+    });
+  }
 
   navigateTo(path: string): void {
     this.router.navigate([path]);

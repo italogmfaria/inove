@@ -138,11 +138,13 @@
 }
 
 .course-card img {
-  width: 100%;
-  height: auto; 
+  width: 100%;  
+  height: 180px; 
+  object-fit: cover; 
   border-radius: 5px;
   margin-bottom: 10px;
 }
+
 
 .course-card h3 {
   font-size: 1.1em;

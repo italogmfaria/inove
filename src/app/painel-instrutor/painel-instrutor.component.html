@@ -23,13 +23,13 @@
         <div class="courses-list">
           <div class="course-item" *ngFor="let curso of cursos">
             <div class="course-header" (click)="toggleCourseDetails(curso)">
-              <span>{{ curso.nome }}</span>
+              <span>{{ curso.name }}</span>
               <button class="expand-btn">&#9662;</button>
             </div>
             <div class="course-details" *ngIf="curso.expanded">
-              <p><strong>Descrição:</strong> {{ curso.descricao }}</p>
-              <p><strong>Data de Criação:</strong> {{ curso.dataCriacao | date:'dd/MM/yyyy' }}</p>
-              <p><strong>Última Atualização:</strong> {{ curso.ultimaAtualizacao | date:'dd/MM/yyyy' }}</p>
+              <p><strong>Descrição:</strong> {{ curso.description }}</p>
+              <p><strong>Data de Criação:</strong> {{ curso.creationDate | date:'dd/MM/yyyy' }}</p>
+              <p><strong>Última Atualização:</strong> {{ curso.lastUpdateDate | date:'dd/MM/yyyy' }}</p>
               <div class="course-actions">
                 <button class="btn-orange" (click)="openUpdateCourseModal(curso)">Atualizar Curso</button>
                 <button class="btn-orange" (click)="createSections(curso)">Criar Seções</button>
@@ -39,11 +39,55 @@
         </div>
       </div>
 
+            <!-- Modal para Atualizar Curso -->
+      <div class="modal-overlay" *ngIf="showUpdateCourseModal" (click)="closeUpdateCourseModal()"></div>
+      <div class="modal" *ngIf="showUpdateCourseModal">
+        <header class="modal-header">
+          <h2>Atualizar Curso</h2>
+          <span class="close-btn" (click)="closeUpdateCourseModal()">&#10005;</span>
+        </header>
+        <div class="modal-body">
+          <!-- Nome do Curso -->
+          <input type="text" [(ngModel)]="cursoEdit.name" placeholder="Nome do Curso" />
+
+          <!-- Descrição do Curso -->
+          <textarea [(ngModel)]="cursoEdit.description" placeholder="Descrição"></textarea>
+
+          <!-- Upload da Imagem -->
+          <div class="upload-section">
+            <label for="courseImage">Imagem do Curso</label>
+            <input id="courseImage" type="file" accept="image/*" (change)="handleImageUpload($event)" />
+          </div>
+
+        <!-- Pré-visualização da Imagem -->
+        <div class="image-preview">
+          <p>Pré-visualização:</p>
+          <div *ngIf="isLoadingImage">Carregando imagem...</div>
+          <img *ngIf="!isLoadingImage && cursoEdit.imageUrl" [src]="cursoEdit.imageUrl" alt="Imagem Atual do Curso" />
+        </div>
+
+
+
+          <!-- Loader -->
+          <div class="loading-spinner" *ngIf="isLoading">
+            <p>Enviando para a nuvem...</p>
+            <div class="spinner"></div>
+          </div>
+
+        </div>
+        <br>
+        <footer class="modal-footer">
+          <button class="btn-orange" (click)="updateCourse()" [disabled]="isLoading">Salvar</button>
+        </footer>
+      </div>
+
+
+
       <!-- Aba de Dados do Instrutor -->
       <div *ngIf="activeTab === 'dadosInstrutor'">
         <h1>Dados do Instrutor</h1>
         <div class="instructor-data">
-          <p><strong>Nome:</strong> {{ instrutor.nome }}</p>
+          <p><strong>Nome:</strong> {{ instrutor.name }}</p>
           <p><strong>Email:</strong> {{ instrutor.email }}</p>
           <p><strong>CPF:</strong> {{ instrutor.cpf }}</p>
           <button class="btn-orange" (click)="editInstructor()">Editar Dados</button>
@@ -58,51 +102,11 @@
           <span class="close-btn" (click)="closeEditInstructorModal()">&#10005;</span>
         </header>
         <div class="modal-body">
-          <input type="text" [(ngModel)]="instrutorEdit.nome" placeholder="Nome" />
+          <input type="text" [(ngModel)]="instrutorEdit.name" placeholder="Nome" />
           <input type="email" [(ngModel)]="instrutorEdit.email" placeholder="Email" />
-          <input type="text" [(ngModel)]="instrutorEdit.cpf" placeholder="CPF" readonly />
+          <input type="text" [(ngModel)]="instrutorEdit.cpf" placeholder="CPF" />
         </div>
         <footer class="modal-footer">
           <button class="btn-orange" (click)="updateInstructor()">Salvar</button>
         </footer>
       </div>
-
- <!-- Modal para Atualizar Curso -->
-<div class="modal-overlay" *ngIf="showUpdateCourseModal" (click)="closeUpdateCourseModal()"></div>
-<div class="modal" *ngIf="showUpdateCourseModal">
-  <header class="modal-header">
-    <h2>Atualizar Curso</h2>
-    <span class="close-btn" (click)="closeUpdateCourseModal()">&#10005;</span>
-  </header>
-  <div class="modal-body">
-    <!-- Nome do Curso -->
-    <input type="text" [(ngModel)]="cursoEdit.nome" placeholder="Nome do Curso" />
-
-    <!-- Descrição do Curso -->
-    <textarea [(ngModel)]="cursoEdit.descricao" placeholder="Descrição"></textarea>
-
-    <!-- Upload da Imagem -->
-    <div class="upload-section">
-      <label for="courseImage">Imagem do Curso</label>
-      <input 
-        id="courseImage" 
-        type="file" 
-        accept="image/*" 
-        (change)="handleImageUpload($event)" 
-      />
-    </div>
-
-    <!-- Pré-visualização da Imagem -->
-    <div class="image-preview" *ngIf="cursoEdit.imagem">
-      <p>Pré-visualização:</p>
-      <img [src]="cursoEdit.imagem" alt="Pré-visualização da Imagem do Curso" />
-    </div>
-  </div>
-  <br>
-  <footer class="modal-footer">
-    <button class="btn-orange" (click)="updateCourse()">Salvar</button>
-  </footer>
-</div>
-    </main>
-  </div>
-</div>
