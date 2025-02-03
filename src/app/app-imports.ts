@@ -4,6 +4,7 @@ import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {routes} from "./app.routes";
 import {HttpClientModule} from "@angular/common/http";
+import { PdfViewerModule } from "ng2-pdf-viewer";
 
 
 export const APP_IMPORTS = [
@@ -12,5 +13,6 @@ export const APP_IMPORTS = [
   CommonModule,
   FormsModule,
   HttpClientModule,
-  RouterOutlet
+  RouterOutlet,
+  PdfViewerModule
 ];

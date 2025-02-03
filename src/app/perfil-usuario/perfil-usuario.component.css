@@ -137,6 +137,10 @@
   background-color: #fff;
 }
 
+.course-card p {
+  text-align: justify;
+}
+
 .course-card img {
   width: 100%;  
   height: 180px; 

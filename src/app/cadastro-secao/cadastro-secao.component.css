@@ -367,3 +367,15 @@ table th {
     transform: translate(-50%, -50%);
   }
   
+
+  .file-info {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #333;
+  }
+  
+  .file-info span {
+    font-weight: bold;
+    color: #555;
+  }
+  

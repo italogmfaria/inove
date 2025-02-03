@@ -52,4 +52,20 @@ export class ContentService {
 
     return this.http.delete<void>(`${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos/${contentId}`, { headers });
   }
+
+  createContent(courseId: number, sectionId: number, content: ContentDTO): Observable<ContentDTO> {
+    return this.http.post<ContentDTO>(
+      `${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos`,
+      content,
+      { headers: this.getHeaders() } 
+    );
+  }
+
+    private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('authToken'); 
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}` 
+    });
+  }
 }

@@ -61,6 +61,7 @@ openUpdateCourseModal(curso: any): void {
       (response) => {
         this.cursoEdit.imageUrl = response.imageUrl;
         this.isLoadingImage = false; // Desativar loading após carregar
+        console.log("URL carregada diretamente para o S3:", this.cursoEdit.imageUrl);
       },
       (error) => {
         console.error('Erro ao carregar a imagem do curso:', error);
@@ -174,6 +175,7 @@ updateCourse(): void {
       console.error("Erro: curso.id está indefinido.");
     }
   }
+  
 
 // Fechar modal de edição de curso
 closeUpdateCourseModal(): void {

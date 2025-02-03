@@ -1,157 +1,291 @@
-import {CommonModule} from '@angular/common';
-import {Component} from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { ContentService } from '../common/service/content.service';
+import { FileService } from '../common/service/file.service';
+import { SectionService } from '../common/service/section.service';
+import { ContentDTO } from '../common/dto/ContentDTO';
+import { SectionDTO } from '../common/dto/SectionDTO';
+import { ContentType } from '../common/dto/ContentType';
+import { ActivatedRoute } from '@angular/router';
+
 
 @Component({
   selector: 'app-cadastro-secao',
   templateUrl: './cadastro-secao.component.html',
   styleUrls: ['./cadastro-secao.component.css']
 })
-export class CadastroSecaoComponent {
-  secoes = [
-    {
-      nome: 'Introdução',
-      conteudos: [
-        {nome: 'Bem-vindo ao curso', tipo: 'Vídeo'},
-        {nome: 'Objetivos do curso', tipo: 'Teórico'}
-      ],
-      expanded: false
-    },
-    {
-      nome: 'Fundamentos',
-      conteudos: [
-        {nome: 'Conceitos básicos', tipo: 'Vídeo'}
-      ],
-      expanded: false
-    }
-  ];
-
-  // Modal States
-  showEditSecaoModal: boolean = false;
-  showContentModal: boolean = false;
-
-  secaoEdit: any = {nome: ''};
-  secaoEditIndex: number | null = null;
-
-  currentContent: any = {nome: '', tipo: 'Vídeo', arquivo: null};
-  editingContent: boolean = false;
+export class CadastroSecaoComponent implements OnInit {
+  secoes: SectionDTO[] = [];
+  courseId: number = 1;
+  ContentType = ContentType;
+  showEditSecaoModal = false;
+  isUploading: boolean = false; 
+  secaoEdit: SectionDTO = {
+    id: 0,
+    title: '',
+    description: '',
+    courseId: 0,
+    contents: []
+  };
+  showContentModal = false;
+  currentContent: ContentDTO = {
+    id: 0,
+    title: '',
+    description: '',
+    contentType: ContentType.VIDEO,
+    fileUrl: '',
+    fileName: '',
+    sectionId: 0
+  };
+  
+  editingContent = false;
+  selectedFile: File | null = null;
   editingIndexes: { secaoIndex: number; conteudoIndex?: number } | null = null;
 
-  // Alternar a exibição de detalhes da seção
-  toggleSection(index: number): void {
-    this.secoes[index].expanded = !this.secoes[index].expanded;
+  constructor(
+    private sectionService: SectionService,
+    private contentService: ContentService,
+    private fileService: FileService,
+    private route: ActivatedRoute // Para obter os parâmetros da URL
+  ) {}
+  
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['cursoId']) {
+        this.courseId = +params['cursoId']; // Obtém o cursoId da URL
+        console.log("Curso ID recebido:", this.courseId); // <-- Debug
+        this.getSecoes();
+      } else {
+        console.error("Erro: Nenhum cursoId foi recebido!");
+      }
+    });
   }
 
-  // Abrir modal para atualizar seção
-  editarSecao(index: number): void {
-    this.secaoEdit = {...this.secoes[index]};
-    this.secaoEditIndex = index;
+  // Carregar seções do curso
+  getSecoes(): void {
+    if (!this.courseId) {
+      console.error("Erro: Nenhum curso selecionado.");
+      return;
+    }
+  
+    this.sectionService.getSections(this.courseId).subscribe(
+      (data: SectionDTO[]) => {
+        console.log("Seções recebidas do back-end:", data); // Log para depurar as seções recebidas
+        this.secoes = data.map(secao => ({
+          ...secao,
+          isOpen: false, // Propriedade para alternar a exibição
+          contents: secao.contents || [] // Garante que contents seja um array
+        }));
+      },
+      (error) => {
+        console.error("Erro ao carregar as seções:", error);
+      }
+    );
+  }
+  
+  
+
+  toggleSection(index: number): void {
+    const secao = this.secoes[index];
+  
+    secao.isOpen = !secao.isOpen;
+  
+    if (secao.isOpen) {
+      // Certifica-se de que secao.contents sempre existe
+      if (!secao.contents) {
+        secao.contents = [];
+      }
+  
+      // Apenas carrega os conteúdos se ainda não tiver carregado antes
+      if (secao.contents.length === 0) {
+        this.contentService.getContents(this.courseId, secao.id).subscribe(
+          (conteudos) => {
+            secao.contents = conteudos;
+          },
+          (error) => {
+            console.error("Erro ao carregar conteúdos da seção:", error);
+          }
+        );
+      }
+    }
+  }
+  
+  
+
+  // Criar uma nova seção
+  criarNovaSecao(): void {
+    const newSection: SectionDTO = {
+      id: 0, // Temporário (será gerado pelo back-end)
+      title: 'Nova Seção',
+      description: '',
+      courseId: this.courseId,
+      contents: []
+    };
+
+    this.sectionService.createSection(this.courseId, newSection).subscribe(() => {
+      this.getSecoes();
+    });
+  }
+
+  // Abrir modal para editar seção
+  editarSecao(secao: SectionDTO): void {
+    this.secaoEdit = { ...secao };
     this.showEditSecaoModal = true;
   }
-
-  // Excluir conteúdo de uma seção
-  excluirConteudo(secaoIndex: number, conteudoIndex: number): void {
-    this.secoes[secaoIndex].conteudos.splice(conteudoIndex, 1);
+  
+  // Salvar edição da seção
+  salvarEdicaoSecao(): void {
+    if (this.secaoEdit) {
+      this.sectionService.updateSection(this.courseId, this.secaoEdit.id, this.secaoEdit).subscribe(() => {
+        this.getSecoes();
+        this.showEditSecaoModal = false;
+      });
+    }
   }
 
   // Excluir seção
-  excluirSecao(index: number): void {
-    const confirmDelete = confirm(`Tem certeza que deseja excluir a seção ${index + 1}?`);
-    if (confirmDelete) {
-      this.secoes.splice(index, 1);
+  excluirSecao(sectionId: number): void {
+    if (confirm('Tem certeza que deseja excluir esta seção?')) {
+      this.sectionService.deleteSection(this.courseId, sectionId).subscribe(
+        () => {
+          alert('Seção excluída com sucesso.');
+          this.getSecoes(); 
+        },
+        (error) => {
+          console.error('Erro ao excluir a seção:', error);
+          alert('Erro ao excluir a seção. Tente novamente mais tarde.');
+        }
+      );
     }
   }
-
-  // Criar nova seção
-  criarNovaSecao(): void {
-    this.secoes.push({nome: `Nova Seção ${this.secoes.length + 1}`, conteudos: [], expanded: false});
-  }
+  
 
   // Adicionar conteúdo à seção
-  adicionarConteudo(secaoIndex: number): void {
-    if (secaoIndex >= 0 && secaoIndex < this.secoes.length) {
-      this.currentContent = {nome: '', tipo: 'Vídeo', arquivo: null};
-      this.editingContent = false; // Indica que é um novo conteúdo
-      this.editingIndexes = {secaoIndex};
-      this.showContentModal = true;
-    } else {
-      console.error('Índice da seção inválido');
-    }
-  }
-
-  // Editar conteúdo de uma seção
-  editarConteudo(secaoIndex: number, conteudoIndex: number): void {
-    if (
-      secaoIndex >= 0 &&
-      secaoIndex < this.secoes.length &&
-      conteudoIndex >= 0 &&
-      conteudoIndex < this.secoes[secaoIndex].conteudos.length
-    ) {
-      const conteudo = this.secoes[secaoIndex].conteudos[conteudoIndex];
-      this.currentContent = {...conteudo}; // Carregar os dados no formulário
-      this.editingContent = true; // Indica que é uma edição
-      this.editingIndexes = {secaoIndex, conteudoIndex};
-      this.showContentModal = true;
-    } else {
-      console.error('Índice da seção ou do conteúdo inválido');
-    }
-  }
-
-  // Fechar modal
-  closeContentModal(): void {
-    this.showContentModal = false;
-    this.currentContent = {nome: '', tipo: 'Vídeo', arquivo: null};
-    this.editingIndexes = null;
+  adicionarConteudo(sectionId: number): void {
+    this.currentContent = {
+      id: 0, // Será gerado pelo back-end
+      title: '',
+      description: '',
+      contentType: ContentType.VIDEO,
+      fileUrl: '',
+      fileName: '',
+      sectionId: sectionId
+    };
     this.editingContent = false;
+    this.showContentModal = true;
   }
 
+  // Editar conteúdo
+  editarConteudo(conteudo: ContentDTO): void {
+    if (!conteudo) {
+      console.error("Erro: Nenhum conteúdo foi fornecido para edição.");
+      return;
+    }
+  
+    // Preenche o conteúdo atual no modal
+    this.currentContent = { ...conteudo };
+    this.editingContent = true;
+  
+    // Log para depurar o conteúdo selecionado
+    console.log("Conteúdo selecionado:", conteudo);
+  
+    // Verifica se existe um arquivo associado
+    if (conteudo.fileName) {
+      console.log(`Arquivo associado encontrado: ${conteudo.fileName}`);
+    } else {
+      console.warn("Nenhum arquivo associado encontrado para este conteúdo.");
+    }
+  
+    this.showContentModal = true;
+  }
+
+  // Excluir conteúdo
+  excluirConteudo(contentId: number, sectionId: number): void {
+    if (confirm(`Tem certeza que deseja excluir este conteúdo?`)) {
+      this.contentService.deleteContent(this.courseId, sectionId, contentId).subscribe(() => {
+        this.getSecoes();
+      });
+    }
+  }
+
+// Fechar modal de conteúdo
+closeContentModal(): void {
+  this.showContentModal = false;
+  this.currentContent = {
+    id: 0,
+    title: '',
+    description: '',
+    contentType: ContentType.VIDEO,
+    fileUrl: '',
+    fileName: '',
+    sectionId: 0
+  };
+  this.selectedFile = null;
+}
 
   // Lidar com upload de arquivo
   handleFileUpload(event: any): void {
     const file = event.target.files[0];
     if (file) {
-      this.currentContent.arquivo = file;
+      this.selectedFile = file;
     }
   }
 
-  // Salvar o conteúdo (novo ou atualizado)
+  // Salvar conteúdo (criação ou edição)
   saveContent(): void {
-    const secaoIndex = this.editingIndexes?.secaoIndex;
-
-    if (secaoIndex !== undefined && secaoIndex >= 0 && secaoIndex < this.secoes.length) {
-      if (this.currentContent.nome) {
-        if (this.editingContent && this.editingIndexes?.conteudoIndex !== undefined) {
-          // Atualizar conteúdo existente
-          const conteudoIndex = this.editingIndexes.conteudoIndex;
-          this.secoes[secaoIndex].conteudos[conteudoIndex] = {...this.currentContent};
-        } else {
-          // Adicionar novo conteúdo
-          this.secoes[secaoIndex].conteudos.push({...this.currentContent});
-        }
-
-        this.closeContentModal();
-      } else {
-        alert('Por favor, preencha todos os campos.');
-      }
+    if (!this.currentContent || !this.currentContent.title) {
+      alert('Preencha todos os campos corretamente.');
+      return;
+    }
+  
+    this.isUploading = true; // Ativa o loading durante o upload
+  
+    if (this.selectedFile) {
+      // Faz upload do novo arquivo
+      this.fileService.uploadContent(this.courseId, this.currentContent.sectionId, this.currentContent, this.selectedFile)
+        .subscribe(
+          (response) => {
+            console.log("Upload bem-sucedido:", response);
+            alert(response); // Exibe a mensagem de sucesso do servidor
+            this.getSecoes(); // Atualiza as seções
+            this.closeContentModal();
+          },
+          (error) => {
+            console.error("Erro no upload:", error);
+            alert("Erro no upload do conteúdo.");
+          }
+        )
+        .add(() => this.isUploading = false); // Desativa o loading após o upload
     } else {
-      console.error('Índice da seção inválido ao salvar conteúdo');
+      // Atualiza somente os dados do conteúdo, sem upload de arquivo
+      this.contentService.updateContent(this.courseId, this.currentContent.sectionId, this.currentContent.id, this.currentContent)
+        .subscribe(
+          () => {
+            console.log("Conteúdo atualizado com sucesso.");
+            this.getSecoes();
+            this.closeContentModal();
+          },
+          (error) => {
+            console.error("Erro ao atualizar o conteúdo:", error);
+            alert("Erro ao atualizar o conteúdo.");
+          }
+        )
+        .add(() => this.isUploading = false); // Desativa o loading após o update
     }
   }
+  
+  
+  
 
-// Salvar alterações na seção
-  salvarEdicaoSecao(): void {
-    if (this.secaoEditIndex !== null && this.secaoEdit.nome.trim() !== '') {
-      this.secoes[this.secaoEditIndex].nome = this.secaoEdit.nome.trim(); // Atualiza o nome da seção
-      this.closeEditSecaoModal();
-    } else {
-      alert('Por favor, insira um nome válido para a seção.');
-    }
-  }
-
-// Fechar modal de edição de seção
+  // Fechar modal de edição da seção
   closeEditSecaoModal(): void {
     this.showEditSecaoModal = false;
-    this.secaoEdit = {nome: ''};
-    this.secaoEditIndex = null;
+    this.secaoEdit = {
+      id: 0,
+      title: '',
+      description: '',
+      courseId: 0,
+      contents: []
+    };
   }
+  
 }

@@ -54,12 +54,12 @@ export class SectionService {
   }
 
   deleteSection(courseId: number, sectionId: number): Observable<void> {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('authToken'); 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}` 
     });
-
+  
     return this.http.delete<void>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`, { headers });
-  }
+  }  
 }

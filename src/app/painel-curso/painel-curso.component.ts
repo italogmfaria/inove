@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CourseService } from '../common/service/course.service';
 import { SectionService } from '../common/service/section.service';
 import { ContentService } from '../common/service/content.service';
+import { FileService } from '../common/service/file.service';
 import { CursoDTO } from '../common/dto/CursoDTO';
 import { SectionDTO } from '../common/dto/SectionDTO';
 import { ContentDTO } from '../common/dto/ContentDTO';
@@ -31,7 +32,8 @@ export class PainelCursoComponent implements OnInit {
     private router: Router,
     private courseService: CourseService,
     private sectionService: SectionService,
-    private contentService: ContentService
+    private contentService: ContentService,
+    private fileService: FileService 
   ) {}
 
   ngOnInit(): void {
@@ -51,7 +53,7 @@ export class PainelCursoComponent implements OnInit {
       (course) => {
         this.courseTitle = course.name;
         this.description = course.description;
-        this.instructor = course.instructors?.[0]?.name || 'Instrutor Não Informado'; 
+        this.instructor = course.instructors?.[0]?.name || 'Instrutor Não Informado';
         this.courseCreationDate = new Date(course.creationDate);
         this.lastUpdateDate = new Date(course.lastUpdateDate);
       },
@@ -61,7 +63,7 @@ export class PainelCursoComponent implements OnInit {
       }
     );
   }
-  
+
   loadSections(): void {
     this.sectionService.getSections(this.courseId).subscribe(
       (sections) => {
@@ -98,9 +100,13 @@ export class PainelCursoComponent implements OnInit {
   }
 
   changeContent(content: ContentDTO): void {
-    this.currentContentUrl = content.fileUrl;
+    this.currentContentUrl = this.fileService.getStreamUrl(content.fileName);
     this.currentContentType = content.contentType;
+  
+    console.log("Conteúdo selecionado:", content);
+    console.log("URL carregada:", this.currentContentUrl);
   }
+
 
   toggleCommentBox(): void {
     this.showCommentBox = !this.showCommentBox;
@@ -119,9 +125,5 @@ export class PainelCursoComponent implements OnInit {
 
   navigateTo(path: string): void {
     this.router.navigate([path]);
-  }
-
-  navigateToPreview(courseId: number) {
-    this.router.navigate(['/preview-curso', courseId]);
   }
 }

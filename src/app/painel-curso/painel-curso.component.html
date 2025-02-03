@@ -3,30 +3,29 @@
   <header class="top-bar">
     <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
     <h1>{{ courseTitle }}</h1>
-    <button class="btn-orange" (click)="navigateToPreview(courseId)">Voltar</button>
+    <button class="btn-orange" onclick="window.history.back();">Voltar</button>
   </header>
 
   <div class="content">
-    <!-- Content Area (Video or PDF Viewer) -->
-    <div class="video-area" *ngIf="currentContentType === 'VIDEO'">
-      <iframe
-        width="100%"
-        height="650px"
-        [src]="currentContentUrl | safeUrl"
-        title="Video Player"
-        frameborder="0"
-        allowfullscreen
-      ></iframe>
+    <!-- Área de visualização (Vídeo ou PDF) -->
+    <div class="viewer" *ngIf="currentContentUrl">  
+      
+      <!-- Exibição de Vídeo -->
+      <video class="video-area" *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.mp4')" controls>
+        <source [src]="currentContentUrl" type="video/mp4">
+        Seu navegador não suporta vídeos.
+      </video>
+
+      <!-- Exibição de PDF com ng2-pdf-viewer -->
+      <div class="pdf-container" *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.pdf')">
+        <pdf-viewer class="pdf-area"
+                    [src]="currentContentUrl"
+                    [render-text]="true">
+        </pdf-viewer>
+      </div>
     </div>
 
-    <div class="pdf-area" *ngIf="currentContentType === 'PDF'">
-      <iframe
-        [src]="currentContentUrl | safeUrl"
-        title="PDF Viewer"
-      ></iframe>
-    </div>
-
-    <!-- Course Content Panel -->
+    <!-- Painel de Conteúdo -->
     <aside class="content-panel">
       <h2>Conteúdos do curso:</h2>
       <div class="section" *ngFor="let section of sections; let i = index">
