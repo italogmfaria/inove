@@ -1,41 +1,40 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro Instrutor</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro Instrutor</title>
 </head>
 <body>
-    <!-- Header Section -->
-    <header class="header">
-        <button class="back-btn" onclick="window.history.back();">Voltar</button>
-        <img (click)="navigateTo('/inicial')" src="assets/logowhite.png" alt="Logotipo INOVE" class="logo">
-    </header>
+<!-- Header Section -->
+<header class="header">
+  <button class="back-btn" (click)="goBack()">Voltar</button>
+  <img (click)="navigateTo('/inicial')" src="assets/logowhite.png" alt="Logotipo INOVE" class="logo">
+</header>
 
-    <!-- Registration Form Section -->
-    <section class="form-container">
-        <h1>Seja um instrutor!</h1>
-        <div class="form-box">
-            <form>
-                <div class="form-group">
-                    <label for="nome">Nome</label>
-                    <input type="text" id="nome" placeholder="Seu nome" required>
-                </div>
-                <div class="form-group">
-                    <label for="cpf">CPF</label>
-                    <input type="text" id="cpf" placeholder="Seu CPF" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="Seu email" required>
-                </div>
-                <div class="form-group">
-                    <label for="motivacao">Motivação</label>
-                    <textarea id="motivacao" placeholder="Por que você deseja ser instrutor?" rows="5" required></textarea>
-                </div>
-                <button type="submit" (click)="navigateTo('/aguarde')" class="submit-btn">Enviar</button>
-            </form>
-        </div>
-    </section>
+<section class="form-container">
+  <h1>Seja um instrutor!</h1>
+  <div class="form-box">
+    <form (ngSubmit)="submitForm()">
+      <div class="form-group">
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" [(ngModel)]="instructor.name" name="name" required>
+      </div>
+      <div class="form-group">
+        <label for="cpf">CPF</label>
+        <input type="text" id="cpf" [(ngModel)]="instructor.cpf" name="cpf" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" [(ngModel)]="instructor.email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="motivacao">Motivação</label>
+        <textarea id="motivacao" [(ngModel)]="instructor.motivation" name="motivation" rows="5" required></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Enviar</button>
+    </form>
+  </div>
+</section>
 </body>
 </html>
