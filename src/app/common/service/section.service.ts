@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { SectionDTO } from '../dto/SectionDTO';
 
 @Injectable({
@@ -52,14 +52,20 @@ export class SectionService {
 
     return this.http.put<SectionDTO>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`, section, { headers });
   }
-
   deleteSection(courseId: number, sectionId: number): Observable<void> {
     const token = localStorage.getItem('authToken'); 
+  
+    if (!token) {
+      console.error('Token não encontrado! O usuário pode estar deslogado.');
+      return throwError(() => new Error('Usuário não autenticado.'));
+    }
+  
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}` 
     });
   
     return this.http.delete<void>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`, { headers });
-  }  
+  }
+  
 }

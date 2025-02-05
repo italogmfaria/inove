@@ -20,22 +20,6 @@ export class FileService {
       .pipe(map(response => response.imageUrl));
   }
   
-  uploadContent(courseId: number, sectionId: number, contentDTO: ContentDTO, file: File): Observable<string> {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('metadata', new Blob([JSON.stringify(contentDTO)], { type: 'application/json' })); 
-  
-    const token = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}` 
-    });
-  
-    return this.http.post(`${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos/upload`, formData, {
-      headers,
-      responseType: 'text'
-    });
-  }
-  
   getStreamUrl(fileName: string): string {
     return `${environment.apiBaseUrl}/cursos/secoes/conteudos/stream/${fileName}`;
   }

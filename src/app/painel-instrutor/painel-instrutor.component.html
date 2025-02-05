@@ -28,8 +28,8 @@
             </div>
             <div class="course-details" *ngIf="curso.expanded">
               <p><strong>Descrição:</strong> {{ curso.description }}</p>
-              <p><strong>Data de Criação:</strong> {{ curso.creationDate | date:'dd/MM/yyyy' }}</p>
-              <p><strong>Última Atualização:</strong> {{ curso.lastUpdateDate | date:'dd/MM/yyyy' }}</p>
+            <!--<p><strong>Data de Criação:</strong> {{ curso.creationDate | date:'dd/MM/yyyy' }}</p>
+              <p><strong>Última Atualização:</strong> {{ curso.lastUpdateDate | date:'dd/MM/yyyy' }}</p>-->
               <div class="course-actions">
                 <button class="btn-orange" (click)="openUpdateCourseModal(curso)">Atualizar Curso</button>
                 <button class="btn-orange" (click)="createSections(curso)">Criar Seções</button>

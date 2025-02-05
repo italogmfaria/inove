@@ -307,3 +307,32 @@ ul {
   padding: 0px 30px;
   background-color: #fff;
 }
+
+.btn-blue {
+  background-color: #1e53e5;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-blue:hover {
+  background-color: #1e53e5;
+}
+
+.btn-red {
+  background-color: #f92626;
+  color: #fff;
+  margin-left: 10px;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-red:hover {
+  background-color: #f92626;
+}

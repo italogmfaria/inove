@@ -4,9 +4,12 @@ import { CourseService } from '../common/service/course.service';
 import { SectionService } from '../common/service/section.service';
 import { ContentService } from '../common/service/content.service';
 import { FileService } from '../common/service/file.service';
+import { FeedbackService } from '../common/service/feedback.service';
 import { CursoDTO } from '../common/dto/CursoDTO';
 import { SectionDTO } from '../common/dto/SectionDTO';
 import { ContentDTO } from '../common/dto/ContentDTO';
+import { FeedBackDTO } from '../common/dto/FeedBackDTO';
+import { AuthService } from '../common/service/auth.service';
 
 @Component({
   selector: 'app-painel-curso',
@@ -23,9 +26,12 @@ export class PainelCursoComponent implements OnInit {
   sections: (SectionDTO & { isOpen: boolean })[] = [];
   currentContentUrl: string = '';
   currentContentType: string = '';
-  comments: { user: string; text: string }[] = [];
+  course: CursoDTO | null = null;
+  userFeedback?: FeedBackDTO;
   newComment: string = '';
-  showCommentBox: boolean = false;
+  isEditing: boolean = false;
+  userId!: number;
+  isLoggedIn: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,10 +39,20 @@ export class PainelCursoComponent implements OnInit {
     private courseService: CourseService,
     private sectionService: SectionService,
     private contentService: ContentService,
-    private fileService: FileService 
+    private fileService: FileService,
+    private feedbackService: FeedbackService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.isLoggedIn = !!this.authService.getToken();
+    const userId = this.authService.getUserId();
+    if (userId !== null) {
+      this.userId = userId;
+    } else {
+      console.error('Erro: Usuário não autenticado.');
+    }
+  
     const courseIdParam = this.route.snapshot.paramMap.get('courseId');
     if (courseIdParam) {
       this.courseId = +courseIdParam;
@@ -47,15 +63,18 @@ export class PainelCursoComponent implements OnInit {
       this.router.navigate(['/cursos']);
     }
   }
+  
 
   loadCourseDetails(): void {
     this.courseService.getCourseById(this.courseId).subscribe(
       (course) => {
+        this.course = course;
         this.courseTitle = course.name;
         this.description = course.description;
         this.instructor = course.instructors?.[0]?.name || 'Instrutor Não Informado';
         this.courseCreationDate = new Date(course.creationDate);
         this.lastUpdateDate = new Date(course.lastUpdateDate);
+        this.loadUserFeedback();
       },
       (error) => {
         console.error('Erro ao carregar detalhes do curso:', error);
@@ -107,20 +126,48 @@ export class PainelCursoComponent implements OnInit {
     console.log("URL carregada:", this.currentContentUrl);
   }
 
-
-  toggleCommentBox(): void {
-    this.showCommentBox = !this.showCommentBox;
+  loadUserFeedback(): void {
+    if (!this.course) return;
+    this.userFeedback = this.course.feedBacks.find(f => f.student.id === this.userId);
   }
 
-  addComment(): void {
-    if (this.newComment.trim()) {
-      this.comments.push({
-        user: 'Usuário Atual',
-        text: this.newComment.trim(),
+  addOrUpdateFeedback(): void {
+    if (this.userFeedback) {
+      // Editar feedback existente
+      this.feedbackService.updateFeedback(this.userFeedback.id, this.userId, this.newComment).subscribe(updatedFeedback => {
+        this.userFeedback = updatedFeedback;
+        this.isEditing = false;
       });
-      this.newComment = '';
-      this.showCommentBox = false;
+    } else {
+      // Criar novo feedback
+      this.feedbackService.addFeedback(this.userId, this.courseId, this.newComment).subscribe(newFeedback => {
+        this.userFeedback = newFeedback;
+        if (this.course) {
+          this.course.feedBacks.push(newFeedback);
+        }
+      });
     }
+  }
+
+  deleteFeedback(): void {
+    if (this.userFeedback) {
+      this.feedbackService.deleteFeedback(this.userFeedback.id, this.userId).subscribe(() => {
+        if (this.course) {
+          this.course.feedBacks = this.course.feedBacks.filter(f => f.id !== this.userFeedback?.id);
+        }
+        this.userFeedback = undefined;
+        this.newComment = '';
+      });
+    }
+  }
+
+  enableEdit(): void {
+    this.newComment = this.userFeedback?.comment || '';
+    this.isEditing = true;
+  }
+
+  toggleCommentBox(): void {
+    this.isEditing = true;
   }
 
   navigateTo(path: string): void {

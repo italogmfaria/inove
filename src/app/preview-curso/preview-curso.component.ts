@@ -32,7 +32,6 @@ export class PreviewCursoComponent implements OnInit {
     this.courseService.getCourseById(courseId).subscribe(
       (course) => {
         if (course) {
-          // Verifica se os instrutores e feedbacks contêm objetos esperados
           course.instructors = course.instructors.map(instructor => ({
             ...instructor,
             name: instructor.name || 'Desconhecido'

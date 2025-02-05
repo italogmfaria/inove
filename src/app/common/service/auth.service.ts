@@ -30,6 +30,11 @@ export class AuthService {
     }
   }
   
+  getUserId(): number | null {
+    const userId = localStorage.getItem('userId');
+    return userId ? parseInt(userId, 10) : null;
+  }
+  
 
   getToken(): string | null {
     return localStorage.getItem('authToken');

@@ -28,20 +28,20 @@
             <thead>
               <tr>
                 <th>Nome</th>
-                <th>Tipo</th>
-                <th>Ações</th>
+             <!--    <th>Tipo</th>
+                 <th>Ações</th>-->  
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let conteudo of secao.contents">
                 <td>{{ conteudo.title }}</td>
-                <td>{{ conteudo.contentType === 'VIDEO' ? 'Vídeo' : 'Teórico' }}</td>
-                <td>
+           <!--      <td>{{ conteudo.contentType && conteudo.contentType.includes('video') ? 'Vídeo' : 'Teórico' }}</td>
+                 <td>
                   <div class="button-group">
                     <button class="btn-blue" (click)="editarConteudo(conteudo)">Atualizar</button>
                     <button class="btn-red" (click)="excluirConteudo(conteudo.id, secao.id)">Excluir</button>
                   </div>
-                </td>                  
+                </td>   -->               
               </tr>
             </tbody>
           </table>
@@ -69,30 +69,26 @@
     </footer>
   </div>
 
-  <!-- Modal para Conteúdo -->
-  <div class="modal-overlay" *ngIf="showContentModal" (click)="closeContentModal()"></div>
-  <div class="modal" *ngIf="showContentModal">
-    <header class="modal-header">
-      <h2>{{ editingContent ? 'Atualizar Conteúdo' : 'Criar Conteúdo' }}</h2>
-      <span class="close-btn" (click)="closeContentModal()">&#10005;</span>
-    </header>
-    <div class="modal-body">
-      <input type="text" [(ngModel)]="currentContent.title" placeholder="Nome do conteúdo" />
-      <select [(ngModel)]="currentContent.contentType">
-        <option [value]="ContentType.VIDEO">Vídeo</option>
-        <option [value]="ContentType.PDF">Teórico</option>
-      </select>
-        <div *ngIf="currentContent.fileName" class="file-info">
-        <label>Arquivo Atual:</label>
-        <span>{{ currentContent.fileName }}</span>
-      </div><br>
-      <input type="file" (change)="handleFileUpload($event)" accept="video/*,application/pdf" />
-    </div>    
-    <footer class="modal-footer">
-      <button class="btn-orange" (click)="saveContent()" [disabled]="isUploading">
-        <span *ngIf="isUploading">Enviando...</span>
-        <span *ngIf="!isUploading">{{ editingContent ? 'Atualizar Conteúdo' : 'Criar Conteúdo' }}</span>
-      </button>
-    </footer>    
-  </div>
+<!-- Modal para Conteúdo -->
+<div class="modal" *ngIf="showContentModal">
+  <header class="modal-header">
+    <h2>{{ editingContent ? 'Atualizar Conteúdo' : 'Criar Conteúdo' }}</h2>
+    <span class="close-btn" (click)="closeContentModal()">&#10005;</span>
+  </header>
+  <div class="modal-body">
+    <input type="text" [(ngModel)]="currentContent.title" placeholder="Nome do conteúdo" />
+    <input type="text" [(ngModel)]="currentContent.description" placeholder="Descrição" />
+    <select [(ngModel)]="currentContent.contentType">
+      <option [value]="ContentType.VIDEO">Vídeo</option>
+      <option [value]="ContentType.PDF">Teórico</option>
+    </select>
+    <input type="file" (change)="handleFileUpload($event)" accept="video/*,application/pdf" />
+  </div>    
+  <footer class="modal-footer">
+    <button class="btn-orange" (click)="saveContent()" [disabled]="isUploading">
+      <span *ngIf="isUploading">Enviando...</span>
+      <span *ngIf="!isUploading">{{ editingContent ? 'Atualizar Conteúdo' : 'Criar Conteúdo' }}</span>
+    </button>
+  </footer>    
+</div>
 </div>
