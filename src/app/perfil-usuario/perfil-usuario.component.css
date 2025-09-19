@@ -2,23 +2,34 @@
 .perfil-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 }
 
 /* Header */
 .header {
   width: 100%;
-  background-color: #3261a8;
-  padding: 20px 0;
+  background: linear-gradient(135deg, #3261a8 0%, #2b4a8b 100%);
+  padding: 1rem 2rem;
   display: flex;
   justify-content: center;
-  z-index: 10;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(10px);
 }
 
 .logo {
-  height: 50px;
+  height: clamp(40px, 5vw, 60px);
   cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
 }
 
 /* Back Button */
@@ -32,9 +43,9 @@
   cursor: pointer;
   transition: background-color 0.3s;
   position: absolute;
-  left: -100px; 
+  left: -100px;
   top: 0px;
-  margin: 25px 100px 100px 120px; 
+  margin: 25px 100px 100px 120px;
 }
 
 .back-btn:hover {
@@ -59,105 +70,187 @@
 .content {
   display: flex;
   flex: 1;
-  background-color: #f4f4f9;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* Side Panel */
 .side-panel {
-  background-color: #fff;
-  width: 200px;
-  padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  min-width: 280px;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  height: fit-content;
+  position: sticky;
+  top: calc(80px + 2rem);
+  border: 1px solid rgba(50, 97, 168, 0.1);
 }
 
 .side-panel h2 {
-  font-size: 1.2em;
-  margin-bottom: 20px;
+  font-size: clamp(1.2rem, 2.5vw, 1.4rem);
+  margin-bottom: 1.5rem;
+  color: #333;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
 }
 
 .side-panel ul {
   list-style: none;
   padding: 0;
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
 }
 
 .side-panel ul li {
-  margin-bottom: 10px;
-  padding: 10px;
+  margin-bottom: 0.5rem;
+  padding: 1rem;
   cursor: pointer;
-  border-radius: 5px;
-  color: #333;
+  border-radius: 12px;
+  color: #666;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.side-panel ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: linear-gradient(135deg, #f9a826, #3261a8);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
 }
 
 .side-panel ul li.active,
 .side-panel ul li:hover {
-  background-color: #e3f2fd;
+  background: linear-gradient(135deg, rgba(50, 97, 168, 0.1), rgba(249, 168, 38, 0.1));
   color: #3261a8;
+  transform: translateX(8px);
+}
+
+.side-panel ul li.active::before,
+.side-panel ul li:hover::before {
+  transform: scaleY(1);
 }
 
 .side-panel button {
-  margin-top: 20px;
+  margin-top: 1rem;
   width: 100%;
 }
 
 /* Main Panel */
 .main-panel {
   flex: 1;
-  padding: 20px;
-  background-color: #fff;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  border-left: 1px solid #ddd;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(50, 97, 168, 0.1);
+  min-height: 600px;
 }
 
 .main-panel h1 {
-  font-size: 1.5em;
-  margin-bottom: 20px;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: 2rem;
+  color: #333;
+  font-weight: 700;
   text-align: left;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.main-panel h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #f9a826, #3261a8);
+  border-radius: 2px;
 }
 
 /* Course Cards Container */
 .course-cards-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); 
-  gap: 20px; 
-  justify-items: center; 
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: clamp(1.5rem, 3vw, 2rem);
+  margin-top: 2rem;
 }
 
 /* Course Cards */
 .course-card {
-  width: 90%; 
-  max-width: 300px; 
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  background: #fff;
+  border: 1px solid rgba(50, 97, 168, 0.1);
+  border-radius: 16px;
   cursor: pointer;
-
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 15px;
-  text-align: center;
-  background-color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 0;
+  text-align: left;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  position: relative;
 }
 
-.course-card p {
-  text-align: justify;
+.course-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f9a826, #3261a8);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.course-card:hover::before {
+  transform: scaleX(1);
+}
+
+.course-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
 .course-card img {
-  width: 100%;  
-  height: 180px; 
-  object-fit: cover; 
-  border-radius: 5px;
-  margin-bottom: 10px;
+  width: 100%;
+  height: clamp(160px, 20vw, 200px);
+  object-fit: cover;
+  transition: transform 0.4s ease;
 }
 
+.course-card:hover img {
+  transform: scale(1.05);
+}
 
 .course-card h3 {
-  font-size: 1.1em;
-  margin-bottom: 8px;
+  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+  margin: 1rem 1rem 0.5rem;
+  color: #333;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 .course-card p {
-  color: #555;
-  font-size: 0.9em;
+  color: #666;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  margin: 0 1rem 1.5rem;
+  line-height: 1.5;
+  text-align: justify;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 
@@ -254,26 +347,123 @@
 }
 
 .btn-logout {
-  background-color: #f9a826;
+  background: linear-gradient(135deg, #f9a826 0%, #e5941e 100%);
   color: #fff;
-  padding: 10px 20px;
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 5px;
-  font-size: 1em;
+  border-radius: 12px;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
-  position: relative;
-  top: 70%;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);
+  width: 100%;
+}
+
+.btn-logout:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(249, 168, 38, 0.4);
 }
 
 .btn-remover {
-  background-color: #f9a826;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
   color: #fff;
-  padding: 10px 20px;
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 5px;
-  font-size: 1em;
+  border-radius: 12px;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
-  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+  margin: 10px
+}
+
+.btn-remover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+}
+
+/* Media Queries */
+@media (max-width: 1024px) {
+  .course-cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .side-panel {
+    min-width: auto;
+    width: 100%;
+    position: static;
+    padding: 1.5rem;
+  }
+
+  .side-panel ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .side-panel ul li {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+    margin-bottom: 0;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .main-panel {
+    padding: 1.5rem;
+  }
+
+  .course-cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 1rem;
+  }
+
+  .content {
+    padding: 0.5rem;
+  }
+
+  .side-panel {
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .side-panel ul {
+    flex-direction: column;
+  }
+
+  .side-panel ul li {
+    min-width: auto;
+    text-align: left;
+  }
+
+  .main-panel {
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .course-cards-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .course-card {
+    border-radius: 12px;
+  }
 }

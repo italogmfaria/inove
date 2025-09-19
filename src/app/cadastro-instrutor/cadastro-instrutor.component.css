@@ -1,7 +1,7 @@
 
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -65,7 +65,7 @@ body {
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group textarea {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     width: 95%;
     padding: 12px;
     border: 1px solid #ddd;
@@ -77,31 +77,37 @@ body {
 /* Submit Button */
 .submit-btn {
     width: 50%;
-    padding: 15px;
-    background-color: #f9a826;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #f9a826 0%, #e5941e 100%);
     color: #fff;
     border: none;
-    border-radius: 5px;
-    font-size: 1em;
+    border-radius: 50px;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);
     margin-top: 10px;
 }
 
 .submit-btn:hover {
-    background-color: #e5941e;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(249, 168, 38, 0.4);
 }
 
 /* Back Button */
 .back-btn {
-    background-color: #f9a826;
+    background: linear-gradient(135deg, #f9a826 0%, #e5941e 100%);
     color: #fff;
-    padding: 10px 20px;
+    padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 5px;
-    font-size: 1em;
+    border-radius: 50px;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);
     position: absolute;
     left: -100px; 
     top: 0px;
@@ -109,5 +115,6 @@ body {
 }
 
 .back-btn:hover {
-    background-color: #e5941e;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(249, 168, 38, 0.4);
 }

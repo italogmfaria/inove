@@ -1,6 +1,6 @@
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -62,16 +62,19 @@ body {
 
 /* Back Button */
 .back-btn {
-    background-color: #f9a826;
+    background: linear-gradient(135deg, #f9a826 0%, #e5941e 100%);
     color: #fff;
-    padding: 15px 30px;
+    padding: 1rem 2rem;
     border: none;
-    border-radius: 5px;
-    font-size: 1em;
+    border-radius: 50px;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);
 }
 
 .back-btn:hover {
-    background-color: #e5941e;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(249, 168, 38, 0.4);
 }

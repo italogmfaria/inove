@@ -23,9 +23,16 @@ export class ContentService {
   }
 
   updateContent(courseId: number, sectionId: number, contentId: number, content: ContentDTO): Observable<ContentDTO> {
+    const payload = {
+      title: content.title,
+      description: content.description,
+      contentType: content.contentType,
+      fileUrl: content.fileUrl,
+      fileName: content.fileName
+    };
     return this.http.put<ContentDTO>(
       `${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos/${contentId}`,
-      content,
+      payload,
       { headers: this.getHeaders() }
     );
   }
@@ -39,10 +46,9 @@ export class ContentService {
   
 
   deleteContent(courseId: number, sectionId: number, contentId: number): Observable<void> {
-    return this.http.delete<void>(
-      `${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos/${contentId}`,
-      { headers: this.getHeaders() }
-    );
+    const url = `${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos/${contentId}`;
+    console.log('URL de exclusão:', url);
+    return this.http.delete<void>(url, { headers: this.getAuthHeaders() });
   }
   
   uploadContent(courseId: number, sectionId: number, file: File, contentData: ContentDTO): Observable<any> {

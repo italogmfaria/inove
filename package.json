@@ -20,6 +20,7 @@
     "@angular/router": "^17.3.0",
     "ng2-pdf-viewer": "^10.4.0",
     "ngx-mask": "^19.0.6",
+    "ngx-toastr": "^19.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"

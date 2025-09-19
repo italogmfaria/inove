@@ -1,6 +1,6 @@
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -74,28 +74,50 @@ body {
     margin-bottom: 10px;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 1em;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.form-group select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    padding-right: 40px;
+}
+
+.form-group select:focus {
+    outline: none;
+    border-color: #3261a8;
+    box-shadow: 0 0 5px rgba(50, 97, 168, 0.3);
 }
 
 /* Submit Button */
 .submit-btn {
     width: 50%;
-    padding: 10px;
-    background-color: #f9a826;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #f9a826 0%, #e5941e 100%);
     color: #fff;
     border: none;
-    border-radius: 5px;
-    font-size: 1em;
+    border-radius: 50px;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);
 }
 
 .submit-btn:hover {
-    background-color: #e5941e;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(249, 168, 38, 0.4);
 }
 
 /* Footer Text */
@@ -129,14 +151,16 @@ body {
 
 /* Back Button */
 .back-btn {
-    background-color: #f9a826;
+    background: linear-gradient(135deg, #f9a826 0%, #e5941e 100%);
     color: #fff;
-    padding: 10px 20px;
+    padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 5px;
-    font-size: 1em;
+    border-radius: 50px;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);
     position: absolute;
     left: -100px; 
     top: 0px;
@@ -144,5 +168,6 @@ body {
 }
 
 .back-btn:hover {
-    background-color: #e5941e;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(249, 168, 38, 0.4);
 }

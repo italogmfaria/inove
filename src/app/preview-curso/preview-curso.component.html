@@ -9,11 +9,9 @@
             </button>
             <input type="text" class="search-bar" placeholder="Pesquisar Cursos">
         </div>
-        <div class="header-right" (click)="navigateTo('/cursos')">
-            <button class="voltar-btn">Voltar</button>
-        </div>
-        <div class="header-right" (click)="navigateTo('/perfil-usuario')">
-            <button class="profile-btn">Perfil</button>
+        <div class="header-right">
+            <button class="voltar-btn" (click)="navigateTo('/cursos')">Voltar</button>
+            <button class="profile-btn" (click)="navigateTo('/perfil-usuario')">Perfil</button>
         </div>
     </header>
 

@@ -1,8 +1,10 @@
 import { UserDTO } from "./UserDTO";
+import { CursoDTO } from "./CursoDTO";
 
 export interface FeedBackDTO {
   id: number;
   student: UserDTO;
-  courseId: number;
+  course?: CursoDTO;
+  courseId?: number;
   comment: string;
 }

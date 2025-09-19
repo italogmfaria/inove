@@ -32,6 +32,7 @@ export class PainelCursoComponent implements OnInit {
   isEditing: boolean = false;
   userId!: number;
   isLoggedIn: boolean = false;
+  isContentLoading: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -119,11 +120,25 @@ export class PainelCursoComponent implements OnInit {
   }
 
   changeContent(content: ContentDTO): void {
+    this.isContentLoading = true;
     this.currentContentUrl = this.fileService.getStreamUrl(content.fileName);
     this.currentContentType = content.contentType;
   
     console.log("Conteúdo selecionado:", content);
     console.log("URL carregada:", this.currentContentUrl);
+    
+    // Auto-hide loading after 2 seconds as fallback
+    setTimeout(() => {
+      this.isContentLoading = false;
+    }, 2000);
+  }
+
+  onContentLoadStart(): void {
+    this.isContentLoading = true;
+  }
+
+  onContentLoaded(): void {
+    this.isContentLoading = false;
   }
 
   loadUserFeedback(): void {
@@ -131,32 +146,60 @@ export class PainelCursoComponent implements OnInit {
     this.userFeedback = this.course.feedBacks.find(f => f.student.id === this.userId);
   }
 
+  refreshComments(): void {
+    if (this.course) {
+      this.feedbackService.getFeedbacksByCourse(this.courseId).subscribe({
+        next: (feedbacks) => {
+          if (this.course) {
+            this.course.feedBacks = feedbacks;
+            this.loadUserFeedback();
+          }
+        },
+        error: (error) => console.error('Erro ao recarregar comentários:', error)
+      });
+    }
+  }
+
   addOrUpdateFeedback(): void {
+    if (!this.newComment.trim()) return;
+    
     if (this.userFeedback) {
       // Editar feedback existente
-      this.feedbackService.updateFeedback(this.userFeedback.id, this.userId, this.newComment).subscribe(updatedFeedback => {
-        this.userFeedback = updatedFeedback;
-        this.isEditing = false;
+      this.feedbackService.updateFeedback(this.userFeedback.id, this.userId, this.newComment).subscribe({
+        next: (updatedFeedback) => {
+          window.location.reload();
+        },
+        error: (error) => {
+          window.location.reload();
+        }
       });
     } else {
       // Criar novo feedback
-      this.feedbackService.addFeedback(this.userId, this.courseId, this.newComment).subscribe(newFeedback => {
-        this.userFeedback = newFeedback;
-        if (this.course) {
-          this.course.feedBacks.push(newFeedback);
+      this.feedbackService.addFeedback(this.userId, this.courseId, this.newComment).subscribe({
+        next: (newFeedback) => {
+          window.location.reload();
+        },
+        error: (error) => {
+          window.location.reload();
         }
       });
     }
   }
 
   deleteFeedback(): void {
-    if (this.userFeedback) {
-      this.feedbackService.deleteFeedback(this.userFeedback.id, this.userId).subscribe(() => {
-        if (this.course) {
-          this.course.feedBacks = this.course.feedBacks.filter(f => f.id !== this.userFeedback?.id);
+    if (this.userFeedback && confirm('Tem certeza que deseja excluir seu comentário?')) {
+      this.feedbackService.deleteFeedback(this.userFeedback.id, this.userId).subscribe({
+        next: () => {
+          if (this.course) {
+            this.course.feedBacks = this.course.feedBacks.filter(f => f.id !== this.userFeedback?.id);
+          }
+          this.userFeedback = undefined;
+          this.resetCommentForm();
+        },
+        error: (error) => {
+          console.error('Erro ao excluir comentário:', error);
+          alert('Erro ao excluir comentário. Tente novamente.');
         }
-        this.userFeedback = undefined;
-        this.newComment = '';
       });
     }
   }
@@ -168,6 +211,15 @@ export class PainelCursoComponent implements OnInit {
 
   toggleCommentBox(): void {
     this.isEditing = true;
+  }
+
+  resetCommentForm(): void {
+    this.isEditing = false;
+    this.newComment = '';
+  }
+
+  cancelEdit(): void {
+    this.resetCommentForm();
   }
 
   navigateTo(path: string): void {

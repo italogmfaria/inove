@@ -3,7 +3,7 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: #f9f9f9;
   }
   
@@ -25,14 +25,16 @@
   }
 
   .btn-logout {
-    background-color: #f9a826;
+    background: linear-gradient(135deg, #f9a826 0%, #e5941e 100%);
     color: #fff;
-    padding: 10px 25px;
+    padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 5px;
-    font-size: 1em;
+    border-radius: 50px;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);
     position: absolute;
     left: -100px; 
     top: 0px;
@@ -40,7 +42,8 @@
   }
   
   .btn-logout:hover {
-    background-color: #e5941e;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(249, 168, 38, 0.4);
   }
 
   
@@ -215,7 +218,7 @@
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 1em;
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
   }
   
   .modal-body textarea {
@@ -282,7 +285,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 /* Label for Select */
@@ -322,7 +325,7 @@
 }
 
 .modal-header{
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 .modal-body input[type="password"] {
   width: 95%;
@@ -332,5 +335,5 @@
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 1em;
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
 }

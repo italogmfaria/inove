@@ -48,7 +48,10 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "define": {
+                "process.env.NODE_ENV": "'development'"
+              }
             }
           },
           "defaultConfiguration": "production"

@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
   background-color: #f9f9f9;
 }
   
@@ -64,16 +64,21 @@
   position: absolute;
   bottom: 50px;
   left: 10px;
-  background-color: #f9a826;
+  background: linear-gradient(135deg, #f9a826 0%, #e5941e 100%);
   color: white;
   border: none;
-  padding: 10px 120px;
-  border-radius: 5px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);
+  width: calc(100% - 20px);
 }
 
 .btn-logout:hover {
-  background-color: #e5941e;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(249, 168, 38, 0.4);
 }
 
 /* Main Content */
@@ -200,7 +205,7 @@ h1 {
 
 .modal-body textarea {
   resize: none;
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
   height: 80px;
 }
 
