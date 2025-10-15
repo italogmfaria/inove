@@ -5,7 +5,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {LoginResponseDTO} from "../dto/LoginResponseDTO";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoginService {
 

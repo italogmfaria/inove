@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SchoolDTO } from '../common/dto/SchoolDTO';
 import { SchoolService } from '../common/service/school.service';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -19,7 +20,11 @@ export class CadastroEscolaComponent {
     students: []
   };
 
-  constructor(private router: Router, private schoolService: SchoolService) {}
+  constructor(
+    private router: Router,
+    private schoolService: SchoolService,
+    private toastr: ToastrService
+  ) {}
 
   navigateTo(path: string) {
     this.router.navigate([path]);
@@ -28,12 +33,12 @@ export class CadastroEscolaComponent {
   registerSchool() {
     this.schoolService.addSchool(this.school).subscribe({
       next: () => {
-        alert('Escola cadastrada com sucesso!');
+        this.toastr.success('Escola cadastrada com sucesso!', 'Sucesso');
         this.router.navigate(['/cadastro-estudante']);
       },
       error: (err) => {
         console.error('Erro ao cadastrar escola', err);
-        alert('Erro ao cadastrar escola. Tente novamente.');
+        this.toastr.error('Erro ao cadastrar escola. Tente novamente.', 'Erro');
       }
     });
   }

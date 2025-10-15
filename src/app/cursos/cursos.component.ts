@@ -4,6 +4,7 @@ import { CursoDTO } from "../common/dto/CursoDTO";
 import { CourseService } from "../common/service/course.service";
 import { FileService } from '../common/service/file.service';
 import { AuthService } from '../common/service/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-cursos',
@@ -14,15 +15,16 @@ export class CursosComponent implements OnInit {
   cursos: CursoDTO[] = [];
   filteredCursos: CursoDTO[] = [];
   searchQuery: string = '';
-  errorMessage: string = ''; 
+  errorMessage: string = '';
   isLoggedIn: boolean = false;
 
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private courseService: CourseService,
     private fileService: FileService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -49,7 +51,7 @@ export class CursosComponent implements OnInit {
       }
     );
   }
-  
+
   private loadCourseImages(): void {
     this.cursos.forEach((curso, index) => {
       this.fileService.getCourseImage(curso.id).subscribe({
@@ -66,7 +68,7 @@ export class CursosComponent implements OnInit {
       });
     });
   }
-  
+
 
   filterCourses() {
     const query = this.searchQuery.toLowerCase();
@@ -79,7 +81,7 @@ export class CursosComponent implements OnInit {
     if (this.isLoggedIn) {
       this.router.navigate([`/perfil-usuario`]);
     } else {
-      alert('Você precisa estar logado para ver seu perfil.');
+      this.toastr.warning('Você precisa estar logado para ver seu perfil.', 'Atenção');
       this.router.navigate(['/login']);
     }
   }

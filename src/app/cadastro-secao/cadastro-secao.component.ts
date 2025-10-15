@@ -5,6 +5,7 @@ import { SectionDTO } from '../common/dto/SectionDTO';
 import { ContentService } from '../common/service/content.service';
 import { FileService } from '../common/service/file.service';
 import { SectionService } from '../common/service/section.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-cadastro-secao',
@@ -13,7 +14,7 @@ import { SectionService } from '../common/service/section.service';
 })
 export class CadastroSecaoComponent implements OnInit {
   secoes: SectionDTO[] = [];
-  courseId: number = 1; 
+  courseId: number = 1;
   showEditSecaoModal = false;
   showContentModal = false;
   isUploading = false;
@@ -27,7 +28,8 @@ export class CadastroSecaoComponent implements OnInit {
   constructor(
     private sectionService: SectionService,
     private contentService: ContentService,
-    private fileService: FileService
+    private fileService: FileService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -52,11 +54,16 @@ export class CadastroSecaoComponent implements OnInit {
   }
 
   excluirSecao(sectionId: number): void {
-    if (confirm('Tem certeza que deseja excluir esta seção?')) {
+    this.toastr.info('Clique novamente para confirmar a exclusão desta seção', 'Confirmação', {
+      timeOut: 5000,
+      closeButton: true,
+      tapToDismiss: false
+    }).onTap.subscribe(() => {
       this.sectionService.deleteSection(this.courseId, sectionId).subscribe(() => {
         this.secoes = this.secoes.filter(secao => secao.id !== sectionId);
+        this.toastr.success('Seção excluída com sucesso!', 'Sucesso');
       });
-    }
+    });
   }
 
   editarSecao(secao: SectionDTO): void {
@@ -77,7 +84,7 @@ export class CadastroSecaoComponent implements OnInit {
 
   toggleSection(index: number): void {
     this.secoes[index].isOpen = !this.secoes[index].isOpen;
-    
+
     if (this.secoes[index].isOpen) {
       this.carregarConteudos(this.secoes[index].id, index);
     }
@@ -101,27 +108,31 @@ export class CadastroSecaoComponent implements OnInit {
             });
           }
         });
-  
+
         // Atualiza os conteúdos da seção
         this.secoes[sectionIndex].contents = conteudos;
       },
       error: (error) => {
         console.error("Erro ao carregar conteúdos:", error);
-        alert("Erro ao carregar os conteúdos desta seção.");
+        this.toastr.error("Erro ao carregar os conteúdos desta seção.", 'Erro');
       }
     });
   }
-  
-  
-  
+
+
+
 
   excluirConteudo(contentId: number, sectionId: number): void {
-    if (confirm("Tem certeza que deseja excluir este conteúdo?")) {
+    this.toastr.info('Clique novamente para confirmar a exclusão deste conteúdo', 'Confirmação', {
+      timeOut: 5000,
+      closeButton: true,
+      tapToDismiss: false
+    }).onTap.subscribe(() => {
       console.log('Tentando excluir conteúdo:', { courseId: this.courseId, sectionId, contentId });
       this.contentService.deleteContent(this.courseId, sectionId, contentId).subscribe({
         next: (response) => {
           console.log('Conteúdo excluído com sucesso:', response);
-          alert("Conteúdo excluído com sucesso!");
+          this.toastr.success("Conteúdo excluído com sucesso!", 'Sucesso');
           const sectionIndex = this.secoes.findIndex(s => s.id === sectionId);
           if (sectionIndex !== -1) {
             this.carregarConteudos(sectionId, sectionIndex);
@@ -129,12 +140,12 @@ export class CadastroSecaoComponent implements OnInit {
         },
         error: (err) => {
           console.error('Erro detalhado ao excluir conteúdo:', err);
-          alert(`Erro ao excluir o conteúdo: ${err.message || err.error?.message || 'Erro desconhecido'}`);
+          this.toastr.error(`Erro ao excluir o conteúdo: ${err.message || err.error?.message || 'Erro desconhecido'}`, 'Erro');
         }
       });
-    }
+    });
   }
-  
+
   editarConteudo(conteudo: ContentDTO): void {
     this.currentContent = { ...conteudo };
     if (!this.currentContent.sectionId) {
@@ -144,7 +155,7 @@ export class CadastroSecaoComponent implements OnInit {
     this.showContentModal = true;
     this.editingContent = true;
   }
-  
+
 ////////
 
   adicionarConteudo(sectionId: number): void {
@@ -159,35 +170,35 @@ export class CadastroSecaoComponent implements OnInit {
 
   saveContent(): void {
     if (!this.currentContent.title || !this.currentContent.description) {
-      alert("Por favor, preencha todos os campos.");
+      this.toastr.warning("Por favor, preencha todos os campos.", 'Atenção');
       return;
     }
-  
+
     this.isUploading = true;
     this.uploadProgress = 0;
-  
+
     if (this.editingContent) {
       // Atualizar conteúdo existente
       this.contentService.updateContent(this.courseId, this.currentContent.sectionId, this.currentContent.id, this.currentContent)
         .subscribe({
           next: () => {
-            alert("Conteúdo atualizado com sucesso!");
+            this.toastr.success("Conteúdo atualizado com sucesso!", 'Sucesso');
             this.isUploading = false;
             this.listarSecoes();
             this.closeContentModal();
           },
           error: (err) => {
             console.error(err);
-            alert("Erro ao atualizar o conteúdo.");
+            this.toastr.error("Erro ao atualizar o conteúdo.", 'Erro');
             this.isUploading = false;
           }
         });
     } else {
       if (!this.selectedFile) {
-        alert("Por favor, selecione um arquivo antes de continuar.");
+        this.toastr.warning("Por favor, selecione um arquivo antes de continuar.", 'Atenção');
         return;
       }
-  
+
       // Simular progresso de upload
       const progressInterval = setInterval(() => {
         this.uploadProgress += 10;
@@ -202,7 +213,7 @@ export class CadastroSecaoComponent implements OnInit {
             clearInterval(progressInterval);
             this.uploadProgress = 100;
             setTimeout(() => {
-              alert("Conteúdo enviado com sucesso!");
+              this.toastr.success("Conteúdo enviado com sucesso!", 'Sucesso');
               this.isUploading = false;
               this.uploadProgress = 0;
               this.listarSecoes();
@@ -212,14 +223,14 @@ export class CadastroSecaoComponent implements OnInit {
           error: (err) => {
             clearInterval(progressInterval);
             console.error(err);
-            alert("Erro ao enviar o conteúdo.");
+            this.toastr.error("Erro ao enviar o conteúdo.", 'Erro');
             this.isUploading = false;
             this.uploadProgress = 0;
           }
         });
     }
   }
-  
+
 
   closeContentModal(): void {
     this.showContentModal = false;

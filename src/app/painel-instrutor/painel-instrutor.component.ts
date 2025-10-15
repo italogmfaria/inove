@@ -6,6 +6,7 @@ import { AuthService } from '../common/service/auth.service';
 import { UserService } from '../common/service/user.service';
 import { FileService } from '../common/service/file.service';
 import { CourseService } from '../common/service/course.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-painel-instrutor',
@@ -18,14 +19,15 @@ export class PainelInstrutorComponent {
     private authService: AuthService,
     private userService: UserService,
     private fileService: FileService,
-    private courseService: CourseService
+    private courseService: CourseService,
+    private toastr: ToastrService
   ) {}
 
   activeTab: 'cursos' | 'dadosInstrutor' = 'cursos';
   instrutor: any = {};
   instrutorEdit: any = {};
   showEditInstructorModal = false;
-  isLoading: boolean = false; 
+  isLoading: boolean = false;
 
   cursos: any[] = [];
 
@@ -44,13 +46,13 @@ export class PainelInstrutorComponent {
 // Abrir modal para editar curso e carregar a imagem da nuvem
 openUpdateCourseModal(curso: any): void {
   if (curso) {
-    this.cursoEdit = { 
-      id: curso.id, 
-      name: curso.name, 
-      description: curso.description, 
+    this.cursoEdit = {
+      id: curso.id,
+      name: curso.name,
+      description: curso.description,
       imageUrl: '', // Inicializa vazio
-      creationDate: curso.creationDate, 
-      lastUpdateDate: curso.lastUpdateDate 
+      creationDate: curso.creationDate,
+      lastUpdateDate: curso.lastUpdateDate
     };
 
     // Adicionar loading para o preview da imagem
@@ -69,7 +71,7 @@ openUpdateCourseModal(curso: any): void {
       }
     );
 
-    this.selectedImageFile = null; 
+    this.selectedImageFile = null;
     this.showUpdateCourseModal = true;
   } else {
     console.error("Erro: Nenhum curso selecionado.");
@@ -101,55 +103,55 @@ handleImageUpload(event: any): void {
     this.selectedImageFile = file;
     const reader = new FileReader();
     reader.onload = (e: any) => {
-      this.cursoEdit.imageUrl = e.target.result; 
+      this.cursoEdit.imageUrl = e.target.result;
     };
     reader.readAsDataURL(file);
   }
 }
 
 updateCourse(): void {
-  this.isLoading = true; 
+  this.isLoading = true;
 
   if (this.selectedImageFile) {
     this.fileService.uploadCourseImage(this.cursoEdit.id, this.selectedImageFile).subscribe(
       (imageUrl) => {
         this.cursoEdit.imageUrl = imageUrl;
-        this.updateCourseData(); 
+        this.updateCourseData();
       },
       (error) => {
         console.error('Erro ao fazer upload da imagem:', error);
-        alert('Erro ao enviar a imagem. Tente novamente.');
-        this.isLoading = false; 
+        this.toastr.error('Erro ao enviar a imagem. Tente novamente.', 'Erro');
+        this.isLoading = false;
       }
     );
   } else {
-    this.updateCourseData(); 
+    this.updateCourseData();
   }
 }
 
-  
+
   private updateCourseData(): void {
     const coursePayload = {
       name: this.cursoEdit.name,
       description: this.cursoEdit.description,
       imageUrl: this.cursoEdit.imageUrl
     };
-  
+
     this.courseService.updateCourseInstructor(this.cursoEdit.id, coursePayload).subscribe(
       () => {
         this.isLoading = false;
-        alert('Curso atualizado com sucesso!');
+        this.toastr.success('Curso atualizado com sucesso!', 'Sucesso');
         this.loadInstructorCourses();
         this.closeUpdateCourseModal();
       },
       (error) => {
-        this.isLoading = false; 
-        alert('Erro ao atualizar o curso.');
+        this.isLoading = false;
+        this.toastr.error('Erro ao atualizar o curso.', 'Erro');
         console.error(error);
       }
     );
   }
-  
+
 
   // Carregar cursos em que o instrutor está vinculado
   loadInstructorCourses(): void {
@@ -171,11 +173,11 @@ updateCourse(): void {
     if (curso && curso.id) {
       this.router.navigate(['/cadastro-secao'], { queryParams: { cursoId: curso.id } });
     } else {
-      alert('Erro ao redirecionar para o cadastro de seções.');
+      this.toastr.error('Erro ao redirecionar para o cadastro de seções.', 'Erro');
       console.error("Erro: curso.id está indefinido.");
     }
   }
-  
+
 
 // Fechar modal de edição de curso
 closeUpdateCourseModal(): void {
@@ -187,7 +189,7 @@ closeUpdateCourseModal(): void {
 // INSTRUCTOR DADOS
 
   loadInstructorData(): void {
-    const userId = localStorage.getItem('userId'); 
+    const userId = localStorage.getItem('userId');
     if (userId) {
       this.userService.getUserById(+userId).subscribe((user) => {
         this.instrutor = user;
@@ -211,7 +213,7 @@ closeUpdateCourseModal(): void {
 
   updateInstructor(): void {
     if (!this.instrutorEdit.name || !this.instrutorEdit.email) {
-      alert('Nome e Email são obrigatórios!');
+      this.toastr.warning('Nome e Email são obrigatórios!', 'Atenção');
       return;
     }
 
@@ -221,10 +223,10 @@ closeUpdateCourseModal(): void {
       email: this.instrutorEdit.email
     }).subscribe(() => {
       this.instrutor = { ...this.instrutorEdit };
-      alert('Dados do instrutor atualizados com sucesso!');
+      this.toastr.success('Dados do instrutor atualizados com sucesso!', 'Sucesso');
       this.closeEditInstructorModal();
     }, error => {
-      alert('Erro ao atualizar os dados.');
+      this.toastr.error('Erro ao atualizar os dados.', 'Erro');
       console.error(error);
     });
   }

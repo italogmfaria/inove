@@ -16,7 +16,7 @@ export class ContentService {
   getContents(courseId: number, sectionId: number): Observable<ContentDTO[]> {
     return this.http.get<ContentDTO[]>(`${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos`, { headers: this.getHeaders() });
   }
-  
+
 
   getContentById(courseId: number, sectionId: number, contentId: number): Observable<ContentDTO> {
     return this.http.get<ContentDTO>(`${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos/${contentId}`, { headers: this.getHeaders() });
@@ -36,48 +36,50 @@ export class ContentService {
       { headers: this.getHeaders() }
     );
   }
-  
+
   getFileType(fileName: string): Observable<{ contentType: string }> {
     return this.http.get<{ contentType: string }>(
       `${environment.apiBaseUrl}/cursos/secoes/conteudos/type/${fileName}`,
       { headers: this.getHeaders() }
     );
   }
-  
+
 
   deleteContent(courseId: number, sectionId: number, contentId: number): Observable<void> {
     const url = `${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos/${contentId}`;
     console.log('URL de exclusão:', url);
     return this.http.delete<void>(url, { headers: this.getAuthHeaders() });
   }
-  
+
   uploadContent(courseId: number, sectionId: number, file: File, contentData: ContentDTO): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('title', contentData.title);
     formData.append('description', contentData.description);
     formData.append('contentType', contentData.contentType);
-  
+
     return this.http.post(
       `${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos/upload`,
       formData,
-      { headers: this.getAuthHeaders(), responseType: 'text' } 
+      { headers: this.getAuthHeaders(), responseType: 'text' }
     );
   }
-  
+
 
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('authToken'); 
+    const token = localStorage.getItem('authToken');
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}` 
+      'Authorization': `Bearer ${token}`,
+      'ngrok-skip-browser-warning': 'true'
     });
   }
 
   private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('authToken'); 
+    const token = localStorage.getItem('authToken');
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}` 
+      'Authorization': `Bearer ${token}`,
+      'ngrok-skip-browser-warning': 'true'
     });
   }
 }

@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CursoDTO } from "../common/dto/CursoDTO";
 import { CourseService } from "../common/service/course.service";
 import { AuthService } from "../common/service/auth.service";
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-preview-curso',
@@ -17,7 +18,8 @@ export class PreviewCursoComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private courseService: CourseService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit() {
@@ -36,7 +38,7 @@ export class PreviewCursoComponent implements OnInit {
             ...instructor,
             name: instructor.name || 'Desconhecido'
           }));
-  
+
           course.feedBacks = course.feedBacks.map(feedback => ({
             ...feedback,
             student: {
@@ -44,7 +46,7 @@ export class PreviewCursoComponent implements OnInit {
               name: feedback.student?.name || 'Anônimo'
             }
           }));
-  
+
           this.course = course;
         }
       },
@@ -53,44 +55,44 @@ export class PreviewCursoComponent implements OnInit {
       }
     );
   }
-  
+
 
   subscribeAndNavigate(): void {
     if (!this.isLoggedIn) {
-      alert('Você precisa estar logado para se inscrever no curso.');
+      this.toastr.warning('Você precisa estar logado para se inscrever no curso.', 'Atenção');
       this.router.navigate(['/login']);
       return;
     }
-  
+
     if (!this.course) {
       console.error('Curso não encontrado.');
-      alert('Curso não encontrado.');
+      this.toastr.error('Curso não encontrado.', 'Erro');
       return;
     }
-  
+
     this.courseService.subscribeToCourse(this.course.id).subscribe({
       next: () => {
-        alert('Inscrição realizada com sucesso!');
-        this.navigateToCurso(); 
+        this.toastr.success('Inscrição realizada com sucesso!', 'Sucesso');
+        this.navigateToCurso();
       },
       error: (error) => {
         console.error('Erro ao se inscrever no curso:', error);
         if (error.message === 'Usuário não está logado.') {
-          alert('Você precisa estar logado para se inscrever no curso.');
+          this.toastr.warning('Você precisa estar logado para se inscrever no curso.', 'Atenção');
           this.router.navigate(['/login']);
         } else {
-          alert('Você já está inscrito neste curso.');
+          this.toastr.info('Você já está inscrito neste curso.', 'Informação');
           this.router.navigate([`/painel-curso/${this.course?.id}`]);
         }
       },
     });
-  }  
-  
+  }
+
   navigateToCurso() {
     if (this.isLoggedIn) {
       this.router.navigate([`/painel-curso/${this.course?.id}`]);
     } else {
-      alert('Você precisa estar logado para se inscrever no curso.');
+      this.toastr.warning('Você precisa estar logado para se inscrever no curso.', 'Atenção');
       this.router.navigate(['/login']);
     }
   }

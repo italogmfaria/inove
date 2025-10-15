@@ -8,6 +8,7 @@ import { SchoolService } from '../common/service/school.service';
 import { CourseService } from '../common/service/course.service';
 import { UserRole } from '../common/dto/UserRole';
 import { AuthService } from '../common/service/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-painel-admin',
@@ -48,7 +49,8 @@ export class PainelAdminComponent {
     private userService: UserService,
     private schoolService: SchoolService,
     private courseService: CourseService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService
   ) {
     this.loadAllData();
   }
@@ -66,7 +68,7 @@ export class PainelAdminComponent {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']); 
+    this.router.navigate(['/login']);
   }
 
   // Tabs
@@ -74,7 +76,7 @@ export class PainelAdminComponent {
     this.activeTab = tab;
   }
 
-  
+
 
   // Usuários
 
@@ -91,13 +93,13 @@ export class PainelAdminComponent {
 
   addUser(): void {
     if (!this.newUser.role) {
-        alert('Por favor, selecione o tipo de usuário.');
+        this.toastr.warning('Por favor, selecione o tipo de usuário.', 'Atenção');
         return;
     }
 
     const userPayload = {
         ...this.newUser,
-        role: this.newUser.role, 
+        role: this.newUser.role,
         school: this.newUser.role === 'STUDENT' ? { id: this.newUser.schoolId } : null,
     };
 
@@ -107,7 +109,7 @@ export class PainelAdminComponent {
     } else if (this.newUser.role === 'STUDENT') {
         addUserObservable = this.userService.addUser(userPayload);
     } else {
-        alert('Papel do usuário inválido.');
+        this.toastr.error('Papel do usuário inválido.', 'Erro');
         return;
     }
 
@@ -115,16 +117,16 @@ export class PainelAdminComponent {
         () => {
             this.getUsers();
             this.closeUserModals();
-            alert('Usuário adicionado com sucesso.');
+            this.toastr.success('Usuário adicionado com sucesso.', 'Sucesso');
         },
         (error) => {
             console.error('Erro ao adicionar usuário:', error);
-            alert('Erro ao adicionar usuário.');
+            this.toastr.error('Erro ao adicionar usuário.', 'Erro');
         }
     );
 }
 
-  
+
 
   toggleAddUserModal(): void {
     this.newUser = this.resetNewUser();
@@ -149,31 +151,31 @@ export class PainelAdminComponent {
 
   updateUser(): void {
     if (!this.selectedUser.name || !this.selectedUser.email) {
-      alert('Por favor, preencha os campos obrigatórios.');
+      this.toastr.warning('Por favor, preencha os campos obrigatórios.', 'Atenção');
       return;
     }
-  
+
     const userPayload = {
       id: this.selectedUser.id,
       name: this.selectedUser.name,
       email: this.selectedUser.email,
     };
-  
+
     this.userService.updateUser(userPayload).subscribe(
       () => {
-        this.getUsers(); 
+        this.getUsers();
         this.closeUserModals();
-        alert('Usuário atualizado com sucesso!');
+        this.toastr.success('Usuário atualizado com sucesso!', 'Sucesso');
       },
       (error) => {
         console.error('Erro ao atualizar usuário:', error);
-        alert('Erro ao atualizar usuário.');
+        this.toastr.error('Erro ao atualizar usuário.', 'Erro');
       }
     );
   }
-  
-  
-  
+
+
+
 
   toggleUpdateUserModal(user: UserDTO): void {
     this.selectedUser = { ...user };
@@ -199,56 +201,55 @@ export class PainelAdminComponent {
   }
 
   addNewSchool(): void {
-    if (!this.newSchool.name || !this.newSchool.email) {   //if (!this.newSchool.name || !this.newSchool.email || !this.newSchool.password) {
-
-      alert('Por favor, preencha todos os campos obrigatórios.');
+    if (!this.newSchool.name || !this.newSchool.email) {
+      this.toastr.warning('Por favor, preencha todos os campos obrigatórios.', 'Atenção');
       return;
     }
-  
+
     this.schoolService.addSchool(this.newSchool).subscribe(
       () => {
         this.getSchools();
         this.toggleNewSchoolModal();
-        alert('Escola cadastrada com sucesso!');
+        this.toastr.success('Escola cadastrada com sucesso!', 'Sucesso');
       },
       (error) => {
         console.error('Erro ao cadastrar escola:', error);
-        alert('Erro ao cadastrar escola.');
+        this.toastr.error('Erro ao cadastrar escola.', 'Erro');
       }
     );
   }
-  
+
   updateSchool(): void {
     if (!this.selectedSchool.name || !this.selectedSchool.city || !this.selectedSchool.federativeUnit) {
-      alert('Por favor, preencha todos os campos obrigatórios.');
+      this.toastr.warning('Por favor, preencha todos os campos obrigatórios.', 'Atenção');
       return;
     }
-  
+
     this.schoolService.updateSchool(this.selectedSchool).subscribe(
       () => {
         this.getSchools();
         this.closeSchoolModal();
-        alert('Escola atualizada com sucesso!');
+        this.toastr.success('Escola atualizada com sucesso!', 'Sucesso');
       },
       (error) => {
         console.error('Erro ao atualizar escola:', error);
-        alert('Erro ao atualizar escola.');
+        this.toastr.error('Erro ao atualizar escola.', 'Erro');
       }
     );
   }
-  
+
   resetNewSchool(): SchoolDTO {
-    return { 
-      id: 0, 
-      name: '', 
-      email: '', 
-      city: '', 
-      federativeUnit: '', 
-      // password: '', 
-      students: [] 
+    return {
+      id: 0,
+      name: '',
+      email: '',
+      city: '',
+      federativeUnit: '',
+      // password: '',
+      students: []
     };
   }
-  
+
   toggleNewSchoolModal(): void {
     this.newSchool = this.resetNewSchool();
     this.showNewSchoolModal = !this.showNewSchoolModal;
@@ -276,13 +277,13 @@ getCourses(): void {
     (response) => {
       this.cursos = response.map((course) => ({
         ...course,
-        description: course.description || 'Descrição não disponível', 
-        instructors: course.instructors || [], 
+        description: course.description || 'Descrição não disponível',
+        instructors: course.instructors || [],
       }));
     },
     (error) => {
       console.error('Erro ao buscar cursos:', error);
-      alert('Erro ao buscar cursos.');
+      this.toastr.error('Erro ao buscar cursos.', 'Erro');
     }
   );
 }
@@ -296,7 +297,7 @@ getCourses(): void {
 
   addCourse(): void {
     if (!this.newCourse.name || !this.newCourse.description || this.newCourse.instructors.length === 0) {
-      alert('Por favor, preencha todos os campos obrigatórios.');
+      this.toastr.warning('Por favor, preencha todos os campos obrigatórios.', 'Atenção');
       return;
     }
 
@@ -304,40 +305,40 @@ getCourses(): void {
       () => {
         this.getCourses();
         this.closeAddCourseModal();
-        alert('Curso adicionado com sucesso!');
+        this.toastr.success('Curso adicionado com sucesso!', 'Sucesso');
       },
       (error) => {
         console.error('Erro ao adicionar curso:', error);
-        alert('Erro ao adicionar curso.');
+        this.toastr.error('Erro ao adicionar curso.', 'Erro');
       }
     );
   }
 
   updateCourse(): void {
     if (!this.selectedCourse.name || !this.selectedCourse.description) {
-      alert('Por favor, preencha os campos obrigatórios.');
+      this.toastr.warning('Por favor, preencha os campos obrigatórios.', 'Atenção');
       return;
     }
-  
+
     const coursePayload = {
       name: this.selectedCourse.name,
       description: this.selectedCourse.description,
     };
-  
+
     this.courseService.updateCourse(this.selectedCourse.id, coursePayload).subscribe(
       () => {
-        this.getCourses(); 
+        this.getCourses();
         this.closeUpdateCourseModal();
-        alert('Curso atualizado com sucesso!');
+        this.toastr.success('Curso atualizado com sucesso!', 'Sucesso');
       },
       (error) => {
         console.error('Erro ao atualizar curso:', error);
-        alert('Erro ao atualizar curso.');
+        this.toastr.error('Erro ao atualizar curso.', 'Erro');
       }
     );
   }
-  
-  
+
+
 
   openAddCourseModal(): void {
     this.newCourse = this.resetNewCourse();

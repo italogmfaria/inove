@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {environment} from "../../../environments/environment";
 import {LoginResponseDTO} from "../dto/LoginResponseDTO";
@@ -14,7 +14,11 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<LoginResponseDTO> {
-    return this.http.post<LoginResponseDTO>(this.baseUrl, { email, password });
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
+    });
+    return this.http.post<LoginResponseDTO>(this.baseUrl, { email, password }, { headers });
   }
 
   saveTokens(token: string, refreshToken: string) {
@@ -29,12 +33,12 @@ export class AuthService {
       console.error('Erro: userId está indefinido ou nulo.');
     }
   }
-  
+
   getUserId(): number | null {
     const userId = localStorage.getItem('userId');
     return userId ? parseInt(userId, 10) : null;
   }
-  
+
 
   getToken(): string | null {
     return localStorage.getItem('authToken');
@@ -54,8 +58,8 @@ export class AuthService {
     const token = this.getToken();
     if (token) {
       try {
-        const payload = JSON.parse(atob(token.split('.')[1])); 
-        return payload.role; 
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.role;
       } catch (e) {
         console.error('Erro ao decodificar o token:', e);
         return null;
@@ -63,5 +67,5 @@ export class AuthService {
     }
     return null;
   }
-  
+
 }

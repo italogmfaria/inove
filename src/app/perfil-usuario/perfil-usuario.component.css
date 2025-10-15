@@ -34,14 +34,16 @@
 
 /* Back Button */
 .back-btn {
-  background-color: #f9a826;
+  background: linear-gradient(135deg, #f9a826 0%, #e5941e 100%);
   color: #fff;
-  padding: 10px 20px;
   border: none;
-  border-radius: 5px;
-  font-size: 1em;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);
   position: absolute;
   left: -100px;
   top: 0px;
@@ -49,7 +51,8 @@
 }
 
 .back-btn:hover {
-  background-color: #e5941e;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(249, 168, 38, 0.4);
 }
 
 .btn-orange {

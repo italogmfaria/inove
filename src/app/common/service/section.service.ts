@@ -17,7 +17,8 @@ export class SectionService {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'ngrok-skip-browser-warning': 'true'
     });
 
     return this.http.get<SectionDTO[]>(`${this.baseUrl}/${courseId}/secoes`, { headers });
@@ -27,7 +28,8 @@ export class SectionService {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'ngrok-skip-browser-warning': 'true'
     });
 
     return this.http.get<SectionDTO>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`, { headers });
@@ -37,7 +39,8 @@ export class SectionService {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'ngrok-skip-browser-warning': 'true'
     });
 
     return this.http.post<SectionDTO>(`${this.baseUrl}/${courseId}/secoes`, section, { headers });
@@ -47,25 +50,27 @@ export class SectionService {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'ngrok-skip-browser-warning': 'true'
     });
 
     return this.http.put<SectionDTO>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`, section, { headers });
   }
   deleteSection(courseId: number, sectionId: number): Observable<void> {
-    const token = localStorage.getItem('authToken'); 
-  
+    const token = localStorage.getItem('authToken');
+
     if (!token) {
       console.error('Token não encontrado! O usuário pode estar deslogado.');
       return throwError(() => new Error('Usuário não autenticado.'));
     }
-  
+
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}` 
+      'Authorization': `Bearer ${token}`,
+      'ngrok-skip-browser-warning': 'true'
     });
-  
+
     return this.http.delete<void>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`, { headers });
   }
-  
+
 }

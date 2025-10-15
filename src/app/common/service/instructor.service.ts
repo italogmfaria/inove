@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {environment} from '../../../environments/environment';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
 
 @Injectable({
@@ -14,7 +14,11 @@ export class InstructorService {
 
   createInstructor(instructorData: any): Observable<string> {
     const url = `${this.baseUrl}/instrutor`;
-    return this.http.post(url, instructorData, { responseType: 'text' });
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
+    });
+    return this.http.post(url, instructorData, { headers, responseType: 'text' });
   }
 
 }

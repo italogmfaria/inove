@@ -16,6 +16,7 @@ export class StudentService {
     const token = localStorage.getItem('authToken');
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
     });
 
     if (token) {
@@ -26,8 +27,8 @@ export class StudentService {
   }
 
   registerStudent(studentData: any): Observable<any> {
-    const headers = this.createHeaders(); 
+    const headers = this.createHeaders();
     return this.http.post(this.baseUrl, studentData, { headers });
   }
-  
+
 }

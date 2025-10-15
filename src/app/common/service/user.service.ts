@@ -18,18 +18,19 @@ export class UserService {
     if (!token) {
       console.error("Erro: Token de autenticação não encontrado.");
     }
-  
+
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
     });
-  
+
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
-  
+
     return headers;
   }
-  
+
 
   getUsers(): Observable<UserDTO[]> {
     const headers = this.createHeaders();
@@ -40,7 +41,7 @@ export class UserService {
     const headers = this.createHeaders();
     return this.http.get<UserDTO[]>(`${this.baseUrl}/instrutor`, { headers });
   }
-  
+
   addUser(user: UserDTO): Observable<void> {
     const headers = this.createHeaders();
     let endpoint: string;
@@ -70,7 +71,7 @@ export class UserService {
     const headers = this.createHeaders();
     return this.http.delete<void>(`${this.baseUrl}/${userId}/cursos/${courseId}`, { headers });
   }
-      
+
   updateUser(user: { id: number; name: string; email: string }): Observable<void> {
     const headers = this.createHeaders();
     return this.http.put<void>(`${this.baseUrl}/${user.id}`, user, { headers });

@@ -6,6 +6,7 @@ import { UserDTO } from '../common/dto/UserDTO';
 import { CourseService } from '../common/service/course.service';
 import { UserRole } from '../common/dto/UserRole';
 import { FileService } from '../common/service/file.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-perfil-usuario',
@@ -23,7 +24,8 @@ export class PerfilUsuarioComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private userService: UserService,
-    private fileService: FileService
+    private fileService: FileService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -81,30 +83,30 @@ export class PerfilUsuarioComponent implements OnInit {
   saveUserData(): void {
     this.userService.updateUser(this.user).subscribe(() => this.toggleEdit());
   }
-  
+
   navigateToCourse(courseId: number): void {
     this.router.navigate([`/painel-curso/${courseId}`]);
   }
-  
+
 
   removeCourse(courseId: number): void {
     const userId = Number(localStorage.getItem('userId'));
-  
+
     this.userService.removeUserCourse(userId, courseId).subscribe({
       next: () => {
         this.userCourses = this.userCourses.filter((course) => course.id !== courseId);
-        console.log(`Curso com ID ${courseId} removido com sucesso.`);
+        this.toastr.success(`Curso removido com sucesso.`, 'Sucesso');
       },
       error: (err) => {
         console.error("Erro ao remover curso:", err);
-        alert("Não foi possível remover o curso. Tente novamente.");
+        this.toastr.error("Não foi possível remover o curso. Tente novamente.", 'Erro');
       }
     });
   }
-  
+
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']); 
+    this.router.navigate(['/login']);
   }
 }

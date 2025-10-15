@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import {InstructorService} from "../common/service/instructor.service";
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-cadastro-instrutor',
@@ -17,7 +18,8 @@ export class CadastroInstrutorComponent {
 
   constructor(
     private router: Router,
-    private instructorService: InstructorService
+    private instructorService: InstructorService,
+    private toastr: ToastrService
   ) {}
 
   goBack() {
@@ -27,12 +29,12 @@ export class CadastroInstrutorComponent {
   submitForm() {
     this.instructorService.createInstructor(this.instructor).subscribe({
       next: (response) => {
-        alert(response);
+        this.toastr.success(response, 'Sucesso');
         this.router.navigate(['/aguarde']);
       },
       error: (error) => {
         console.error(error);
-        alert(error.error || 'Erro ao enviar solicitação.');
+        this.toastr.error(error.error || 'Erro ao enviar solicitação.', 'Erro');
       }
     });
   }
@@ -41,4 +43,3 @@ export class CadastroInstrutorComponent {
     this.router.navigate([path]);
   }
 }
-

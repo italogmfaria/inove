@@ -9,5 +9,4 @@ services:
       - NODE_ENV=development
     volumes:
       - ./src:/app/src
-    depends_on:
-      - inove-backend
+

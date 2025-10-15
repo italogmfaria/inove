@@ -10,6 +10,7 @@ import { SectionDTO } from '../common/dto/SectionDTO';
 import { ContentDTO } from '../common/dto/ContentDTO';
 import { FeedBackDTO } from '../common/dto/FeedBackDTO';
 import { AuthService } from '../common/service/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-painel-curso',
@@ -42,7 +43,8 @@ export class PainelCursoComponent implements OnInit {
     private contentService: ContentService,
     private fileService: FileService,
     private feedbackService: FeedbackService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +55,7 @@ export class PainelCursoComponent implements OnInit {
     } else {
       console.error('Erro: Usuário não autenticado.');
     }
-  
+
     const courseIdParam = this.route.snapshot.paramMap.get('courseId');
     if (courseIdParam) {
       this.courseId = +courseIdParam;
@@ -64,7 +66,7 @@ export class PainelCursoComponent implements OnInit {
       this.router.navigate(['/cursos']);
     }
   }
-  
+
 
   loadCourseDetails(): void {
     this.courseService.getCourseById(this.courseId).subscribe(
@@ -123,10 +125,10 @@ export class PainelCursoComponent implements OnInit {
     this.isContentLoading = true;
     this.currentContentUrl = this.fileService.getStreamUrl(content.fileName);
     this.currentContentType = content.contentType;
-  
+
     console.log("Conteúdo selecionado:", content);
     console.log("URL carregada:", this.currentContentUrl);
-    
+
     // Auto-hide loading after 2 seconds as fallback
     setTimeout(() => {
       this.isContentLoading = false;
@@ -162,7 +164,7 @@ export class PainelCursoComponent implements OnInit {
 
   addOrUpdateFeedback(): void {
     if (!this.newComment.trim()) return;
-    
+
     if (this.userFeedback) {
       // Editar feedback existente
       this.feedbackService.updateFeedback(this.userFeedback.id, this.userId, this.newComment).subscribe({
@@ -187,7 +189,20 @@ export class PainelCursoComponent implements OnInit {
   }
 
   deleteFeedback(): void {
-    if (this.userFeedback && confirm('Tem certeza que deseja excluir seu comentário?')) {
+    if (this.userFeedback) {
+      // Mostrar toast de confirmação usando um modal customizado ou diretamente deletar com feedback
+      this.toastr.info('Tem certeza que deseja excluir seu comentário?', 'Confirmação', {
+        timeOut: 5000,
+        closeButton: true,
+        tapToDismiss: false
+      }).onTap.subscribe(() => {
+        this.confirmDeleteFeedback();
+      });
+    }
+  }
+
+  private confirmDeleteFeedback(): void {
+    if (this.userFeedback) {
       this.feedbackService.deleteFeedback(this.userFeedback.id, this.userId).subscribe({
         next: () => {
           if (this.course) {
@@ -195,10 +210,11 @@ export class PainelCursoComponent implements OnInit {
           }
           this.userFeedback = undefined;
           this.resetCommentForm();
+          this.toastr.success('Comentário excluído com sucesso!', 'Sucesso');
         },
         error: (error) => {
           console.error('Erro ao excluir comentário:', error);
-          alert('Erro ao excluir comentário. Tente novamente.');
+          this.toastr.error('Erro ao excluir comentário. Tente novamente.', 'Erro');
         }
       });
     }

@@ -15,16 +15,23 @@ export class FileService {
   uploadCourseImage(courseId: number, file: File): Observable<string> {
     const formData = new FormData();
     formData.append('imagem', file);
-  
-    return this.http.post<{ imageUrl: string }>(`${this.baseUrl}/${courseId}/upload-imagem-curso`, formData)
+
+    const headers = new HttpHeaders({
+      'ngrok-skip-browser-warning': 'true'
+    });
+
+    return this.http.post<{ imageUrl: string }>(`${this.baseUrl}/${courseId}/upload-imagem-curso`, formData, { headers })
       .pipe(map(response => response.imageUrl));
   }
-  
+
   getStreamUrl(fileName: string): string {
     return `${environment.apiBaseUrl}/cursos/secoes/conteudos/stream/${fileName}`;
   }
-  
+
   getCourseImage(courseId: number): Observable<{ imageUrl: string }> {
-    return this.http.get<{ imageUrl: string }>(`${this.baseUrl}/${courseId}/preview-imagem`);
-  }  
+    const headers = new HttpHeaders({
+      'ngrok-skip-browser-warning': 'true'
+    });
+    return this.http.get<{ imageUrl: string }>(`${this.baseUrl}/${courseId}/preview-imagem`, { headers });
+  }
 }
