@@ -97,6 +97,7 @@ body {
 
 /* Back Button */
 .back-btn {
+    font-family: 'Inter', sans-serif !important;
     position: absolute;
     left: 20px;
     background: rgba(255, 255, 255, 0.2);
@@ -141,7 +142,7 @@ body {
     padding: 45px 40px;
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(50, 97, 168, 0.12);
-    max-width: 600px;
+    max-width: 500px;
     width: 100%;
     position: relative;
     animation: slideUp 0.6s ease-out;
@@ -192,25 +193,13 @@ body {
     font-size: 0.95em;
     color: #7f8c8d;
     font-weight: 400;
-}
-
-/* Form Row */
-.form-row {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
+    line-height: 1.5;
 }
 
 /* Input Groups */
 .input-group {
     position: relative;
     margin-bottom: 20px;
-    width: 100%;
-}
-
-.input-group.half-width {
-    flex: 1;
-    margin-bottom: 0;
 }
 
 .input-icon {
@@ -242,14 +231,98 @@ body {
     box-shadow: 0 0 0 4px rgba(50, 97, 168, 0.1);
 }
 
+.input-field:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .input-field::placeholder {
     color: #bdc3c7;
 }
 
+/* Password Field */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper .input-field {
+    padding-right: 50px;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #95a5a6;
+    font-size: 22px;
+    transition: color 0.3s ease;
+    z-index: 2;
+}
+
+.password-toggle-icon:hover {
+    color: #3261a8;
+}
+
+/* Password Requirements */
+.password-requirements {
+    background: linear-gradient(135deg, #f8f9fa, #e8ecef);
+    border: 2px solid #e8ecef;
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin: 20px 0;
+}
+
+.requirements-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 0.95em;
+    margin-bottom: 10px;
+}
+
+.requirements-title .material-icons {
+    font-size: 18px;
+    color: #3261a8;
+}
+
+.requirements-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.requirements-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #7f8c8d;
+    font-size: 0.9em;
+    margin: 8px 0;
+    transition: color 0.3s ease;
+}
+
+.requirements-list li .material-icons {
+    font-size: 18px;
+    color: #e74c3c;
+}
+
+.requirements-list li.valid {
+    color: #27ae60;
+}
+
+.requirements-list li.valid .material-icons {
+    color: #27ae60;
+}
+
 /* Submit Button */
 .submit-btn {
+    font-family: 'Inter', sans-serif !important;
     width: 100%;
-    font-family: 'Inter', sans-serif;
     padding: 16px 24px;
     background: linear-gradient(135deg, #f9a826 0%, #e5941e 100%);
     color: #fff;
@@ -267,18 +340,36 @@ body {
     margin-top: 25px;
 }
 
-.submit-btn:hover {
+.submit-btn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(249, 168, 38, 0.4);
     background: linear-gradient(135deg, #ffb84d 0%, #f9a826 100%);
 }
 
-.submit-btn:active {
+.submit-btn:active:not(:disabled) {
     transform: translateY(0);
+}
+
+.submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .submit-btn .material-icons {
     font-size: 20px;
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Divider */
@@ -348,15 +439,6 @@ body {
 
     .icon-wrapper .material-icons {
         font-size: 28px;
-    }
-
-    .form-row {
-        flex-direction: column;
-        gap: 0;
-    }
-
-    .input-group.half-width {
-        margin-bottom: 20px;
     }
 }
 

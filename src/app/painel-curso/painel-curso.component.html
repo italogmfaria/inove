@@ -1,100 +1,200 @@
-<div class="curso-container">
-  <!-- Top Bar -->
-  <header class="top-bar">
-    <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
-    <h1>{{ courseTitle }}</h1>
-    <button class="btn-orange" onclick="window.history.back();">Voltar</button>
-  </header>
-
-  <div class="content">
-    <!-- Área de visualização (Vídeo ou PDF) -->
-    <div class="viewer" *ngIf="currentContentUrl">  
-      
-      <!-- Loading Spinner -->
-      <div class="loading-spinner" *ngIf="isContentLoading">
-        <div class="spinner"></div>
-        <p>Carregando conteúdo...</p>
-      </div>
-      
-      <!-- Exibição de Vídeo -->
-      <video class="video-area" *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.mp4') && !isContentLoading" 
-             controls preload="metadata" (loadeddata)="onContentLoaded()">
-        <source [src]="currentContentUrl" type="video/mp4">
-        Seu navegador não suporta vídeos.
-      </video>
-
-      <!-- Exibição de PDF com ng2-pdf-viewer -->
-      <div class="pdf-container" *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.pdf') && !isContentLoading">
-        <pdf-viewer class="pdf-area"
-                    [src]="currentContentUrl"
-                    [render-text]="true">
-        </pdf-viewer>
-      </div>
+<body>
+    <!-- Background Decorations -->
+    <div class="background-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
     </div>
 
-    <!-- Painel de Conteúdo -->
-    <aside class="content-panel">
-      <h2>Conteúdos do curso:</h2>
-      <div class="section" *ngFor="let section of sections; let i = index">
-        <button class="section-toggle" (click)="toggleSection(i)">
-          {{ section.title }} <span [innerHTML]="section.isOpen ? '&#9660;' : '&#9658;'"></span>
-        </button>
-
-        <ul *ngIf="section.isOpen">
-          <li *ngFor="let content of section.contents">
-            <button class="content-btn" (click)="changeContent(content)">
-              <img
-                [src]="content.contentType === 'VIDEO' ? 'assets/flaticons/video.png' : 'assets/flaticons/pdf.png'"
-                alt="Content Type Icon"
-                class="content-icon"
-              />
-              {{ content.title }}
+    <div class="curso-container">
+        <!-- Header -->
+        <header class="header">
+            <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
+            <h1 class="course-header-title">{{ courseTitle }}</h1>
+            <button class="back-btn" (click)="goBack()">
+                <span class="material-icons">arrow_back</span>
+                Voltar
             </button>
-          </li>
-        </ul>
-      </div>
-    </aside>
-  </div>
+        </header>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <p><strong>Descrição:</strong> {{ description }}</p>
-    <p><strong>Instrutor:</strong> {{ instructor }}</p>
-    <p><strong>Data de Criação:</strong> {{ courseCreationDate | date: 'dd/MM/yyyy' }}</p>
-    <p><strong>Última Atualização:</strong> {{ lastUpdateDate | date: 'dd/MM/yyyy' }}</p>
-  </footer>
+        <!-- Main Content -->
+        <div class="main-wrapper">
+            <div class="content-grid">
+                <!-- Área de Visualização -->
+                <div class="viewer-card">
+                    <div class="viewer" *ngIf="currentContentUrl">
+                        <!-- Loading Spinner -->
+                        <div class="loading-spinner" *ngIf="isContentLoading">
+                            <div class="spinner"></div>
+                            <p>Carregando conteúdo...</p>
+                        </div>
 
-  <!-- Comments Section -->
-  <section class="comments-section">
-    <h2 class="comments-title">Comentários:</h2>
-    
-    <div class="comments-list">
-      <div class="comment" *ngFor="let feedback of course?.feedBacks">
-        <p class="comment-user"><strong>{{ feedback.student.name }}</strong></p>
-        <p class="comment-text">{{ feedback.comment }}</p>
-      </div>
-    </div>
-  
-    <div class="user-comment-section">
-      <div *ngIf="userFeedback && !isEditing" class="existing-comment">
-        <p><strong>Seu comentário:</strong> {{ userFeedback.comment }}</p>
-        <div class="comment-actions">
-          <button class="btn-blue" (click)="enableEdit()">Editar</button>
-          <button class="btn-red" (click)="deleteFeedback()">Excluir</button>
+                        <!-- Exibição de Vídeo -->
+                        <video class="video-area" *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.mp4') && !isContentLoading"
+                               controls preload="metadata" (loadeddata)="onContentLoaded()">
+                            <source [src]="currentContentUrl" type="video/mp4">
+                            Seu navegador não suporta vídeos.
+                        </video>
+
+                        <!-- Exibição de PDF -->
+                        <div class="pdf-container" *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.pdf') && !isContentLoading">
+                            <pdf-viewer class="pdf-area"
+                                        [src]="currentContentUrl"
+                                        [render-text]="true">
+                            </pdf-viewer>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div class="empty-viewer" *ngIf="!currentContentUrl">
+                        <span class="material-icons empty-icon">play_circle_outline</span>
+                        <h3>Nenhum conteúdo selecionado</h3>
+                        <p>Selecione um vídeo ou PDF na lista ao lado para começar</p>
+                    </div>
+                </div>
+
+                <!-- Painel de Conteúdo -->
+                <aside class="content-panel">
+                    <div class="panel-header">
+                        <span class="material-icons">list</span>
+                        <h2>Conteúdo do Curso</h2>
+                    </div>
+
+                    <div class="sections-list">
+                        <div class="section" *ngFor="let section of sections; let i = index">
+                            <button class="section-toggle" (click)="toggleSection(i)">
+                                <span class="material-icons section-icon">folder</span>
+                                <span class="section-title">{{ section.title }}</span>
+                                <span class="material-icons toggle-icon">{{ section.isOpen ? 'expand_less' : 'expand_more' }}</span>
+                            </button>
+
+                            <ul class="contents-list" *ngIf="section.isOpen">
+                                <li *ngFor="let content of section.contents" class="content-item">
+                                    <button class="content-btn" (click)="changeContent(content)">
+                                        <span class="material-icons content-type-icon">
+                                            {{ content.contentType === 'VIDEO' ? 'play_circle' : 'picture_as_pdf' }}
+                                        </span>
+                                        <span class="content-title">{{ content.title }}</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- Course Info Footer -->
+            <div class="course-info-card">
+                <div class="info-header">
+                    <span class="material-icons">info</span>
+                    <h3>Informações do Curso</h3>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="material-icons">description</span>
+                        <div>
+                            <strong>Descrição</strong>
+                            <p>{{ description }}</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="material-icons">person</span>
+                        <div>
+                            <strong>Instrutor</strong>
+                            <p>{{ instructor }}</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="material-icons">calendar_today</span>
+                        <div>
+                            <strong>Data de Criação</strong>
+                            <p>{{ courseCreationDate | date: 'dd/MM/yyyy' }}</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="material-icons">update</span>
+                        <div>
+                            <strong>Última Atualização</strong>
+                            <p>{{ lastUpdateDate | date: 'dd/MM/yyyy' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <section class="comments-section">
+                <div class="comments-header">
+                    <span class="material-icons">chat_bubble</span>
+                    <h2>Avaliações dos Alunos</h2>
+                    <span class="comments-count" *ngIf="course && course.feedBacks">({{ course.feedBacks.length }})</span>
+                </div>
+
+                <div class="comments-list" *ngIf="course && course.feedBacks && course.feedBacks.length > 0">
+                    <div class="comment" *ngFor="let feedback of course.feedBacks; let i = index"
+                         [style.animation-delay]="(i * 0.1) + 's'">
+                        <div class="comment-avatar">
+                            <span class="material-icons">account_circle</span>
+                        </div>
+                        <div class="comment-content">
+                            <p class="comment-user">{{ feedback.student.name }}</p>
+                            <p class="comment-text">{{ feedback.comment }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="empty-comments" *ngIf="!course || !course.feedBacks || course.feedBacks.length === 0">
+                    <span class="material-icons">rate_review</span>
+                    <p>Nenhuma avaliação ainda. Seja o primeiro!</p>
+                </div>
+
+                <!-- User Comment Section -->
+                <div class="user-comment-section">
+                    <div *ngIf="userFeedback && !isEditing" class="existing-comment">
+                        <div class="comment-header-edit">
+                            <span class="material-icons">edit_note</span>
+                            <strong>Seu comentário:</strong>
+                        </div>
+                        <p>{{ userFeedback.comment }}</p>
+                        <div class="comment-actions">
+                            <button class="btn-edit" (click)="enableEdit()">
+                                <span class="material-icons">edit</span>
+                                Editar
+                            </button>
+                            <button class="btn-delete" (click)="deleteFeedback()">
+                                <span class="material-icons">delete</span>
+                                Excluir
+                            </button>
+                        </div>
+                    </div>
+
+                    <div *ngIf="!userFeedback && !isEditing" class="add-comment-prompt">
+                        <button class="btn-add-comment" (click)="isEditing = true">
+                            <span class="material-icons">add_comment</span>
+                            Adicionar Comentário
+                        </button>
+                    </div>
+
+                    <div *ngIf="isEditing" class="comment-box">
+                        <div class="textarea-wrapper">
+                            <span class="material-icons textarea-icon">edit</span>
+                            <textarea [(ngModel)]="newComment"
+                                      placeholder="Escreva seu comentário sobre o curso..."
+                                      rows="4"></textarea>
+                        </div>
+                        <div class="comment-box-actions">
+                            <button class="btn-submit" (click)="addOrUpdateFeedback()" [disabled]="!newComment.trim()">
+                                <span class="material-icons">send</span>
+                                {{ userFeedback ? 'Atualizar' : 'Enviar' }}
+                            </button>
+                            <button class="btn-cancel" (click)="cancelEdit()">
+                                <span class="material-icons">close</span>
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
-      </div>
-  
-      <div *ngIf="!userFeedback && !isEditing">
-        <button class="btn-orange" (click)="isEditing = true">Inserir comentário</button>
-      </div>
-  
-      <div *ngIf="isEditing" class="comment-box">
-        <textarea [(ngModel)]="newComment" placeholder="Escreva seu comentário aqui..." rows="4"></textarea>
-        <div class="comment-box-actions">
-          <button class="btn-submit" (click)="addOrUpdateFeedback()" [disabled]="!newComment.trim()">{{ userFeedback ? 'Atualizar' : 'Enviar' }}</button>
-          <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
-        </div>
-      </div>
     </div>
-  </section>  
-</div>
+</body>
+

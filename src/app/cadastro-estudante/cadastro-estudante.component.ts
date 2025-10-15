@@ -23,6 +23,7 @@ export class CadastroEstudanteComponent implements OnInit {
 
   escolas: SchoolDTO[] = []; // Lista de escolas carregadas do back-end
   carregandoEscolas: boolean = false;
+  showPassword = false;
 
   constructor(
     private studentService: StudentService,
@@ -77,6 +78,10 @@ export class CadastroEstudanteComponent implements OnInit {
         this.toastr.error('Erro ao realizar o cadastro. Tente novamente.', 'Erro');
       }
     );
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   navigateTo(path: string) {

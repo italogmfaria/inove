@@ -1,12 +1,74 @@
 /* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Inter', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    background-color: #f4f4f9;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e8f0ff 0%, #f4f7fb 100%);
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Background Decorations */
+.background-decoration {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.08;
+}
+
+.circle-1 {
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(135deg, #3261a8, #4a7bc8);
+    top: -150px;
+    left: -150px;
+    animation: float 20s ease-in-out infinite;
+}
+
+.circle-2 {
+    width: 300px;
+    height: 300px;
+    background: linear-gradient(135deg, #f9a826, #ffb84d);
+    bottom: -100px;
+    right: -100px;
+    animation: float 15s ease-in-out infinite reverse;
+}
+
+.circle-3 {
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(135deg, #3261a8, #f9a826);
+    top: 50%;
+    right: 10%;
+    animation: float 18s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-30px) rotate(5deg);
+    }
 }
 
 /* Header */
@@ -14,67 +76,219 @@ body {
     position: fixed;
     top: 0;
     width: 100%;
-    background-color: #3261a8;
-    padding: 20px 0;
+    background: linear-gradient(135deg, #3261a8 0%, #2a5190 100%);
+    padding: 15px 0;
     display: flex;
     justify-content: center;
-    z-index: 10;
+    align-items: center;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(50, 97, 168, 0.15);
 }
 
 .logo {
-    height: 50px;
+    height: 45px;
     cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
+.logo:hover {
+    transform: scale(1.05);
+}
+
+/* Confirmation Container */
 .confirmation-container {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     padding: 20px;
-    margin-top: -200px; 
+    min-height: 100vh;
+    position: relative;
+    z-index: 10;
 }
 
+/* Confirmation Box */
 .confirmation-box {
-    background-color: #fff;
-    padding: 40px 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(50, 97, 168, 0.12);
     max-width: 500px;
     width: 100%;
     text-align: center;
+    position: relative;
+    animation: slideUp 0.6s ease-out;
 }
 
-/* Title */
-.confirmation-box h1 {
-    font-size: 1.8em;
-    color: #333;
-    margin-bottom: 15px;
-    font-weight: bold;
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* Message Text */
-.confirmation-box p {
-    font-size: 1em;
-    color: #555;
-    margin-bottom: 25px;
+/* Success Animation */
+.success-animation {
+    margin-bottom: 30px;
+    animation: scaleIn 0.5s ease-out;
 }
 
-/* Back Button */
-.back-btn {
-    background: linear-gradient(135deg, #f9a826 0%, #e5941e 100%);
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.checkmark-circle {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #4caf50, #66bb6a);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+    position: relative;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+    }
+    50% {
+        box-shadow: 0 8px 35px rgba(76, 175, 80, 0.5);
+    }
+}
+
+.checkmark {
     color: #fff;
-    padding: 1rem 2rem;
+    font-size: 48px;
+}
+
+/* Confirmation Content */
+.confirmation-content {
+    margin-bottom: 30px;
+}
+
+.confirmation-content h1 {
+    font-size: 2em;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.message {
+    font-size: 1.1em;
+    color: #4caf50;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.sub-message {
+    font-size: 0.95em;
+    color: #7f8c8d;
+    line-height: 1.6;
+}
+
+/* Info Box */
+.info-box {
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%);
+    border-left: 4px solid #4caf50;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+}
+
+.info-box .material-icons {
+    color: #4caf50;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.info-box p {
+    font-size: 0.9em;
+    color: #2c3e50;
+    margin: 0;
+}
+
+/* Back Button Primary */
+.back-btn-primary {
+    font-family: 'Inter', sans-serif !important;
+    width: 100%;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    color: #fff;
     border: none;
-    border-radius: 50px;
-    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    border-radius: 12px;
+    font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
-.back-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(249, 168, 38, 0.4);
+.back-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+    background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%);
 }
+
+.back-btn-primary:active {
+    transform: translateY(0);
+}
+
+.back-btn-primary .material-icons {
+    font-size: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .confirmation-box {
+        padding: 40px 30px;
+        margin: 20px;
+    }
+
+    .confirmation-content h1 {
+        font-size: 1.7em;
+    }
+
+    .checkmark-circle {
+        width: 80px;
+        height: 80px;
+    }
+
+    .checkmark {
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .confirmation-box {
+        padding: 35px 25px;
+    }
+
+    .info-box {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+

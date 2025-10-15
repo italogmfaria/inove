@@ -1,6 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../common/service/auth.service';
 import { UserService } from '../common/service/user.service';
@@ -13,7 +11,26 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './painel-instrutor.component.html',
   styleUrls: ['./painel-instrutor.component.css']
 })
-export class PainelInstrutorComponent {
+export class PainelInstrutorComponent implements OnInit {
+  activeTab: 'cursos' | 'dadosInstrutor' = 'cursos';
+  instrutor: any = {};
+  instrutorEdit: any = {};
+  showEditInstructorModal = false;
+  isLoading: boolean = false;
+  isLoadingImage: boolean = false;
+
+  cursos: any[] = [];
+
+  cursoEdit: any = { id: 0, name: '', description: '', imageUrl: '', creationDate: null, lastUpdateDate: null };
+  showUpdateCourseModal: boolean = false;
+  selectedImageFile: File | null = null;
+
+  // Propriedades para o modal de confirmação
+  showConfirmModal: boolean = false;
+  confirmationTitle: string = '';
+  confirmationMessage: string = '';
+  private pendingAction: (() => void) | null = null;
+
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -23,112 +40,76 @@ export class PainelInstrutorComponent {
     private toastr: ToastrService
   ) {}
 
-  activeTab: 'cursos' | 'dadosInstrutor' = 'cursos';
-  instrutor: any = {};
-  instrutorEdit: any = {};
-  showEditInstructorModal = false;
-  isLoading: boolean = false;
-
-  cursos: any[] = [];
-
-  cursoEdit: any = { id: 0, name: '', description: '', imageUrl: '', creationDate: null, lastUpdateDate: null };
-  showUpdateCourseModal: boolean = false;
-  selectedImageFile: File | null = null;
-
   ngOnInit(): void {
     this.loadInstructorData();
     this.loadInstructorCourses();
   }
 
+  // CURSOS
 
-  isLoadingImage: boolean = false; // Indica se a imagem do curso está carregando
+  openUpdateCourseModal(curso: any): void {
+    if (curso) {
+      this.cursoEdit = {
+        id: curso.id,
+        name: curso.name,
+        description: curso.description,
+        imageUrl: '',
+        creationDate: curso.creationDate,
+        lastUpdateDate: curso.lastUpdateDate
+      };
 
-// Abrir modal para editar curso e carregar a imagem da nuvem
-openUpdateCourseModal(curso: any): void {
-  if (curso) {
-    this.cursoEdit = {
-      id: curso.id,
-      name: curso.name,
-      description: curso.description,
-      imageUrl: '', // Inicializa vazio
-      creationDate: curso.creationDate,
-      lastUpdateDate: curso.lastUpdateDate
-    };
+      this.isLoadingImage = true;
 
-    // Adicionar loading para o preview da imagem
-    this.isLoadingImage = true;
+      this.fileService.getCourseImage(curso.id).subscribe(
+        (response) => {
+          this.cursoEdit.imageUrl = response.imageUrl;
+          this.isLoadingImage = false;
+          console.log("URL carregada diretamente para o S3:", this.cursoEdit.imageUrl);
+        },
+        (error) => {
+          console.error('Erro ao carregar a imagem do curso:', error);
+          this.isLoadingImage = false;
+        }
+      );
 
-    // Chamar o serviço para obter a URL da imagem do curso
-    this.fileService.getCourseImage(curso.id).subscribe(
-      (response) => {
-        this.cursoEdit.imageUrl = response.imageUrl;
-        this.isLoadingImage = false; // Desativar loading após carregar
-        console.log("URL carregada diretamente para o S3:", this.cursoEdit.imageUrl);
-      },
-      (error) => {
-        console.error('Erro ao carregar a imagem do curso:', error);
-        this.isLoadingImage = false;
-      }
-    );
-
-    this.selectedImageFile = null;
-    this.showUpdateCourseModal = true;
-  } else {
-    console.error("Erro: Nenhum curso selecionado.");
-  }
-}
-
-// Carregar imagem do curso ao abrir o modal
-loadCourseImage(courseId: number): void {
-  if (!courseId) return;
-
-  this.isLoadingImage = true; // Ativar o loading enquanto carrega a imagem
-
-  this.fileService.getCourseImage(courseId).subscribe(
-    (imageUrl) => {
-      this.cursoEdit.imageUrl = imageUrl;
-      this.isLoadingImage = false; // Desativar o loading quando a imagem carregar
-    },
-    (error) => {
-      console.error('Erro ao carregar a imagem do curso:', error);
-      this.isLoadingImage = false;
+      this.selectedImageFile = null;
+      this.showUpdateCourseModal = true;
+    } else {
+      console.error("Erro: Nenhum curso selecionado.");
     }
-  );
-}
-
-// Upload de imagem
-handleImageUpload(event: any): void {
-  const file = event.target.files[0];
-  if (file) {
-    this.selectedImageFile = file;
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      this.cursoEdit.imageUrl = e.target.result;
-    };
-    reader.readAsDataURL(file);
   }
-}
 
-updateCourse(): void {
-  this.isLoading = true;
-
-  if (this.selectedImageFile) {
-    this.fileService.uploadCourseImage(this.cursoEdit.id, this.selectedImageFile).subscribe(
-      (imageUrl) => {
-        this.cursoEdit.imageUrl = imageUrl;
-        this.updateCourseData();
-      },
-      (error) => {
-        console.error('Erro ao fazer upload da imagem:', error);
-        this.toastr.error('Erro ao enviar a imagem. Tente novamente.', 'Erro');
-        this.isLoading = false;
-      }
-    );
-  } else {
-    this.updateCourseData();
+  handleImageUpload(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedImageFile = file;
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.cursoEdit.imageUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
   }
-}
 
+  updateCourse(): void {
+    this.isLoading = true;
+
+    if (this.selectedImageFile) {
+      this.fileService.uploadCourseImage(this.cursoEdit.id, this.selectedImageFile).subscribe(
+        (imageUrl) => {
+          this.cursoEdit.imageUrl = imageUrl;
+          this.updateCourseData();
+        },
+        (error) => {
+          console.error('Erro ao fazer upload da imagem:', error);
+          this.toastr.error('Erro ao enviar a imagem. Tente novamente.', 'Erro');
+          this.isLoading = false;
+        }
+      );
+    } else {
+      this.updateCourseData();
+    }
+  }
 
   private updateCourseData(): void {
     const coursePayload = {
@@ -152,8 +133,6 @@ updateCourse(): void {
     );
   }
 
-
-  // Carregar cursos em que o instrutor está vinculado
   loadInstructorCourses(): void {
     const userId = localStorage.getItem('userId');
     if (userId) {
@@ -163,12 +142,6 @@ updateCourse(): void {
     }
   }
 
-  // Alternar a exibição de detalhes do curso
-  toggleCourseDetails(curso: any): void {
-    curso.expanded = !curso.expanded;
-  }
-
-  // Criar seções do curso
   createSections(curso: any): void {
     if (curso && curso.id) {
       this.router.navigate(['/cadastro-secao'], { queryParams: { cursoId: curso.id } });
@@ -178,15 +151,11 @@ updateCourse(): void {
     }
   }
 
+  closeUpdateCourseModal(): void {
+    this.showUpdateCourseModal = false;
+  }
 
-// Fechar modal de edição de curso
-closeUpdateCourseModal(): void {
-  this.showUpdateCourseModal = false;
-}
-
-
-
-// INSTRUCTOR DADOS
+  // INSTRUCTOR DADOS
 
   loadInstructorData(): void {
     const userId = localStorage.getItem('userId');
@@ -231,12 +200,35 @@ closeUpdateCourseModal(): void {
     });
   }
 
+  // LOGOUT E CONFIRMAÇÃO
+
   logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.confirmationTitle = 'Sair da Plataforma';
+    this.confirmationMessage = 'Tem certeza que deseja sair do painel do instrutor? Você precisará fazer login novamente para acessar.';
+
+    this.pendingAction = () => {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+    };
+
+    this.showConfirmModal = true;
+  }
+
+  confirmAction(): void {
+    if (this.pendingAction) {
+      this.pendingAction();
+      this.pendingAction = null;
+    }
+    this.showConfirmModal = false;
+  }
+
+  cancelConfirmation(): void {
+    this.pendingAction = null;
+    this.showConfirmModal = false;
   }
 
   navigateTo(path: string): void {
     this.router.navigate([path]);
   }
 }
+

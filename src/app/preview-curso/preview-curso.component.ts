@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CursoDTO } from "../common/dto/CursoDTO";
 import { CourseService } from "../common/service/course.service";
 import { AuthService } from "../common/service/auth.service";
+import { FileService } from '../common/service/file.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -13,12 +14,14 @@ import { ToastrService } from 'ngx-toastr';
 export class PreviewCursoComponent implements OnInit {
   course: CursoDTO | null = null;
   isLoggedIn: boolean = false;
+  courseImageUrl: string = 'assets/placeholder.png';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private courseService: CourseService,
     private authService: AuthService,
+    private fileService: FileService,
     private toastr: ToastrService
   ) {}
 
@@ -48,6 +51,7 @@ export class PreviewCursoComponent implements OnInit {
           }));
 
           this.course = course;
+          this.loadCourseImage(courseId);
         }
       },
       (error) => {
@@ -56,6 +60,17 @@ export class PreviewCursoComponent implements OnInit {
     );
   }
 
+  loadCourseImage(courseId: number): void {
+    this.fileService.getCourseImage(courseId).subscribe({
+      next: (response) => {
+        this.courseImageUrl = response.imageUrl;
+      },
+      error: (err) => {
+        console.error(`Erro ao carregar imagem do curso ${courseId}:`, err);
+        this.courseImageUrl = 'assets/placeholder.png';
+      },
+    });
+  }
 
   subscribeAndNavigate(): void {
     if (!this.isLoggedIn) {

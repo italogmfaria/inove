@@ -1,0 +1,103 @@
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <button class="back-btn" (click)="voltarLogin()">
+            <span class="material-icons">arrow_back</span>
+            Voltar
+        </button>
+        <img (click)="voltarLogin()" src="assets/logowhite.png" alt="Logotipo" class="logo">
+    </header>
+
+    <!-- Background Decorations -->
+    <div class="background-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+    </div>
+
+    <!-- Form Section -->
+    <section class="form-container">
+        <div class="form-box">
+            <div class="form-header">
+                <h1>Redefinir Senha</h1>
+                <p class="subtitle">Digite sua nova senha para concluir a recuperação</p>
+            </div>
+
+            <form (submit)="redefinirSenha(); $event.preventDefault()">
+                <div class="input-group">
+                    <span class="material-icons input-icon">lock</span>
+                    <div class="password-wrapper">
+                        <input
+                            [type]="showPassword ? 'text' : 'password'"
+                            placeholder="Digite sua nova senha"
+                            name="password"
+                            [(ngModel)]="newPassword"
+                            required
+                            [disabled]="isLoading"
+                            class="input-field">
+                        <span class="material-icons password-toggle-icon" (click)="togglePasswordVisibility()">
+                            {{ showPassword ? 'visibility_off' : 'visibility' }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons input-icon">lock_outline</span>
+                    <div class="password-wrapper">
+                        <input
+                            [type]="showConfirmPassword ? 'text' : 'password'"
+                            placeholder="Confirme sua nova senha"
+                            name="confirmPassword"
+                            [(ngModel)]="confirmPassword"
+                            required
+                            [disabled]="isLoading"
+                            class="input-field">
+                        <span class="material-icons password-toggle-icon" (click)="toggleConfirmPasswordVisibility()">
+                            {{ showConfirmPassword ? 'visibility_off' : 'visibility' }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="password-requirements">
+                    <p class="requirements-title">
+                        <span class="material-icons">info</span>
+                        Sua senha deve conter:
+                    </p>
+                    <ul class="requirements-list">
+                        <li [class.valid]="passwordValidation.minLength">
+                            <span class="material-icons">{{ passwordValidation.minLength ? 'check_circle' : 'cancel' }}</span>
+                            Mínimo de 8 caracteres
+                        </li>
+                        <li [class.valid]="passwordValidation.hasUpper">
+                            <span class="material-icons">{{ passwordValidation.hasUpper ? 'check_circle' : 'cancel' }}</span>
+                            Uma letra maiúscula
+                        </li>
+                        <li [class.valid]="passwordValidation.hasLower">
+                            <span class="material-icons">{{ passwordValidation.hasLower ? 'check_circle' : 'cancel' }}</span>
+                            Uma letra minúscula
+                        </li>
+                        <li [class.valid]="passwordValidation.hasNumber">
+                            <span class="material-icons">{{ passwordValidation.hasNumber ? 'check_circle' : 'cancel' }}</span>
+                            Um número
+                        </li>
+                    </ul>
+                </div>
+
+                <button type="submit" class="submit-btn" [disabled]="isLoading || !isFormValid()">
+                    <span class="material-icons" *ngIf="!isLoading"></span>
+                    <span class="material-icons spinning" *ngIf="isLoading">sync</span>
+                    <span>{{ isLoading ? 'Redefinindo...' : 'Redefinir Senha' }}</span>
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>ou</span>
+            </div>
+
+            <p class="footer-text">
+                Lembrou sua senha?
+                <a (click)="voltarLogin()" class="btn-link">Voltar para o login</a>
+            </p>
+        </div>
+    </section>
+</body>

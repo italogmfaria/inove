@@ -20,6 +20,13 @@ export class PerfilUsuarioComponent implements OnInit {
   userCourses: any[] = [];
   courseImages: { [key: number]: string } = {};
 
+  // Propriedades para o modal de confirmação
+  showConfirmModal: boolean = false;
+  confirmationType: 'delete' | 'logout' = 'delete';
+  confirmationTitle: string = '';
+  confirmationMessage: string = '';
+  private pendingAction: (() => void) | null = null;
+
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -71,7 +78,6 @@ export class PerfilUsuarioComponent implements OnInit {
     this.router.navigate([path]);
   }
 
-
   switchPanel(panel: 'cursos' | 'dados'): void {
     this.activePanel = panel;
   }
@@ -81,32 +87,81 @@ export class PerfilUsuarioComponent implements OnInit {
   }
 
   saveUserData(): void {
-    this.userService.updateUser(this.user).subscribe(() => this.toggleEdit());
-  }
-
-  navigateToCourse(courseId: number): void {
-    this.router.navigate([`/painel-curso/${courseId}`]);
-  }
-
-
-  removeCourse(courseId: number): void {
-    const userId = Number(localStorage.getItem('userId'));
-
-    this.userService.removeUserCourse(userId, courseId).subscribe({
+    const userName = this.user.name;
+    this.userService.updateUser(this.user).subscribe({
       next: () => {
-        this.userCourses = this.userCourses.filter((course) => course.id !== courseId);
-        this.toastr.success(`Curso removido com sucesso.`, 'Sucesso');
+        this.toggleEdit();
+        this.toastr.success(`Seus dados foram atualizados com sucesso, ${userName}!`, 'Dados Salvos');
       },
       error: (err) => {
-        console.error("Erro ao remover curso:", err);
-        this.toastr.error("Não foi possível remover o curso. Tente novamente.", 'Erro');
+        console.error("Erro ao salvar dados:", err);
+        this.toastr.error("Não foi possível salvar seus dados. Tente novamente.", 'Erro');
       }
     });
   }
 
+  navigateToCourse(courseId: number): void {
+    this.router.navigate(['/painel-curso', courseId]);
+  }
+
+  removeCourse(courseId: number): void {
+    // Buscar o nome do curso para exibir na confirmação
+    const course = this.userCourses.find(c => c.id === courseId);
+    const courseName = course ? course.name : 'este curso';
+
+    // Configurar o modal de confirmação
+    this.confirmationType = 'delete';
+    this.confirmationTitle = 'Remover Curso';
+    this.confirmationMessage = `Tem certeza que deseja remover "${courseName}" dos seus cursos? Esta ação não pode ser desfeita.`;
+
+    // Armazenar a ação pendente
+    this.pendingAction = () => {
+      const userId = Number(localStorage.getItem('userId'));
+
+      this.userService.removeUserCourse(userId, courseId).subscribe({
+        next: () => {
+          this.userCourses = this.userCourses.filter((course) => course.id !== courseId);
+          this.toastr.success(`O curso "${courseName}" foi removido com sucesso!`, 'Curso Removido');
+        },
+        error: (err) => {
+          console.error("Erro ao remover curso:", err);
+          this.toastr.error("Não foi possível remover o curso. Tente novamente.", 'Erro');
+        }
+      });
+    };
+
+    // Exibir o modal
+    this.showConfirmModal = true;
+  }
 
   logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    // Configurar o modal de confirmação
+    this.confirmationType = 'logout';
+    this.confirmationTitle = 'Sair da Plataforma';
+    this.confirmationMessage = 'Tem certeza que deseja sair? Você precisará fazer login novamente para acessar a plataforma.';
+
+    // Armazenar a ação pendente
+    this.pendingAction = () => {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+    };
+
+    // Exibir o modal
+    this.showConfirmModal = true;
+  }
+
+  // Confirmar a ação pendente
+  confirmAction(): void {
+    if (this.pendingAction) {
+      this.pendingAction();
+      this.pendingAction = null;
+    }
+    this.showConfirmModal = false;
+  }
+
+  // Cancelar a confirmação
+  cancelConfirmation(): void {
+    this.pendingAction = null;
+    this.showConfirmModal = false;
   }
 }

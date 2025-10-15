@@ -1,23 +1,35 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmação de Cadastro</title>
-</head>
 <body>
     <!-- Header Section -->
     <header class="header">
         <img (click)="navigateTo('/inicial')" src="assets/logowhite.png" alt="Logotipo INOVE" class="logo">
     </header>
 
+    <!-- Background Decorations -->
+    <div class="background-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+    </div>
+
     <!-- Confirmation Message Section -->
     <section class="confirmation-container">
         <div class="confirmation-box">
-            <h1>Aguarde</h1>
-            <p>Entraremos em contato pelo e-mail. Agradecemos pela sua atenção!</p>
-            <button class="back-btn" (click)="navigateTo('/inicial')">Voltar</button>
+            <div class="success-animation">
+                <div class="checkmark-circle">
+                    <span class="material-icons checkmark">check_circle</span>
+                </div>
+            </div>
+
+            <div class="confirmation-content">
+                <h1>Aguarde!</h1>
+                <p class="message">Sua solicitação foi enviada com sucesso!</p>
+                <p class="sub-message">Entraremos em contato pelo e-mail em breve. Agradecemos pela sua atenção!</p>
+            </div>
+
+            <button class="back-btn-primary" (click)="navigateTo('/inicial')">
+                <span>Voltar ao Início</span>
+            </button>
         </div>
     </section>
 </body>
-</html>
+

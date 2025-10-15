@@ -1,39 +1,73 @@
 <body>
     <!-- Header Section -->
     <header class="header">
-        <button class="back-btn" onclick="window.history.back();">Voltar</button>
+        <button class="back-btn" (click)="navigateTo('/inicial')">
+            <span class="material-icons">arrow_back</span>
+            Voltar
+        </button>
         <img (click)="navigateTo('/inicial')" src="assets/logowhite.png" alt="Logotipo INOVE" class="logo">
     </header>
 
+    <!-- Background Decorations -->
+    <div class="background-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+    </div>
+
     <!-- Main Content -->
-    <main class="content">
-        <h1>Como acessar a plataforma:</h1>
+    <main class="content-container">
+        <div class="content-box">
+            <div class="content-header">
+                <h1>Como acessar a plataforma</h1>
+                <p class="subtitle">Tudo o que você precisa saber para começar</p>
+            </div>
 
-        <section class="help-section">
-            <h2>Como acessar?</h2>
-            <p>Para acessar nossa plataforma, é necessário que você esteja vinculado a uma escola cadastrada no sistema. Caso sua escola já esteja registrada, você poderá se cadastrar e associar-se a ela. Se sua escola ainda não estiver no sistema, será necessário cadastrá-la primeiro para que seu vínculo possa ser estabelecido.</p>
-        </section>
-        
-        <section class="help-section">
-            <h2>Por que usar nossa plataforma?</h2>
-            <p>Com a nossa plataforma, você terá acesso a ferramentas inovadoras e cursos exclusivos que o ajudarão a aplicar metodologias pedagógicas mais modernas e eficazes. Essa é uma oportunidade única para aprimorar suas práticas educacionais e oferecer uma experiência de aprendizagem mais dinâmica aos seus alunos.</p>
-        </section>
-        
-        <section class="help-section">
-            <h2>Acesso à plataforma</h2>
-            <p>Após realizar seu cadastro e vincular-se a uma escola cadastrada, você terá acesso a todos os cursos e recursos educacionais disponíveis. Caso sua escola ainda não esteja no sistema, será necessário cadastrá-la antes de prosseguir.</p>
-        </section>
-        
-        <section class="help-section">
-            <h2>Termos e Condições</h2>
-            <p>Ao utilizar a plataforma, você concorda em seguir nossas diretrizes de uso e ética educacional, garantindo um ambiente respeitoso e colaborativo para todos os participantes. O uso responsável da plataforma é essencial para manter a qualidade da experiência de aprendizado.</p>
-        </section>
-        
+            <section class="info-section">
+                <div class="info-card">
+                    <div class="card-icon">
+                        <span class="material-icons">help_outline</span>
+                    </div>
+                    <h2>Como acessar?</h2>
+                    <p>Para acessar nossa plataforma, é necessário que você esteja vinculado a uma escola cadastrada no sistema. Caso sua escola já esteja registrada, você poderá se cadastrar e associar-se a ela. Se sua escola ainda não estiver no sistema, será necessário cadastrá-la primeiro para que seu vínculo possa ser estabelecido.</p>
+                </div>
 
-        <!-- Registration Section -->
-        <section class="registration-section">
-            <h2>Formulário para Cadastro:</h2>
-            <button class="register-btn" (click)="navigateTo('/cadastro-estudante')">Cadastrar</button>
-        </section>
+                <div class="info-card">
+                    <div class="card-icon">
+                        <span class="material-icons">lightbulb</span>
+                    </div>
+                    <h2>Por que usar nossa plataforma?</h2>
+                    <p>Com a nossa plataforma, você terá acesso a ferramentas inovadoras e cursos exclusivos que o ajudarão a aplicar metodologias pedagógicas mais modernas e eficazes. Essa é uma oportunidade única para aprimorar suas práticas educacionais e oferecer uma experiência de aprendizagem mais dinâmica aos seus alunos.</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-icon">
+                        <span class="material-icons">vpn_key</span>
+                    </div>
+                    <h2>Acesso à plataforma</h2>
+                    <p>Após realizar seu cadastro e vincular-se a uma escola cadastrada, você terá acesso a todos os cursos e recursos educacionais disponíveis. Caso sua escola ainda não esteja no sistema, será necessário cadastrá-la antes de prosseguir.</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-icon">
+                        <span class="material-icons">description</span>
+                    </div>
+                    <h2>Termos e Condições</h2>
+                    <p>Ao utilizar a plataforma, você concorda em seguir nossas diretrizes de uso e ética educacional, garantindo um ambiente respeitoso e colaborativo para todos os participantes. O uso responsável da plataforma é essencial para manter a qualidade da experiência de aprendizado.</p>
+                </div>
+            </section>
+
+            <!-- Registration Section -->
+            <div class="cta-section">
+                <div class="cta-content">
+                    <span class="material-icons">how_to_reg</span>
+                    <p class="cta-text">Pronto para começar? Cadastre-se agora e tenha acesso a todos os recursos!</p>
+                </div>
+                <button class="cta-btn" (click)="navigateTo('/cadastro-estudante')">
+                    <span>Cadastrar Agora</span>
+                </button>
+            </div>
+        </div>
     </main>
 </body>
+

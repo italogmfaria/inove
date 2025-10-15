@@ -28,6 +28,20 @@ export class PainelAdminComponent {
   showAddCourseModal: boolean = false;
   showUpdateCourseModal: boolean = false;
   originalCourseTitle: string = '';
+  showPassword: boolean = false;
+  selectedInstructorId: number | null = null;
+
+  // Propriedades para o modal de confirmação
+  showConfirmModal: boolean = false;
+  confirmationType: 'delete' | 'logout' = 'delete';
+  confirmationTitle: string = '';
+  confirmationMessage: string = '';
+  private pendingAction: (() => void) | null = null;
+
+  // Search filters
+  searchUsuarios: string = '';
+  searchEscolas: string = '';
+  searchCursos: string = '';
 
   newUser: UserDTO = this.resetNewUser();
   selectedUser: UserDTO = this.resetNewUser();
@@ -67,8 +81,19 @@ export class PainelAdminComponent {
   }
 
   logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    // Configurar o modal de confirmação
+    this.confirmationType = 'logout';
+    this.confirmationTitle = 'Sair da Plataforma';
+    this.confirmationMessage = 'Tem certeza que deseja sair do painel administrativo? Você precisará fazer login novamente para acessar.';
+
+    // Armazenar a ação pendente
+    this.pendingAction = () => {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+    };
+
+    // Exibir o modal
+    this.showConfirmModal = true;
   }
 
   // Tabs
@@ -141,7 +166,7 @@ export class PainelAdminComponent {
       cpf: '',
       password: '',
       role: UserRole.STUDENT,
-      schoolId: 0,
+      schoolId: null as any,
       birthDate: new Date(),
       adminCourses: [],
       instructorCourses: [],
@@ -187,10 +212,12 @@ export class PainelAdminComponent {
     this.newUser = this.resetNewUser();
     this.showAddUserModal = false;
     this.showUpdateUserModal = false;
+    this.showPassword = false;
   }
 
-
-
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 
 // Escola
 
@@ -347,6 +374,7 @@ getCourses(): void {
 
   closeAddCourseModal(): void {
     this.newCourse = this.resetNewCourse();
+    this.selectedInstructorId = null;
     this.showAddCourseModal = false;
   }
 
@@ -373,5 +401,160 @@ getCourses(): void {
       feedBacks: [],
       sections: [],
     };
+  }
+
+  addInstructorToCourse(): void {
+    if (!this.selectedInstructorId) {
+      this.toastr.warning('Por favor, selecione um instrutor.', 'Atenção');
+      return;
+    }
+
+    const instructor = this.instrutores.find(i => i.id === this.selectedInstructorId);
+    if (!instructor) {
+      this.toastr.error('Instrutor não encontrado.', 'Erro');
+      return;
+    }
+
+    // Verificar se o instrutor já foi adicionado
+    const alreadyAdded = this.newCourse.instructors.some(i => i.id === instructor.id);
+    if (alreadyAdded) {
+      this.toastr.warning('Este instrutor já foi adicionado.', 'Atenção');
+      return;
+    }
+
+    this.newCourse.instructors.push(instructor);
+    this.selectedInstructorId = null;
+    this.toastr.success('Instrutor adicionado!', 'Sucesso');
+  }
+
+  removeInstructor(index: number): void {
+    this.newCourse.instructors.splice(index, 1);
+    this.toastr.info('Instrutor removido.', 'Info');
+  }
+
+  // Delete methods
+  deleteUser(user: UserDTO): void {
+    // Configurar o modal de confirmação
+    this.confirmationType = 'delete';
+    this.confirmationTitle = 'Remover Usuário';
+    this.confirmationMessage = `Tem certeza que deseja remover o usuário "${user.name}"? Esta ação não pode ser desfeita e pode afetar dados relacionados.`;
+
+    // Armazenar a ação pendente
+    this.pendingAction = () => {
+      this.userService.deleteUser(user.id).subscribe(
+        () => {
+          this.getUsers();
+          this.toastr.success(`O usuário "${user.name}" foi removido com sucesso!`, 'Usuário Removido');
+        },
+        (error) => {
+          console.error('Erro ao remover usuário:', error);
+          this.toastr.error('Erro ao remover usuário. Verifique se o usuário possui vínculos.', 'Erro');
+        }
+      );
+    };
+
+    // Exibir o modal
+    this.showConfirmModal = true;
+  }
+
+  deleteSchool(school: SchoolDTO): void {
+    // Configurar o modal de confirmação
+    this.confirmationType = 'delete';
+    this.confirmationTitle = 'Remover Escola';
+    this.confirmationMessage = `Tem certeza que deseja remover a escola "${school.name}"? Esta ação não pode ser desfeita e pode afetar estudantes vinculados.`;
+
+    // Armazenar a ação pendente
+    this.pendingAction = () => {
+      this.schoolService.deleteSchool(school.id).subscribe(
+        () => {
+          this.getSchools();
+          this.toastr.success(`A escola "${school.name}" foi removida com sucesso!`, 'Escola Removida');
+        },
+        (error) => {
+          console.error('Erro ao remover escola:', error);
+          this.toastr.error('Erro ao remover escola. Verifique se a escola possui estudantes vinculados.', 'Erro');
+        }
+      );
+    };
+
+    // Exibir o modal
+    this.showConfirmModal = true;
+  }
+
+  deleteCourse(course: CursoDTO): void {
+    // Configurar o modal de confirmação
+    this.confirmationType = 'delete';
+    this.confirmationTitle = 'Remover Curso';
+    this.confirmationMessage = `Tem certeza que deseja remover o curso "${course.name}"? Esta ação não pode ser desfeita e afetará todos os alunos inscritos.`;
+
+    // Armazenar a ação pendente
+    this.pendingAction = () => {
+      this.courseService.deleteCourse(course.id).subscribe(
+        () => {
+          this.getCourses();
+          this.toastr.success(`O curso "${course.name}" foi removido com sucesso!`, 'Curso Removido');
+        },
+        (error) => {
+          console.error('Erro ao remover curso:', error);
+          this.toastr.error('Erro ao remover curso. Verifique se o curso possui alunos inscritos.', 'Erro');
+        }
+      );
+    };
+
+    // Exibir o modal
+    this.showConfirmModal = true;
+  }
+
+  // Confirmar a ação pendente
+  confirmAction(): void {
+    if (this.pendingAction) {
+      this.pendingAction();
+      this.pendingAction = null;
+    }
+    this.showConfirmModal = false;
+  }
+
+  // Cancelar a confirmação
+  cancelConfirmation(): void {
+    this.pendingAction = null;
+    this.showConfirmModal = false;
+  }
+
+  // Filter methods
+  get filteredUsuarios(): UserDTO[] {
+    if (!this.searchUsuarios.trim()) {
+      return this.usuarios;
+    }
+    const search = this.searchUsuarios.toLowerCase();
+    return this.usuarios.filter(user =>
+      user.name.toLowerCase().includes(search) ||
+      user.email.toLowerCase().includes(search) ||
+      user.role.toLowerCase().includes(search)
+    );
+  }
+
+  get filteredEscolas(): SchoolDTO[] {
+    if (!this.searchEscolas.trim()) {
+      return this.escolas;
+    }
+    const search = this.searchEscolas.toLowerCase();
+    return this.escolas.filter(escola =>
+      escola.name.toLowerCase().includes(search) ||
+      escola.email.toLowerCase().includes(search) ||
+      escola.city.toLowerCase().includes(search) ||
+      escola.federativeUnit.toLowerCase().includes(search)
+    );
+  }
+
+  get filteredCursos(): CursoDTO[] {
+    if (!this.searchCursos.trim()) {
+      return this.cursos;
+    }
+    const search = this.searchCursos.toLowerCase();
+    return this.cursos.filter(curso =>
+      curso.name.toLowerCase().includes(search) ||
+      curso.description.toLowerCase().includes(search) ||
+      curso.instructors.some(inst => inst.name.toLowerCase().includes(search))
+    );
   }
 }

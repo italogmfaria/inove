@@ -1,35 +1,80 @@
 <body>
-  <header class="header">
-      <div class="header-left">
-          <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
-      </div>
-      <div class="header-center">
-          <button class="search-btn">
-              <img src="assets/flaticons/search-icon.png" alt="Ícone de lupa">
-          </button>
-          <input 
-            type="text" 
-            class="search-bar" 
-            placeholder="Pesquisar Cursos"
-            [(ngModel)]="searchQuery" 
-            (input)="filterCourses()">
-      </div>
-      <div class="header-right">
-          <button class="profile-btn" (click)="navigateToPerfil()">Perfil</button>
-      </div>
-  </header>
-
-  <main class="gallery">
-    <!-- Mensagem de erro -->
-    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
-
-    <!-- Exibição dos cursos -->
-    <div *ngIf="!errorMessage && filteredCursos.length > 0" class="course-row">
-      <div *ngFor="let curso of filteredCursos" class="course-card">
-        <img [src]="curso.imageUrl || 'assets/placeholder.png'" alt="Imagem do Curso" class="course-image" (click)="navigateToPreview(curso.id)"/>        
-        <h3 class="course-title">{{ curso.name }}</h3>
-        <p class="course-description">{{ curso.description }}</p>
-      </div>
+    <!-- Background Decorations -->
+    <div class="background-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
     </div>
-  </main>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
+        </div>
+        <div class="header-center">
+            <span class="material-icons search-icon">search</span>
+            <input
+                type="text"
+                class="search-bar"
+                placeholder="Pesquisar Cursos"
+                [(ngModel)]="searchQuery"
+                (input)="filterCourses()">
+        </div>
+        <div class="header-right">
+            <button class="profile-btn" (click)="navigateToPerfil()">
+                <span class="material-icons">person</span>
+                <span>Perfil</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="gallery">
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="error-container">
+            <span class="material-icons error-icon">error_outline</span>
+            <p class="error-message">{{ errorMessage }}</p>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!errorMessage && filteredCursos.length === 0 && searchQuery" class="empty-state">
+            <span class="material-icons empty-icon">search_off</span>
+            <h3>Nenhum curso encontrado</h3>
+            <p>Tente ajustar sua pesquisa ou explorar outros cursos disponíveis</p>
+        </div>
+
+        <!-- Courses Grid -->
+        <div *ngIf="!errorMessage && filteredCursos.length > 0" class="courses-section">
+            <div class="section-header">
+                <h2>{{ searchQuery ? 'Resultados da pesquisa' : 'Cursos disponíveis' }}</h2>
+                <p class="course-count">{{ filteredCursos.length }} {{ filteredCursos.length === 1 ? 'curso disponível' : 'cursos disponíveis' }}</p>
+            </div>
+
+            <div class="course-grid">
+                <div *ngFor="let curso of filteredCursos" class="course-card" (click)="navigateToPreview(curso.id)">
+                    <div class="course-image-container">
+                        <img [src]="curso.imageUrl || 'assets/placeholder.png'" alt="{{ curso.name }}" class="course-image"/>
+                        <div class="course-overlay">
+                            <span class="material-icons">visibility</span>
+                            <span>Ver Curso</span>
+                        </div>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">{{ curso.name }}</h3>
+                        <p class="course-description">{{ curso.description }}</p>
+                        <div class="course-footer">
+                            <span class="course-badge">
+                                <span class="material-icons">school</span>
+                                Curso
+                            </span>
+                            <span class="course-arrow">
+                                <span class="material-icons">arrow_forward</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 </body>
+

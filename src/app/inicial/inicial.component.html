@@ -1,85 +1,227 @@
+<body>
     <div class="inicial-container">
 
-    <!-- Header Section -->
-    <header class="header">
-        <img src="assets/logowhite.png" alt="Inove Logo" class="logo">
-        <button id="top" class="login-btn" (click)="navigateTo('/login')">Login</button>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <h1>Melhore seu conhecimento com a tecnologia</h1>
-        <button class="cta-btn" (click)="navigateTo('/cursos')">Veja os cursos</button>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
-        <div class="feature-grid">
-            <div class="feature-item">
-                <img src="assets/flaticons/icone2.png" alt="Ícone Plataforma Gratuita">
-                <p>Plataforma Gratuita</p>
-            </div>
-            <div class="feature-item">
-                <img src="assets/flaticons/icone3.png" alt="Ícone Apoio ao Conhecimento">
-                <p>Apoio ao Conhecimento</p>
-            </div>
-            <div class="feature-item">
-                <img src="assets/flaticons/icone4.png" alt="Ícone Melhor Aprendizado">
-                <p>Melhor Aprendizado</p>
-            </div>
+        <!-- Background Decorations -->
+        <div class="background-decoration">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
         </div>
-        <div class="feature-text">
-            <h2>Juntamente com sua escola</h2>
-            <p>Comece sua jornada de aprendizado hoje! Entre em contato com a gente a partir de sua instituição de ensino.</p>
-            <a class="btn-link" (click)="navigateTo('/acesso-plataforma')">Mais sobre →</a>
-        </div>
-    </section>
 
-    <!-- Image Gallery Section -->
-    <section class="gallery">
-        <img src="assets/mask-group.png" alt="Galeria de Imagens">
-    </section>
+        <!-- Header Section -->
+        <header class="header">
+            <img src="assets/logowhite.png" alt="Inove Logo" class="logo">
+            <nav class="nav-menu">
+                <a (click)="navigateTo('/cursos')" class="nav-link">
+                    Cursos
+                </a>
+                <a (click)="navigateTo('/seja-instrutor')" class="nav-link">
+                    Seja Instrutor
+                </a>
+                <button class="login-btn" (click)="navigateTo('/login')">
+                    Login
+                </button>
+            </nav>
+        </header>
 
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <h2>Como acessar a plataforma?</h2>
-        <button class="cta-btn-secondary" (click)="navigateTo('/acesso-plataforma')">Clique aqui!</button><br>
-    </section>
-<br><br>
-    <!-- About Section -->
-    <section class="about">
-        <h2>Sobre o projeto:</h2>
-        <p>
-            O projeto <strong>INOVE</strong> foi desenvolvido para transformar o cenário educacional, oferecendo uma plataforma inovadora destinada a professores. Nosso objetivo é capacitar educadores com ferramentas e metodologias modernas, promovendo um ensino mais dinâmico, inclusivo e personalizado.
-        </p>
-        <p>
-            Além de democratizar o acesso à educação, a plataforma <strong>INOVE</strong> busca melhorar a experiência de ensino e aprendizado, com foco na interação colaborativa e significativa entre alunos e professores. Nossa missão é proporcionar um ambiente onde a inovação impulsiona a educação.
-        </p>
-        <br>
-        <button class="cta-btn-secondary" (click)="navigateTo('/seja-instrutor')">Deseja ser um instrutor?</button>
-    </section>
-
-
-    <!-- Footer Section -->
-    <footer class="footer">
-        <img src="assets/logowhite.png" alt="Inove Logo" class="footer-logo">
-        <div class="footer-links">
-            <div>
-                <h3>Suporte</h3>
-                <ul>
-                    <li><a class="btn-link" href="tel:+5564992827727">Telefone</a></li>
-                    <li><a class="btn-link" href="mailto:inoveprojetointegrador@gmail.com">E-Mail</a></li>
-                </ul>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="material-icons">stars</span>
+                    <span>Plataforma Gratuita</span>
+                </div>
+                <h1>Melhore seu conhecimento com a tecnologia</h1>
+                <p class="hero-subtitle">Transforme sua carreira educacional com cursos inovadores e metodologias modernas</p>
+                <div class="hero-buttons">
+                    <button class="cta-btn primary" (click)="navigateTo('/acesso-plataforma')">
+                        <span class="material-icons">rocket_launch</span>
+                        <span>Começar Agora</span>
+                    </button>
+                    <button class="cta-btn secondary" (click)="navigateTo('/cursos')">
+                      <span class="material-icons">school</span>
+                      <span>Ver Cursos</span>
+                    </button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="material-icons">school</span>
+                        <div>
+                            <strong>Cursos</strong>
+                            <p>Inovadores</p>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="material-icons">people</span>
+                        <div>
+                            <strong>Professores</strong>
+                            <p>Capacitados</p>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="material-icons">workspace_premium</span>
+                        <div>
+                            <strong>100%</strong>
+                            <p>Gratuito</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div>
-                <h3>Dúvidas</h3>
-                <ul>
-                    <li><a class="btn-link" (click)="navigateTo('/cursos')">Ver Cursos</a></li>
-                    <li><a class="btn-link" (click)="navigateTo('/acesso-plataforma')">Acesso à Plataforma</a></li>
-                    <li><a class="btn-link" (click)="navigateTo('/seja-instrutor')">Seja um Instrutor</a></li>
-                </ul>
-            </div>
-        </div>
-          </footer>
+        </section>
 
-</div>
+        <!-- Features Section -->
+        <section class="features">
+            <div class="section-header">
+                <span class="section-badge">Por que escolher o INOVE?</span>
+                <h2>Recursos que fazem a diferença</h2>
+                <p class="section-subtitle">Ferramentas projetadas para impulsionar sua jornada educacional</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="assets/flaticons/icone2.png" alt="Ícone Plataforma Gratuita">
+                    </div>
+                    <h3>Plataforma Gratuita</h3>
+                    <p>Acesso completo a todos os recursos educacionais sem nenhum custo. Democratizando a educação de qualidade.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="assets/flaticons/icone3.png" alt="Ícone Apoio ao Conhecimento">
+                    </div>
+                    <h3>Apoio ao Conhecimento</h3>
+                    <p>Suporte contínuo e materiais didáticos de alta qualidade para acelerar seu aprendizado.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="assets/flaticons/icone4.png" alt="Ícone Melhor Aprendizado">
+                    </div>
+                    <h3>Melhor Aprendizado</h3>
+                    <p>Metodologias modernas e interativas que garantem uma experiência educacional superior.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- School Partnership Section -->
+        <section class="partnership">
+            <div class="partnership-content">
+                <div class="partnership-text">
+                    <span class="section-badge">Juntos pela educação</span>
+                    <h2>Juntamente com sua escola</h2>
+                    <p>Comece sua jornada de aprendizado hoje! Entre em contato conosco através de sua instituição de ensino e descubra como podemos transformar a experiência educacional juntos.</p>
+                    <button class="cta-btn-link" (click)="navigateTo('/acesso-plataforma')">
+                        <span>Saiba mais sobre acesso</span>
+                        <span class="material-icons">arrow_forward</span>
+                    </button>
+                </div>
+                <div class="partnership-image">
+                    <img src="assets/mask-group.png" alt="Educação colaborativa">
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="cta-content">
+                <span class="material-icons cta-icon">help_outline</span>
+                <h2>Como acessar a plataforma?</h2>
+                <p>Descubra o passo a passo para fazer parte da nossa comunidade educacional</p>
+                <button class="cta-btn-accent" (click)="navigateTo('/acesso-plataforma')">
+                    <span>Clique aqui!</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about">
+            <div class="about-content">
+                <div class="about-header">
+                    <span class="section-badge">Nossa Missão</span>
+                    <h2>Sobre o projeto INOVE</h2>
+                </div>
+                <div class="about-grid">
+                    <div class="about-card">
+                        <div class="about-icon">
+                            <span class="material-icons">lightbulb</span>
+                        </div>
+                        <p>
+                            O projeto <strong>INOVE</strong> foi desenvolvido para transformar o cenário educacional, oferecendo uma plataforma inovadora destinada a professores. Nosso objetivo é capacitar educadores com ferramentas e metodologias modernas, promovendo um ensino mais dinâmico, inclusivo e personalizado.
+                        </p>
+                    </div>
+                    <div class="about-card">
+                        <div class="about-icon">
+                            <span class="material-icons">groups</span>
+                        </div>
+                        <p>
+                            Além de democratizar o acesso à educação, a plataforma <strong>INOVE</strong> busca melhorar a experiência de ensino e aprendizado, com foco na interação colaborativa e significativa entre alunos e professores. Nossa missão é proporcionar um ambiente onde a inovação impulsiona a educação.
+                        </p>
+                    </div>
+                </div>
+                <div class="about-cta">
+                    <button class="cta-btn-secondary" (click)="navigateTo('/seja-instrutor')">
+                        <span>Deseja ser um instrutor?</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="assets/logowhite.png" alt="Inove Logo" class="footer-logo">
+                    <p>Transformando a educação através da inovação e tecnologia</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Suporte</h3>
+                        <ul>
+                            <li>
+                                <a class="footer-link" href="tel:+5564992827727">
+                                    <span class="material-icons">phone</span>
+                                    <span>Telefone</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="footer-link" href="mailto:inoveprojetointegrador@gmail.com">
+                                    <span class="material-icons">email</span>
+                                    <span>E-Mail</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Navegação</h3>
+                        <ul>
+                            <li>
+                                <a class="footer-link" (click)="navigateTo('/cursos')">
+                                    <span class="material-icons">school</span>
+                                    <span>Ver Cursos</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="footer-link" (click)="navigateTo('/acesso-plataforma')">
+                                    <span class="material-icons">login</span>
+                                    <span>Acesso à Plataforma</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="footer-link" (click)="navigateTo('/seja-instrutor')">
+                                    <span class="material-icons">person_add</span>
+                                    <span>Seja um Instrutor</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 INOVE. Todos os direitos reservados.</p>
+            </div>
+        </footer>
+
+    </div>
+</body>
+

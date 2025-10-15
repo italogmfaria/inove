@@ -10,8 +10,9 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  email = '';
-  password = '';
+  email: string = '';
+  password: string = '';
+  showPassword: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -19,7 +20,15 @@ export class LoginComponent {
     private toastr: ToastrService
   ) {}
 
-  onLogin(event: Event) {
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
+  }
+
+  onLogin(event: Event): void {
     event.preventDefault();
 
     this.authService.login(this.email, this.password).subscribe({
@@ -58,9 +67,5 @@ export class LoginComponent {
         this.toastr.error('Credenciais inválidas', 'Erro');
       },
     });
-  }
-
-  navigateTo(route: string) {
-    this.router.navigate([route]);
   }
 }

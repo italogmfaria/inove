@@ -25,6 +25,12 @@ export class CadastroSecaoComponent implements OnInit {
   selectedFile?: File;
   ContentType = ContentType;
 
+  // Propriedades para o modal de confirmação
+  showConfirmModal: boolean = false;
+  confirmationTitle: string = '';
+  confirmationMessage: string = '';
+  private pendingAction: (() => void) | null = null;
+
   constructor(
     private sectionService: SectionService,
     private contentService: ContentService,
@@ -53,17 +59,33 @@ export class CadastroSecaoComponent implements OnInit {
     });
   }
 
+  confirmarExclusao(sectionId: number): void {
+    this.showConfirmModal = true;
+    this.confirmationTitle = 'Confirmação de Exclusão';
+    this.confirmationMessage = 'Clique novamente para confirmar a exclusão desta seção.';
+    this.pendingAction = () => this.excluirSecao(sectionId);
+  }
+
   excluirSecao(sectionId: number): void {
-    this.toastr.info('Clique novamente para confirmar a exclusão desta seção', 'Confirmação', {
-      timeOut: 5000,
-      closeButton: true,
-      tapToDismiss: false
-    }).onTap.subscribe(() => {
-      this.sectionService.deleteSection(this.courseId, sectionId).subscribe(() => {
-        this.secoes = this.secoes.filter(secao => secao.id !== sectionId);
-        this.toastr.success('Seção excluída com sucesso!', 'Sucesso');
+    // Configurar o modal de confirmação
+    this.confirmationTitle = 'Remover Seção';
+    this.confirmationMessage = 'Tem certeza que deseja remover esta seção? Esta ação não pode ser desfeita e todos os conteúdos vinculados serão perdidos.';
+
+    // Armazenar a ação pendente
+    this.pendingAction = () => {
+      this.sectionService.deleteSection(this.courseId, sectionId).subscribe({
+        next: () => {
+          this.secoes = this.secoes.filter(secao => secao.id !== sectionId);
+          this.toastr.success('Seção excluída com sucesso!', 'Sucesso');
+        },
+        error: () => {
+          this.toastr.error('Erro ao excluir a seção.', 'Erro');
+        }
       });
-    });
+    };
+
+    // Exibir o modal
+    this.showConfirmModal = true;
   }
 
   editarSecao(secao: SectionDTO): void {
@@ -123,11 +145,22 @@ export class CadastroSecaoComponent implements OnInit {
 
 
   excluirConteudo(contentId: number, sectionId: number): void {
-    this.toastr.info('Clique novamente para confirmar a exclusão deste conteúdo', 'Confirmação', {
-      timeOut: 5000,
-      closeButton: true,
-      tapToDismiss: false
-    }).onTap.subscribe(() => {
+    // Buscar o nome do conteúdo para exibir na confirmação
+    let contentName = 'este conteúdo';
+    const section = this.secoes.find(s => s.id === sectionId);
+    if (section && section.contents) {
+      const content = section.contents.find(c => c.id === contentId);
+      if (content) {
+        contentName = `"${content.title}"`;
+      }
+    }
+
+    // Configurar o modal de confirmação
+    this.confirmationTitle = 'Remover Conteúdo';
+    this.confirmationMessage = `Tem certeza que deseja remover ${contentName}? Esta ação não pode ser desfeita.`;
+
+    // Armazenar a ação pendente
+    this.pendingAction = () => {
       console.log('Tentando excluir conteúdo:', { courseId: this.courseId, sectionId, contentId });
       this.contentService.deleteContent(this.courseId, sectionId, contentId).subscribe({
         next: (response) => {
@@ -143,7 +176,10 @@ export class CadastroSecaoComponent implements OnInit {
           this.toastr.error(`Erro ao excluir o conteúdo: ${err.message || err.error?.message || 'Erro desconhecido'}`, 'Erro');
         }
       });
-    });
+    };
+
+    // Exibir o modal
+    this.showConfirmModal = true;
   }
 
   editarConteudo(conteudo: ContentDTO): void {
@@ -234,5 +270,23 @@ export class CadastroSecaoComponent implements OnInit {
 
   closeContentModal(): void {
     this.showContentModal = false;
+  }
+
+  // Métodos de confirmação
+  confirmAction(): void {
+    if (this.pendingAction) {
+      this.pendingAction();
+      this.pendingAction = null;
+    }
+    this.showConfirmModal = false;
+  }
+
+  cancelConfirmation(): void {
+    this.pendingAction = null;
+    this.showConfirmModal = false;
+  }
+
+  goBack(): void {
+    window.history.back();
   }
 }

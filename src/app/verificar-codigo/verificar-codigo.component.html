@@ -1,0 +1,81 @@
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <button class="back-btn" (click)="voltarEmail()">
+            <span class="material-icons">arrow_back</span>
+            Voltar
+        </button>
+        <img (click)="voltarEmail()" src="assets/logowhite.png" alt="Logotipo" class="logo">
+    </header>
+
+    <!-- Background Decorations -->
+    <div class="background-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+    </div>
+
+    <!-- Form Section -->
+    <section class="form-container">
+        <div class="form-box">
+            <div class="form-header">
+                <h1>Verificar Código</h1>
+                <p class="subtitle">Digite o código de 6 dígitos enviado para<br><strong>{{ email }}</strong></p>
+            </div>
+
+            <form (submit)="verificarCodigo(); $event.preventDefault()">
+                <div class="code-inputs">
+                    <input
+                        *ngFor="let digit of [0,1,2,3,4,5]; let i = index"
+                        #codeInput
+                        type="text"
+                        inputmode="numeric"
+                        maxlength="1"
+                        autocomplete="off"
+                        (input)="onInput($event, i)"
+                        (keydown)="onKeyDown($event, i)"
+                        (paste)="onPaste($event, i)"
+                        (focus)="onFocus($event)"
+                        [disabled]="isLoading"
+                        class="code-input"
+                    />
+                </div>
+
+                <button type="submit" class="submit-btn" [disabled]="isLoading || !isCodeComplete()">
+                    <span class="material-icons" *ngIf="!isLoading"></span>
+                    <span class="material-icons spinning" *ngIf="isLoading">sync</span>
+                    <span>{{ isLoading ? 'Verificando...' : 'Verificar Código' }}</span>
+                </button>
+            </form>
+
+            <div class="resend-section">
+                <p *ngIf="!canResend" class="countdown-text">
+                    Reenviar código em <strong>{{ countdown }}s</strong>
+                </p>
+                <button
+                    type="button"
+                    *ngIf="canResend"
+                    class="btn-resend"
+                    (click)="reenviarCodigo()"
+                    [disabled]="isResending">
+                    <span class="material-icons">refresh</span>
+                    <span>{{ isResending ? 'Reenviando...' : 'Reenviar Código' }}</span>
+                </button>
+            </div>
+
+            <div class="divider">
+                <span>ou</span>
+            </div>
+
+            <p class="footer-text">
+                E-mail incorreto?
+                <a (click)="voltarEmail()" class="btn-link">Alterar e-mail</a>
+            </p>
+
+            <div class="help-text">
+                <span class="material-icons">info</span>
+                <span>Verifique sua caixa de spam caso não tenha recebido</span>
+            </div>
+        </div>
+    </section>
+</body>

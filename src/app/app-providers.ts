@@ -7,6 +7,7 @@ import {SchoolService} from "./common/service/school.service";
 import {StudentService} from "./common/service/student.service";
 import {InstructorService} from "./common/service/instructor.service";
 import { FeedbackService } from "./common/service/feedback.service";
+import { provideNgxMask } from 'ngx-mask';
 
 export const APP_PROVIDERS = [
   LoginService,
@@ -17,5 +18,6 @@ export const APP_PROVIDERS = [
   SchoolService,
   StudentService,
   InstructorService,
-  FeedbackService
+  FeedbackService,
+  provideNgxMask()
 ];

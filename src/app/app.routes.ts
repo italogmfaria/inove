@@ -14,11 +14,17 @@ import { AcessoPlataformaComponent } from "./acesso-plataforma/acesso-plataforma
 import { AguardeComponent } from "./aguarde/aguarde.component";
 import { SejaInstrutorComponent } from "./seja-instrutor/seja-instrutor.component";
 import { CadastroEstudanteComponent } from './cadastro-estudante/cadastro-estudante.component';
+import { EsqueciSenhaComponent } from './esqueci-senha/esqueci-senha.component';
+import { VerificarCodigoComponent } from './verificar-codigo/verificar-codigo.component';
+import { RedefinirSenhaComponent } from './redefinir-senha/redefinir-senha.component';
 import { AuthGuard } from './common/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: InicialComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'esqueci-senha', component: EsqueciSenhaComponent },
+  { path: 'verificar-codigo', component: VerificarCodigoComponent },
+  { path: 'redefinir-senha', component: RedefinirSenhaComponent },
   { path: 'cursos', component: CursosComponent },
   { path: 'perfil-usuario', component: PerfilUsuarioComponent, canActivate: [AuthGuard], data: { role: 'STUDENT' } },
   { path: 'painel-curso/:courseId', component: PainelCursoComponent, canActivate: [AuthGuard], data: { role: 'STUDENT' } },
@@ -34,4 +40,3 @@ export const routes: Routes = [
   { path: 'seja-instrutor', component: SejaInstrutorComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
-

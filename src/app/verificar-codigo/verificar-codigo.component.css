@@ -97,6 +97,7 @@ body {
 
 /* Back Button */
 .back-btn {
+    font-family: 'Inter', sans-serif !important;
     position: absolute;
     left: 20px;
     background: rgba(255, 255, 255, 0.2);
@@ -141,7 +142,7 @@ body {
     padding: 45px 40px;
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(50, 97, 168, 0.12);
-    max-width: 600px;
+    max-width: 500px;
     width: 100%;
     position: relative;
     animation: slideUp 0.6s ease-out;
@@ -192,64 +193,48 @@ body {
     font-size: 0.95em;
     color: #7f8c8d;
     font-weight: 400;
+    line-height: 1.5;
 }
 
-/* Form Row */
-.form-row {
+/* Code Inputs */
+.code-inputs {
     display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
+    gap: 12px;
+    justify-content: center;
+    margin: 30px 0;
 }
 
-/* Input Groups */
-.input-group {
-    position: relative;
-    margin-bottom: 20px;
-    width: 100%;
-}
-
-.input-group.half-width {
-    flex: 1;
-    margin-bottom: 0;
-}
-
-.input-icon {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #95a5a6;
-    font-size: 22px;
-    z-index: 2;
-}
-
-.input-field {
-    width: 100%;
-    padding: 15px 15px 15px 50px;
+.code-input {
+    width: 55px;
+    height: 60px;
+    text-align: center;
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #2c3e50;
     border: 2px solid #e8ecef;
     border-radius: 12px;
-    font-size: 1em;
-    color: #2c3e50;
     background-color: #f8f9fa;
     transition: all 0.3s ease;
     font-family: 'Inter', sans-serif;
 }
 
-.input-field:focus {
+.code-input:focus {
     outline: none;
     border-color: #3261a8;
     background-color: #fff;
     box-shadow: 0 0 0 4px rgba(50, 97, 168, 0.1);
+    transform: scale(1.05);
 }
 
-.input-field::placeholder {
-    color: #bdc3c7;
+.code-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 /* Submit Button */
 .submit-btn {
+    font-family: 'Inter', sans-serif !important;
     width: 100%;
-    font-family: 'Inter', sans-serif;
     padding: 16px 24px;
     background: linear-gradient(135deg, #f9a826 0%, #e5941e 100%);
     color: #fff;
@@ -267,18 +252,84 @@ body {
     margin-top: 25px;
 }
 
-.submit-btn:hover {
+.submit-btn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(249, 168, 38, 0.4);
     background: linear-gradient(135deg, #ffb84d 0%, #f9a826 100%);
 }
 
-.submit-btn:active {
+.submit-btn:active:not(:disabled) {
     transform: translateY(0);
+}
+
+.submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .submit-btn .material-icons {
     font-size: 20px;
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Resend Section */
+.resend-section {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.countdown-text {
+    color: #7f8c8d;
+    font-size: 0.95em;
+}
+
+.countdown-text strong {
+    color: #3261a8;
+    font-weight: 700;
+}
+
+.btn-resend {
+    font-family: 'Inter', sans-serif !important;
+    background: transparent;
+    color: #3261a8;
+    border: 2px solid #3261a8;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-resend:hover:not(:disabled) {
+    background: #3261a8;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(50, 97, 168, 0.3);
+}
+
+.btn-resend:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-resend .material-icons {
+    font-size: 18px;
 }
 
 /* Divider */
@@ -325,6 +376,22 @@ body {
     border-bottom-color: #f9a826;
 }
 
+/* Help Text */
+.help-text {
+    text-align: center;
+    font-size: 0.85em;
+    color: #95a5a6;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.help-text .material-icons {
+    font-size: 18px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .form-box {
@@ -350,13 +417,14 @@ body {
         font-size: 28px;
     }
 
-    .form-row {
-        flex-direction: column;
-        gap: 0;
+    .code-input {
+        width: 45px;
+        height: 50px;
+        font-size: 1.5em;
     }
 
-    .input-group.half-width {
-        margin-bottom: 20px;
+    .code-inputs {
+        gap: 8px;
     }
 }
 
@@ -373,5 +441,14 @@ body {
         height: 40px;
         justify-content: center;
     }
-}
 
+    .code-input {
+        width: 40px;
+        height: 48px;
+        font-size: 1.3em;
+    }
+
+    .code-inputs {
+        gap: 6px;
+    }
+}

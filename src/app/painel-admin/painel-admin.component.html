@@ -1,245 +1,501 @@
 <div class="admin-container">
+  <!-- Background Decorations -->
+  <div class="background-decoration">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+  </div>
+
   <!-- Header -->
   <header class="header">
     <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
-    <button class="btn-logout" (click)="logout()">Sair</button>
+    <h1 class="admin-title">Painel Administrativo</h1>
+    <button class="btn-logout" (click)="logout()">
+      <span class="material-icons">logout</span>
+      <span>Sair</span>
+    </button>
   </header>
 
   <div class="content">
     <!-- Side Menu -->
     <aside class="side-menu">
-      <h2>Administração</h2>
+      <h2>
+        <span class="material-icons">admin_panel_settings</span>
+        Administração
+      </h2>
       <ul>
-        <li (click)="changeTab('usuarios')" [class.active]="activeTab === 'usuarios'">Usuários</li>
-        <li (click)="changeTab('escolas')" [class.active]="activeTab === 'escolas'">Escolas</li>
-        <li (click)="changeTab('cursos')" [class.active]="activeTab === 'cursos'">Cursos</li>
+        <li (click)="changeTab('usuarios')" [class.active]="activeTab === 'usuarios'">
+          <span class="material-icons">group</span>
+          <span>Usuários</span>
+        </li>
+        <li (click)="changeTab('escolas')" [class.active]="activeTab === 'escolas'">
+          <span class="material-icons">school</span>
+          <span>Escolas</span>
+        </li>
+        <li (click)="changeTab('cursos')" [class.active]="activeTab === 'cursos'">
+          <span class="material-icons">menu_book</span>
+          <span>Cursos</span>
+        </li>
       </ul>
     </aside>
 
     <!-- Main Content -->
     <main class="main-content">
       <!-- Usuários Tab -->
-      <div *ngIf="activeTab === 'usuarios'">
-        <h1>Usuários Cadastrados</h1>
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Email</th>
-              <th>Tipo</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let usuario of usuarios; let i = index">
-              <td>{{ usuario.name }}</td>
-              <td>{{ usuario.email }}</td>
-              <td>{{ usuario.role }}</td>
-              <td>
-                <button class="btn-blue" (click)="toggleUpdateUserModal(usuario)">Atualizar</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <br>
-        <button class="btn-orange" (click)="toggleAddUserModal()">Adicionar Novo Usuário</button>
+      <div *ngIf="activeTab === 'usuarios'" class="tab-content">
+        <div class="content-header">
+          <h1>
+            <span class="material-icons">group</span>
+            Usuários Cadastrados
+          </h1>
+        </div>
+        <div class="search-bar">
+          <span class="material-icons search-icon">search</span>
+          <input
+            type="text"
+            [(ngModel)]="searchUsuarios"
+            placeholder="Pesquisar por nome, email ou tipo..."
+            class="search-input"
+          />
+          <span class="search-count">{{ filteredUsuarios.length }} {{ filteredUsuarios.length === 1 ? 'usuário' : 'usuários' }}</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th><span class="material-icons">person</span> Nome</th>
+                <th><span class="material-icons">email</span> Email</th>
+                <th><span class="material-icons">badge</span> Tipo</th>
+                <th><span class="material-icons">settings</span> Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let usuario of filteredUsuarios">
+                <td>{{ usuario.name }}</td>
+                <td>{{ usuario.email }}</td>
+                <td><span class="role-badge" [class]="'role-' + usuario.role.toLowerCase()">{{ usuario.role }}</span></td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn-action btn-edit" (click)="toggleUpdateUserModal(usuario)">
+                      <span class="material-icons">edit</span>
+                      Atualizar
+                    </button>
+                    <button class="btn-action btn-delete" (click)="deleteUser(usuario)">
+                      <span class="material-icons">delete</span>
+                      Remover
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn-add" (click)="toggleAddUserModal()">
+          <span class="material-icons">add_circle</span>
+          Adicionar Novo Usuário
+        </button>
       </div>
 
       <!-- Escolas Tab -->
-      <div *ngIf="activeTab === 'escolas'">
-        <h1>Escolas Cadastradas</h1>
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Email</th>
-              <th>Cidade</th>
-              <th>Estado</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let escola of escolas; let i = index">
-              <td>{{ escola.name }}</td>
-              <td>{{ escola.email }}</td>
-              <td>{{ escola.city }}</td>
-              <td>{{ escola.federativeUnit }}</td>
-              <td>
-                <button class="btn-blue" (click)="toggleSchoolModal(escola)">Atualizar</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <br>
-        <button class="btn-orange" (click)="toggleNewSchoolModal()">Adicionar Nova Escola</button>
+      <div *ngIf="activeTab === 'escolas'" class="tab-content">
+        <div class="content-header">
+          <h1>
+            <span class="material-icons">school</span>
+            Escolas Cadastradas
+          </h1>
+        </div>
+        <div class="search-bar">
+          <span class="material-icons search-icon">search</span>
+          <input
+            type="text"
+            [(ngModel)]="searchEscolas"
+            placeholder="Pesquisar por nome, email, cidade ou estado..."
+            class="search-input"
+          />
+          <span class="search-count">{{ filteredEscolas.length }} {{ filteredEscolas.length === 1 ? 'escola' : 'escolas' }}</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th><span class="material-icons">business</span> Nome</th>
+                <th><span class="material-icons">email</span> Email</th>
+                <th><span class="material-icons">location_city</span> Cidade</th>
+                <th><span class="material-icons">map</span> Estado</th>
+                <th><span class="material-icons">settings</span> Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let escola of filteredEscolas">
+                <td>{{ escola.name }}</td>
+                <td>{{ escola.email }}</td>
+                <td>{{ escola.city }}</td>
+                <td>{{ escola.federativeUnit }}</td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn-action btn-edit" (click)="toggleSchoolModal(escola)">
+                      <span class="material-icons">edit</span>
+                      Atualizar
+                    </button>
+                    <button class="btn-action btn-delete" (click)="deleteSchool(escola)">
+                      <span class="material-icons">delete</span>
+                      Remover
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn-add" (click)="toggleNewSchoolModal()">
+          <span class="material-icons">add_circle</span>
+          Adicionar Nova Escola
+        </button>
       </div>
 
-     <!-- Cursos Tab -->
-<div *ngIf="activeTab === 'cursos'">
-  <h1>Cursos Cadastrados</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Título</th>
-        <th>Descrição</th>
-        <th>Instrutores</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let curso of cursos">
-        <td>{{ curso.name }}</td>
-        <td>{{ curso.description }}</td>
-        <td>
-          <span *ngIf="curso.instructors.length > 0; else noInstructors">
-            <span *ngFor="let instrutor of curso.instructors; let last = last">
-              {{ instrutor.name }}<span *ngIf="!last">, </span>
-            </span>
-          </span>
-          <ng-template #noInstructors>Sem instrutores atribuídos</ng-template>
-        </td>
-        <td>
-          <button class="btn-blue" (click)="openUpdateCourseModal(curso)">Atualizar</button>
-        </td>
-      </tr>      
-    </tbody>
-  </table>
-  <br>
-  <button class="btn-orange" (click)="openAddCourseModal()">Adicionar Novo Curso</button>
-</div>
-
+      <!-- Cursos Tab -->
+      <div *ngIf="activeTab === 'cursos'" class="tab-content">
+        <div class="content-header">
+          <h1>
+            <span class="material-icons">menu_book</span>
+            Cursos Cadastrados
+          </h1>
+        </div>
+        <div class="search-bar">
+          <span class="material-icons search-icon">search</span>
+          <input
+            type="text"
+            [(ngModel)]="searchCursos"
+            placeholder="Pesquisar por título, descrição ou instrutor..."
+            class="search-input"
+          />
+          <span class="search-count">{{ filteredCursos.length }} {{ filteredCursos.length === 1 ? 'curso' : 'cursos' }}</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th><span class="material-icons">title</span> Título</th>
+                <th><span class="material-icons">description</span> Descrição</th>
+                <th><span class="material-icons">person_outline</span> Instrutores</th>
+                <th><span class="material-icons">settings</span> Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let curso of filteredCursos">
+                <td>{{ curso.name }}</td>
+                <td class="description-cell">{{ curso.description }}</td>
+                <td>
+                  <span *ngIf="curso.instructors.length > 0; else noInstructors" class="instructors-list-cell">
+                    <span *ngFor="let instrutor of curso.instructors; let last = last">
+                      {{ instrutor.name }}<span *ngIf="!last">, </span>
+                    </span>
+                  </span>
+                  <ng-template #noInstructors><span class="no-data">Sem instrutores</span></ng-template>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn-action btn-edit" (click)="openUpdateCourseModal(curso)">
+                      <span class="material-icons">edit</span>
+                      Atualizar
+                    </button>
+                    <button class="btn-action btn-delete" (click)="deleteCourse(curso)">
+                      <span class="material-icons">delete</span>
+                      Remover
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn-add" (click)="openAddCourseModal()">
+          <span class="material-icons">add_circle</span>
+          Adicionar Novo Curso
+        </button>
+      </div>
+    </main>
+  </div>
 
   <!-- Modals -->
-<!-- Adicionar Usuário Modal -->
-<div class="modal-overlay" *ngIf="showAddUserModal" (click)="closeUserModals()"></div>
-<div class="modal" *ngIf="showAddUserModal">
-  <header class="modal-header">
-    <h2>Adicionar Novo Usuário</h2>
-    <span class="close-btn" (click)="closeUserModals()">&#10005;</span>
-  </header>
-  <div class="modal-body">
-    <input type="text" [(ngModel)]="newUser.name" placeholder="Nome" />
-    <input type="email" [(ngModel)]="newUser.email" placeholder="Email" />
-    <input type="text" [(ngModel)]="newUser.cpf" placeholder="CPF" />
-    <input type="password" [(ngModel)]="newUser.password" placeholder="Senha" />
-
-    <label for="role">Tipo  </label>
-    <select id="role" [(ngModel)]="newUser.role">
-      <option [value]="UserRole.STUDENT">Estudante</option>
-      <option [value]="UserRole.INSTRUCTOR">Instrutor</option>
-      <option [value]="UserRole.ADMINISTRATOR">Administrador</option>
-    </select>
-
-    <!-- Escolha da Escola -->
-    <div *ngIf="newUser.role === 'STUDENT'">
-      <br />
-      <label for="school">Escola  </label>
-      <select id="school" [(ngModel)]="newUser.schoolId">
-        <option *ngFor="let escola of escolas" [value]="escola.id">{{ escola.name }}</option>
-      </select>
+  <!-- Adicionar Usuário Modal -->
+  <div class="modal-overlay" *ngIf="showAddUserModal" (click)="closeUserModals()"></div>
+  <div class="modal" *ngIf="showAddUserModal">
+    <header class="modal-header">
+      <h2><span class="material-icons">person_add</span> Adicionar Novo Usuário</h2>
+      <span class="close-btn" (click)="closeUserModals()">
+        <span class="material-icons">close</span>
+      </span>
+    </header>
+    <div class="modal-body">
+      <div class="input-group">
+        <span class="material-icons">person</span>
+        <input type="text" [(ngModel)]="newUser.name" placeholder="Nome Completo" />
+      </div>
+      <div class="input-group">
+        <span class="material-icons">email</span>
+        <input type="email" [(ngModel)]="newUser.email" placeholder="E-mail" />
+      </div>
+      <div class="input-group">
+        <span class="material-icons">badge</span>
+        <input type="text" [(ngModel)]="newUser.cpf" placeholder="000.000.000-00" mask="000.000.000-00" />
+      </div>
+      <div class="input-group">
+        <span class="material-icons">lock</span>
+        <div class="password-wrapper">
+          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="newUser.password" placeholder="Senha" />
+          <span class="material-icons password-toggle-icon" (click)="togglePasswordVisibility()">
+            {{ showPassword ? 'visibility_off' : 'visibility' }}
+          </span>
+        </div>
+      </div>
+      <div class="input-group">
+        <span class="material-icons">assignment_ind</span>
+        <select [(ngModel)]="newUser.role">
+          <option value="" disabled selected>Selecione o tipo de usuário</option>
+          <option [value]="UserRole.STUDENT">Estudante</option>
+          <option [value]="UserRole.INSTRUCTOR">Instrutor</option>
+          <option [value]="UserRole.ADMINISTRATOR">Administrador</option>
+        </select>
+      </div>
+      <div *ngIf="newUser.role === 'STUDENT'" class="input-group">
+        <span class="material-icons">school</span>
+        <select [(ngModel)]="newUser.schoolId">
+          <option [value]="null" disabled selected>Selecione a escola</option>
+          <option *ngFor="let escola of escolas" [value]="escola.id">{{ escola.name }}</option>
+        </select>
+      </div>
     </div>
-  </div><br>
-  <footer class="modal-footer">
-    <button class="btn-orange" (click)="addUser()">Salvar</button>
-  </footer>
-</div>
-
-
-
-
-<!-- Atualizar User Modal -->
-<div class="modal-overlay" *ngIf="showUpdateUserModal" (click)="closeUserModals()"></div>
-<div class="modal" *ngIf="showUpdateUserModal">
-  <header class="modal-header">
-    <h2>Atualizar Usuário</h2>
-    <span class="close-btn" (click)="closeUserModals()">&#10005;</span>
-  </header>
-  <div class="modal-body">
-    <input type="text" [(ngModel)]="selectedUser.name" placeholder="Nome" />
-    <input type="email" [(ngModel)]="selectedUser.email" placeholder="Email" />
+    <footer class="modal-footer">
+      <button class="btn-modal-save" (click)="addUser()">
+        <span class="material-icons">save</span>
+        Salvar
+      </button>
+      <button class="btn-modal-cancel" (click)="closeUserModals()">
+        <span class="material-icons">cancel</span>
+        Cancelar
+      </button>
+    </footer>
   </div>
-  <footer class="modal-footer">
-    <button class="btn-orange" (click)="updateUser()">Salvar</button>
-  </footer>
-</div>
 
-  
-<!-- Modal para Adicionar Nova Escola -->
-<div class="modal-overlay" *ngIf="showNewSchoolModal" (click)="toggleNewSchoolModal()"></div>
-<div class="modal" *ngIf="showNewSchoolModal">
-  <header class="modal-header">
-    <h2>Adicionar Nova Escola</h2>
-    <span class="close-btn" (click)="toggleNewSchoolModal()">&#10005;</span>
-  </header>
-  <div class="modal-body">
-    <input type="text" [(ngModel)]="newSchool.name" placeholder="Nome" />
-    <input type="email" [(ngModel)]="newSchool.email" placeholder="Email" />
-    <input type="text" [(ngModel)]="newSchool.city" placeholder="Cidade" />
-    <input type="text" [(ngModel)]="newSchool.federativeUnit" placeholder="Estado" />
-    <!--<input type="password" [(ngModel)]="newSchool.password" placeholder="Senha" />-->
+  <!-- Atualizar User Modal -->
+  <div class="modal-overlay" *ngIf="showUpdateUserModal" (click)="closeUserModals()"></div>
+  <div class="modal" *ngIf="showUpdateUserModal">
+    <header class="modal-header">
+      <h2><span class="material-icons">edit</span> Atualizar Usuário</h2>
+      <span class="close-btn" (click)="closeUserModals()">
+        <span class="material-icons">close</span>
+      </span>
+    </header>
+    <div class="modal-body">
+      <div class="input-group">
+        <span class="material-icons">person</span>
+        <input type="text" [(ngModel)]="selectedUser.name" placeholder="Nome Completo" />
+      </div>
+      <div class="input-group">
+        <span class="material-icons">email</span>
+        <input type="email" [(ngModel)]="selectedUser.email" placeholder="E-mail" />
+      </div>
+    </div>
+    <footer class="modal-footer">
+      <button class="btn-modal-save" (click)="updateUser()">
+        <span class="material-icons">save</span>
+        Salvar
+      </button>
+      <button class="btn-modal-cancel" (click)="closeUserModals()">
+        <span class="material-icons">cancel</span>
+        Cancelar
+      </button>
+    </footer>
   </div>
-  <footer class="modal-footer">
-    <button class="btn-orange" (click)="addNewSchool()">Salvar</button>
-  </footer>
-</div>
 
-
-<!-- Atualizar Escola Modal -->
-<div class="modal-overlay" *ngIf="showSchoolModal" (click)="closeSchoolModal()"></div>
-<div class="modal" *ngIf="showSchoolModal">
-  <header class="modal-header">
-    <h2>Atualizar Escola</h2>
-    <span class="close-btn" (click)="closeSchoolModal()">&#10005;</span>
-  </header>
-  <div class="modal-body">
-    <input type="text" [(ngModel)]="selectedSchool.name" placeholder="Nome" />
-    <input type="email" [(ngModel)]="selectedSchool.email" placeholder="Email"/>
-    <input type="text" [(ngModel)]="selectedSchool.city" placeholder="Cidade" />
-    <input type="text" [(ngModel)]="selectedSchool.federativeUnit" placeholder="Estado" />
+  <!-- Modal para Adicionar Nova Escola -->
+  <div class="modal-overlay" *ngIf="showNewSchoolModal" (click)="toggleNewSchoolModal()"></div>
+  <div class="modal" *ngIf="showNewSchoolModal">
+    <header class="modal-header">
+      <h2><span class="material-icons">add_business</span> Adicionar Nova Escola</h2>
+      <span class="close-btn" (click)="toggleNewSchoolModal()">
+        <span class="material-icons">close</span>
+      </span>
+    </header>
+    <div class="modal-body">
+      <div class="input-group">
+        <span class="material-icons">business</span>
+        <input type="text" [(ngModel)]="newSchool.name" placeholder="Nome da Escola" />
+      </div>
+      <div class="input-group">
+        <span class="material-icons">email</span>
+        <input type="email" [(ngModel)]="newSchool.email" placeholder="Email" />
+      </div>
+      <div class="input-group">
+        <span class="material-icons">location_city</span>
+        <input type="text" [(ngModel)]="newSchool.city" placeholder="Cidade" />
+      </div>
+      <div class="input-group">
+        <span class="material-icons">map</span>
+        <input type="text" [(ngModel)]="newSchool.federativeUnit" placeholder="Estado (UF)" />
+      </div>
+    </div>
+    <footer class="modal-footer">
+      <button class="btn-modal-save" (click)="addNewSchool()">
+        <span class="material-icons">save</span>
+        Salvar
+      </button>
+      <button class="btn-modal-cancel" (click)="toggleNewSchoolModal()">
+        <span class="material-icons">cancel</span>
+        Cancelar
+      </button>
+    </footer>
   </div>
-  <footer class="modal-footer">
-    <button class="btn-orange" (click)="updateSchool()">Salvar</button>
-  </footer>
-</div>
 
+  <!-- Atualizar Escola Modal -->
+  <div class="modal-overlay" *ngIf="showSchoolModal" (click)="closeSchoolModal()"></div>
+  <div class="modal" *ngIf="showSchoolModal">
+    <header class="modal-header">
+      <h2><span class="material-icons">edit</span> Atualizar Escola</h2>
+      <span class="close-btn" (click)="closeSchoolModal()">
+        <span class="material-icons">close</span>
+      </span>
+    </header>
+    <div class="modal-body">
+      <div class="input-group">
+        <span class="material-icons">business</span>
+        <input type="text" [(ngModel)]="selectedSchool.name" placeholder="Nome da Escola" />
+      </div>
+      <div class="input-group">
+        <span class="material-icons">email</span>
+        <input type="email" [(ngModel)]="selectedSchool.email" placeholder="E-mail de Contato"/>
+      </div>
+      <div class="input-group">
+        <span class="material-icons">location_city</span>
+        <input type="text" [(ngModel)]="selectedSchool.city" placeholder="Cidade" />
+      </div>
+      <div class="input-group">
+        <span class="material-icons">map</span>
+        <input type="text" [(ngModel)]="selectedSchool.federativeUnit" placeholder="Estado (UF)" />
+      </div>
+    </div>
+    <footer class="modal-footer">
+      <button class="btn-modal-save" (click)="updateSchool()">
+        <span class="material-icons">save</span>
+        Salvar
+      </button>
+      <button class="btn-modal-cancel" (click)="closeSchoolModal()">
+        <span class="material-icons">cancel</span>
+        Cancelar
+      </button>
+    </footer>
+  </div>
 
-<!-- Modal para Adicionar Novo Curso -->
-<div class="modal-overlay" *ngIf="showAddCourseModal" (click)="closeAddCourseModal()"></div>
-<div class="modal" *ngIf="showAddCourseModal">
-  <header class="modal-header">
-    <h2>Adicionar Novo Curso</h2>
-    <span class="close-btn" (click)="closeAddCourseModal()">&#10005;</span>
-  </header>
-  <div class="modal-body">
-    <input type="text" [(ngModel)]="newCourse.name" placeholder="Título" />
-    <textarea [(ngModel)]="newCourse.description" placeholder="Descrição"></textarea>
-    <div class="custom-select">
-      <label for="instructorsSelect">Instrutores</label>
-      <select id="instructorsSelect" [(ngModel)]="newCourse.instructors" multiple>
-        <option *ngFor="let instrutor of instrutores" [value]="instrutor">
-          {{ instrutor.name }}
-        </option>
-      </select>
+  <!-- Modal para Adicionar Novo Curso -->
+  <div class="modal-overlay" *ngIf="showAddCourseModal" (click)="closeAddCourseModal()"></div>
+  <div class="modal" *ngIf="showAddCourseModal">
+    <header class="modal-header">
+      <h2><span class="material-icons">add_circle_outline</span> Adicionar Novo Curso</h2>
+      <span class="close-btn" (click)="closeAddCourseModal()">
+        <span class="material-icons">close</span>
+      </span>
+    </header>
+    <div class="modal-body">
+      <div class="input-group">
+        <span class="material-icons">title</span>
+        <input type="text" [(ngModel)]="newCourse.name" placeholder="Título do Curso" />
+      </div>
+      <div class="input-group">
+        <span class="material-icons">description</span>
+        <textarea [(ngModel)]="newCourse.description" placeholder="Descrição do curso"></textarea>
+      </div>
+      <div class="input-group">
+        <span class="material-icons">person_outline</span>
+        <select [(ngModel)]="selectedInstructorId">
+          <option [value]="null" disabled selected>Selecione um instrutor</option>
+          <option *ngFor="let instrutor of instrutores" [value]="instrutor.id">
+            {{ instrutor.name }}
+          </option>
+        </select>
+      </div>
+      <div *ngIf="newCourse.instructors.length > 0" class="selected-instructors">
+        <h4>Instrutores selecionados:</h4>
+        <div class="instructor-chips">
+          <div *ngFor="let instrutor of newCourse.instructors; let i = index" class="instructor-chip">
+            <span class="material-icons">person</span>
+            <span>{{ instrutor.name }}</span>
+            <span class="material-icons remove-chip" (click)="removeInstructor(i)">close</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn-add-instructor" (click)="addInstructorToCourse()">
+        <span class="material-icons">person_add</span>
+        Adicionar Instrutor
+      </button>
+    </div>
+    <footer class="modal-footer">
+      <button class="btn-modal-save" (click)="addCourse()">
+        <span class="material-icons">save</span>
+        Salvar
+      </button>
+      <button class="btn-modal-cancel" (click)="closeAddCourseModal()">
+        <span class="material-icons">cancel</span>
+        Cancelar
+      </button>
+    </footer>
+  </div>
+
+  <!-- Modal para Atualizar Curso -->
+  <div class="modal-overlay" *ngIf="showUpdateCourseModal" (click)="closeUpdateCourseModal()"></div>
+  <div class="modal" *ngIf="showUpdateCourseModal">
+    <header class="modal-header">
+      <h2><span class="material-icons">edit</span> Atualizar Curso</h2>
+      <span class="close-btn" (click)="closeUpdateCourseModal()">
+        <span class="material-icons">close</span>
+      </span>
+    </header>
+    <div class="modal-body">
+      <div class="input-group">
+        <span class="material-icons">title</span>
+        <input type="text" [(ngModel)]="selectedCourse.name" placeholder="Título do Curso" />
+      </div>
+      <div class="input-group">
+        <span class="material-icons">description</span>
+        <textarea [(ngModel)]="selectedCourse.description" placeholder="Descrição do curso"></textarea>
+      </div>
+    </div>
+    <footer class="modal-footer">
+      <button class="btn-modal-save" (click)="updateCourse()">
+        <span class="material-icons">save</span>
+        Salvar
+      </button>
+      <button class="btn-modal-cancel" (click)="closeUpdateCourseModal()">
+        <span class="material-icons">cancel</span>
+        Cancelar
+      </button>
+    </footer>
+  </div>
+
+  <!-- Modal de Confirmação -->
+  <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmation()">
+    <div class="modal confirm-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="confirm-icon" [ngClass]="confirmationType">
+          <span class="material-icons">{{ confirmationType === 'delete' ? 'warning' : 'logout' }}</span>
+        </div>
+      </div>
+
+      <div class="confirm-content">
+        <h2>{{ confirmationTitle }}</h2>
+        <p>{{ confirmationMessage }}</p>
+      </div>
+
+      <div class="confirm-actions">
+        <button class="btn-cancel" (click)="cancelConfirmation()">
+          <span class="material-icons">close</span>
+          <span>Cancelar</span>
+        </button>
+        <button class="btn-confirm" [ngClass]="confirmationType" (click)="confirmAction()">
+          <span class="material-icons">{{ confirmationType === 'delete' ? 'delete_forever' : 'logout' }}</span>
+          <span>{{ confirmationType === 'delete' ? 'Remover' : 'Sair' }}</span>
+        </button>
+      </div>
     </div>
   </div>
-  <footer class="modal-footer">
-    <button class="btn-orange" (click)="addCourse()">Salvar</button>
-  </footer>
 </div>
-
-<!-- Modal para Atualizar Curso -->
-<div class="modal-overlay" *ngIf="showUpdateCourseModal" (click)="closeUpdateCourseModal()"></div>
-<div class="modal" *ngIf="showUpdateCourseModal">
-  <header class="modal-header">
-    <h2>Atualizar Curso</h2>
-    <span class="close-btn" (click)="closeUpdateCourseModal()">&#10005;</span>
-  </header>
-  <div class="modal-body">
-    <input type="text" [(ngModel)]="selectedCourse.name" placeholder="Título" />
-    <textarea [(ngModel)]="selectedCourse.description" placeholder="Descrição"></textarea>
-  </div>
-  <footer class="modal-footer">
-    <button class="btn-orange" (click)="updateCourse()">Salvar</button>
-  </footer>
-</div>
-

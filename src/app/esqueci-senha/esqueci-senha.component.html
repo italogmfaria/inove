@@ -1,0 +1,62 @@
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <button class="back-btn" (click)="voltarLogin()">
+            <span class="material-icons">arrow_back</span>
+            Voltar
+        </button>
+        <img (click)="voltarLogin()" src="assets/logowhite.png" alt="Logotipo" class="logo">
+    </header>
+
+    <!-- Background Decorations -->
+    <div class="background-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+    </div>
+
+    <!-- Form Section -->
+    <section class="form-container">
+        <div class="form-box">
+            <div class="form-header">
+                <h1>Esqueceu sua senha?</h1>
+                <p class="subtitle">Não se preocupe! Digite seu e-mail e enviaremos um código de verificação</p>
+            </div>
+
+            <form (submit)="enviarCodigo(); $event.preventDefault()">
+                <div class="input-group">
+                    <span class="material-icons input-icon">email</span>
+                    <input
+                        type="email"
+                        placeholder="Digite seu e-mail"
+                        name="email"
+                        [(ngModel)]="email"
+                        required
+                        [disabled]="isLoading"
+                        class="input-field">
+                </div>
+
+                <button type="submit" class="submit-btn" [disabled]="isLoading">
+                    <span class="material-icons" *ngIf="!isLoading"></span>
+                    <span class="material-icons spinning" *ngIf="isLoading">sync</span>
+                    <span>{{ isLoading ? 'Enviando...' : 'Enviar Código' }}</span>
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>ou</span>
+            </div>
+
+            <p class="footer-text">
+                Lembrou sua senha?
+                <a (click)="voltarLogin()" class="btn-link">Voltar para o login</a>
+            </p>
+
+            <div class="help-text">
+                <span class="material-icons">info</span>
+                <span>Verifique sua caixa de spam caso não receba o e-mail</span>
+            </div>
+        </div>
+    </section>
+</body>
+

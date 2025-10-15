@@ -1,99 +1,273 @@
-<div class="secao-panel">
+<div class="section-container">
+  <!-- Background Decorations -->
+  <div class="background-decoration">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+  </div>
+
   <!-- Header -->
   <header class="header">
-    <button class="back-btn" onclick="window.history.back();">Voltar</button>
+    <button class="back-btn" (click)="goBack()">
+      <span class="material-icons">arrow_back</span>
+      <span>Voltar</span>
+    </button>
     <img src="assets/logowhite.png" alt="Logotipo INOVE" class="logo">
   </header>
 
   <!-- Main Content -->
   <main class="main-content">
-    <h1>Seções do Curso</h1>
-
-    <!-- Lista de Seções -->
-    <div class="sections-list">
-      <div class="section-item" *ngFor="let secao of secoes; let i = index">
-        <!-- Header da Seção -->
-        <div class="section-header">
-          <span>Seção {{ i + 1 }}: {{ secao.title }}</span>
-          <div class="section-actions">
-            <button class="btn-blue" (click)="editarSecao(secao)">Atualizar Seção</button>
-            <button class="btn-red" (click)="excluirSecao(secao.id)">Excluir Seção</button>
-            <button class="expand-btn" [class.expanded]="secao.isOpen" (click)="toggleSection(i)">&#9662;</button>
-          </div>
+    <div class="content-wrapper">
+      <div class="content-header">
+        <div class="header-info">
+          <h1>
+            <span class="material-icons">view_module</span>
+            Seções do Curso
+          </h1>
+          <p class="subtitle">Organize e gerencie o conteúdo do seu curso</p>
         </div>
+        <button class="btn-add-section" (click)="criarNovaSecao()">
+          <span class="material-icons">add_circle</span>
+          <span>Nova Seção</span>
+        </button>
+      </div>
 
-        <!-- Detalhes da Seção -->
-        <div class="section-details" *ngIf="secao.isOpen">
-          <table>
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Tipo</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let conteudo of secao.contents">
-                <td>{{ conteudo.title }}</td>
-                <td>{{ conteudo.contentType && conteudo.contentType.includes('video') ? 'Vídeo' : 'Teórico' }}</td>
-                <td>
-                  <div class="button-group">
-                    <button class="btn-blue" (click)="editarConteudo(conteudo)">Atualizar</button>
+      <!-- Empty State -->
+      <div *ngIf="secoes.length === 0" class="empty-state">
+        <span class="material-icons empty-icon">folder_open</span>
+        <h3>Nenhuma seção criada</h3>
+        <p>Comece criando uma nova seção para organizar o conteúdo do curso</p>
+      </div>
+
+      <!-- Sections List -->
+      <div class="sections-list" *ngIf="secoes.length > 0">
+        <div class="section-card" *ngFor="let secao of secoes; let i = index">
+          <!-- Section Header -->
+          <div class="section-card-header" (click)="toggleSection(i)">
+            <div class="section-info">
+              <div class="section-number">
+                <span class="material-icons">library_books</span>
+                <span>Seção {{ i + 1 }}</span>
+              </div>
+              <h3>{{ secao.title }}</h3>
+            </div>
+            <div class="section-header-actions">
+              <button class="btn-icon btn-edit" (click)="editarSecao(secao); $event.stopPropagation();" title="Editar seção">
+                <span class="material-icons">edit</span>
+              </button>
+              <button class="btn-icon btn-delete" (click)="excluirSecao(secao.id); $event.stopPropagation();" title="Excluir seção">
+                <span class="material-icons">delete</span>
+              </button>
+              <button class="btn-expand" [class.expanded]="secao.isOpen">
+                <span class="material-icons">expand_more</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Section Body -->
+          <div class="section-card-body" *ngIf="secao.isOpen">
+            <!-- Contents Table -->
+            <div class="contents-table" *ngIf="secao.contents && secao.contents.length > 0">
+              <div class="table-header">
+                <div class="col-name">
+                  <span class="material-icons">description</span>
+                  <span>Nome do Conteúdo</span>
+                </div>
+                <div class="col-type">
+                  <span class="material-icons">category</span>
+                  <span>Tipo</span>
+                </div>
+                <div class="col-actions">
+                  <span class="material-icons">settings</span>
+                  <span>Ações</span>
+                </div>
+              </div>
+
+              <div class="table-body">
+                <div class="content-row" *ngFor="let conteudo of secao.contents">
+                  <div class="col-name">
+                    <span class="material-icons content-icon">
+                      {{ conteudo.contentType && conteudo.contentType.includes('video') ? 'play_circle' : 'picture_as_pdf' }}
+                    </span>
+                    <span>{{ conteudo.title }}</span>
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <button class="btn-orange" (click)="adicionarConteudo(secao.id)">Novo Conteúdo</button>
+                  <div class="col-type">
+                    <span class="type-badge" [class.video]="conteudo.contentType && conteudo.contentType.includes('video')">
+                      {{ conteudo.contentType && conteudo.contentType.includes('video') ? 'Vídeo' : 'PDF' }}
+                    </span>
+                  </div>
+                  <div class="col-actions">
+                    <button class="btn-action btn-edit-content" (click)="editarConteudo(conteudo)">
+                      <span class="material-icons">edit</span>
+                      <span>Editar</span>
+                    </button>
+                    <button class="btn-action btn-delete-content" (click)="excluirConteudo(conteudo.id, secao.id)">
+                      <span class="material-icons">delete</span>
+                      <span>Excluir</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Empty Contents State -->
+            <div class="empty-contents" *ngIf="!secao.contents || secao.contents.length === 0">
+              <span class="material-icons">inbox</span>
+              <p>Nenhum conteúdo nesta seção</p>
+            </div>
+
+            <!-- Add Content Button -->
+            <button class="btn-add-content" (click)="adicionarConteudo(secao.id)">
+              <span class="material-icons">add</span>
+              <span>Adicionar Conteúdo</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- Botão Criar Nova Seção -->
-    <button class="btn-large-orange" (click)="criarNovaSecao()">Criar Nova Seção</button>
   </main>
 
-  <!-- Modal para Atualizar Seção -->
+  <!-- Modal para Editar Seção -->
   <div class="modal-overlay" *ngIf="showEditSecaoModal" (click)="closeEditSecaoModal()"></div>
-  <div class="modal" *ngIf="showEditSecaoModal">
+  <div class="modal" *ngIf="showEditSecaoModal" (click)="$event.stopPropagation()">
     <header class="modal-header">
-      <h2>Atualizar Seção</h2>
-      <span class="close-btn" (click)="closeEditSecaoModal()">&#10005;</span>
+      <h2>
+        <span class="material-icons">edit</span>
+        Editar Seção
+      </h2>
+      <button class="close-btn" (click)="closeEditSecaoModal()">
+        <span class="material-icons">close</span>
+      </button>
     </header>
     <div class="modal-body">
-      <input type="text" [(ngModel)]="secaoEdit.title" placeholder="Nome da Seção" />
+      <div class="input-group">
+        <span class="material-icons">title</span>
+        <input type="text" [(ngModel)]="secaoEdit.title" placeholder="Nome da Seção" />
+      </div>
     </div>
     <footer class="modal-footer">
-      <button class="btn-orange" (click)="salvarEdicaoSecao()">Salvar</button>
+      <button class="btn-modal-save" (click)="salvarEdicaoSecao()">
+        <span class="material-icons">save</span>
+        <span>Salvar</span>
+      </button>
+      <button class="btn-modal-cancel" (click)="closeEditSecaoModal()">
+        <span class="material-icons">cancel</span>
+        <span>Cancelar</span>
+      </button>
     </footer>
   </div>
 
-<!-- Modal para Conteúdo -->
-<div class="modal" *ngIf="showContentModal">
-  <header class="modal-header">
-    <h2>{{ editingContent ? 'Atualizar Conteúdo' : 'Criar Conteúdo' }}</h2>
-    <span class="close-btn" (click)="closeContentModal()">&#10005;</span>
-  </header>
-  <div class="modal-body">
-    <input type="text" [(ngModel)]="currentContent.title" placeholder="Nome do conteúdo" />
-    <input type="text" [(ngModel)]="currentContent.description" placeholder="Descrição" />
-    <select [(ngModel)]="currentContent.contentType">
-      <option [value]="ContentType.VIDEO">Vídeo</option>
-      <option [value]="ContentType.PDF">Teórico</option>
-    </select>
-    <input type="file" (change)="handleFileUpload($event)" accept="video/*,application/pdf" />
-    <div class="upload-progress" *ngIf="uploadProgress > 0 && uploadProgress < 100">
-      <div class="progress-bar">
-        <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+  <!-- Modal para Conteúdo -->
+  <div class="modal-overlay" *ngIf="showContentModal" (click)="closeContentModal()"></div>
+  <div class="modal large-modal" *ngIf="showContentModal" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>
+        <span class="material-icons">{{ editingContent ? 'edit' : 'add_circle' }}</span>
+        {{ editingContent ? 'Atualizar Conteúdo' : 'Novo Conteúdo' }}
+      </h2>
+      <button class="close-btn" (click)="closeContentModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </header>
+    <div class="modal-body">
+      <div class="input-group">
+        <span class="material-icons">title</span>
+        <input type="text" [(ngModel)]="currentContent.title" placeholder="Nome do conteúdo" />
       </div>
-      <p>Enviando: {{ uploadProgress }}%</p>
+
+      <div class="input-group">
+        <span class="material-icons">description</span>
+        <textarea [(ngModel)]="currentContent.description" placeholder="Descrição do conteúdo"></textarea>
+      </div>
+
+      <div class="content-type-selector">
+        <label>
+          <span class="material-icons">category</span>
+          Tipo de Conteúdo
+        </label>
+        <div class="type-options">
+          <button
+            type="button"
+            class="type-option"
+            [class.active]="currentContent.contentType === ContentType.VIDEO"
+            (click)="currentContent.contentType = ContentType.VIDEO">
+            <span class="material-icons">video_library</span>
+            <span>Vídeo</span>
+          </button>
+          <button
+            type="button"
+            class="type-option"
+            [class.active]="currentContent.contentType === ContentType.PDF"
+            (click)="currentContent.contentType = ContentType.PDF">
+            <span class="material-icons">picture_as_pdf</span>
+            <span>PDF (Teórico)</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="upload-section">
+        <label for="fileUpload">
+          <span class="material-icons">cloud_upload</span>
+          Arquivo ({{ currentContent.contentType === ContentType.VIDEO ? 'Vídeo' : 'PDF' }})
+        </label>
+        <input
+          id="fileUpload"
+          type="file"
+          (change)="handleFileUpload($event)"
+          accept="{{currentContent.contentType === ContentType.VIDEO ? 'video/*' : 'application/pdf'}}"
+        />
+      </div>
+
+      <!-- Upload Progress -->
+      <div class="upload-progress-container" *ngIf="uploadProgress > 0 && uploadProgress < 100">
+        <div class="progress-info">
+          <span class="material-icons uploading-icon">cloud_upload</span>
+          <span>Enviando arquivo...</span>
+          <span class="progress-percent">{{ uploadProgress }}%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+        </div>
+      </div>
     </div>
-  </div>    
-  <footer class="modal-footer">
-    <button class="btn-orange" (click)="saveContent()" [disabled]="isUploading">
-      <span *ngIf="isUploading">Enviando...</span>
-      <span *ngIf="!isUploading">{{ editingContent ? 'Atualizar Conteúdo' : 'Criar Conteúdo' }}</span>
-    </button>
-  </footer>    
-</div>
+    <footer class="modal-footer">
+      <button class="btn-modal-save" (click)="saveContent()" [disabled]="isUploading">
+        <span class="material-icons" *ngIf="!isUploading">{{ editingContent ? 'save' : 'add_circle' }}</span>
+        <span class="material-icons spinning" *ngIf="isUploading">sync</span>
+        <span *ngIf="!isUploading">{{ editingContent ? 'Atualizar' : 'Criar Conteúdo' }}</span>
+        <span *ngIf="isUploading">Enviando...</span>
+      </button>
+      <button class="btn-modal-cancel" (click)="closeContentModal()" [disabled]="isUploading">
+        <span class="material-icons">cancel</span>
+        <span>Cancelar</span>
+      </button>
+    </footer>
+  </div>
+
+  <!-- Modal de Confirmação -->
+  <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmation()">
+    <div class="modal confirm-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="confirm-icon delete">
+          <span class="material-icons">warning</span>
+        </div>
+      </div>
+
+      <div class="confirm-content">
+        <h2>{{ confirmationTitle }}</h2>
+        <p>{{ confirmationMessage }}</p>
+      </div>
+
+      <div class="confirm-actions">
+        <button class="btn-cancel" (click)="cancelConfirmation()">
+          <span class="material-icons">close</span>
+          <span>Cancelar</span>
+        </button>
+        <button class="btn-confirm delete" (click)="confirmAction()">
+          <span class="material-icons">delete_forever</span>
+          <span>Excluir</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

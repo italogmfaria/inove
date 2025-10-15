@@ -1,112 +1,256 @@
-<div class="instructor-panel">
+<div class="instructor-container">
+  <!-- Background Decorations -->
+  <div class="background-decoration">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+  </div>
+
   <!-- Header -->
   <header class="header">
     <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
+    <h1 class="page-title">Painel do Instrutor</h1>
+    <button class="btn-logout" (click)="logout()">
+      <span class="material-icons">logout</span>
+      <span>Sair</span>
+    </button>
   </header>
-  
+
   <div class="content">
-    <!-- Menu Lateral -->
+    <!-- Side Menu -->
     <aside class="side-menu">
-      <h2>Painel do Instrutor</h2>
-      <ul>
-        <li (click)="changeTab('cursos')" [class.active]="activeTab === 'cursos'">Cursos</li>
-        <li (click)="changeTab('dadosInstrutor')" [class.active]="activeTab === 'dadosInstrutor'">Dados do Instrutor</li>
+      <div class="instructor-profile">
+        <div class="profile-avatar">
+          <span class="material-icons">person</span>
+        </div>
+        <h3>{{ instrutor.name || 'Instrutor' }}</h3>
+        <p class="profile-role">Instrutor</p>
+      </div>
+
+      <ul class="menu-list">
+        <li (click)="changeTab('cursos')" [class.active]="activeTab === 'cursos'">
+          <span class="material-icons">school</span>
+          <span>Meus Cursos</span>
+        </li>
+        <li (click)="changeTab('dadosInstrutor')" [class.active]="activeTab === 'dadosInstrutor'">
+          <span class="material-icons">person</span>
+          <span>Meus Dados</span>
+        </li>
       </ul>
-      <button class="btn-logout" (click)="logout()">Sair</button>
     </aside>
 
-    <!-- Conteúdo Principal -->
+    <!-- Main Content -->
     <main class="main-content">
       <!-- Aba de Cursos -->
-      <div *ngIf="activeTab === 'cursos'">
-        <h1>Cursos Cadastrados</h1>
-        <div class="courses-list">
-          <div class="course-item" *ngFor="let curso of cursos">
-            <div class="course-header" (click)="toggleCourseDetails(curso)">
-              <span>{{ curso.name }}</span>
-              <button class="expand-btn">&#9662;</button>
-            </div>
-            <div class="course-details" *ngIf="curso.expanded">
-              <p><strong>Descrição:</strong> {{ curso.description }}</p>
-            <!--<p><strong>Data de Criação:</strong> {{ curso.creationDate | date:'dd/MM/yyyy' }}</p>
-              <p><strong>Última Atualização:</strong> {{ curso.lastUpdateDate | date:'dd/MM/yyyy' }}</p>-->
-              <div class="course-actions">
-                <button class="btn-orange" (click)="openUpdateCourseModal(curso)">Atualizar Curso</button>
-                <button class="btn-orange" (click)="createSections(curso)">Criar Seções</button>
+      <div *ngIf="activeTab === 'cursos'" class="tab-content">
+        <div class="content-header">
+          <h1>
+            <span class="material-icons">school</span>
+            Meus Cursos
+          </h1>
+          <p class="subtitle">Gerencie os cursos que você ministra</p>
+        </div>
+
+        <div *ngIf="cursos.length === 0" class="empty-state">
+          <span class="material-icons empty-icon">auto_stories</span>
+          <h3>Nenhum curso encontrado</h3>
+          <p>Você ainda não possui cursos cadastrados.</p>
+        </div>
+
+        <div class="courses-grid" *ngIf="cursos.length > 0">
+          <div class="course-card" *ngFor="let curso of cursos">
+            <div class="course-card-header">
+              <div class="course-icon">
+                <span class="material-icons">menu_book</span>
               </div>
+              <h3>{{ curso.name }}</h3>
+            </div>
+
+            <div class="course-card-body">
+              <p class="course-description">{{ curso.description }}</p>
+            </div>
+
+            <div class="course-card-actions">
+              <button class="btn-action btn-edit" (click)="openUpdateCourseModal(curso)">
+                <span class="material-icons">edit</span>
+                <span>Editar</span>
+              </button>
+              <button class="btn-action btn-sections" (click)="createSections(curso)">
+                <span class="material-icons">view_list</span>
+                <span>Seções</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
-
-            <!-- Modal para Atualizar Curso -->
-      <div class="modal-overlay" *ngIf="showUpdateCourseModal" (click)="closeUpdateCourseModal()"></div>
-      <div class="modal" *ngIf="showUpdateCourseModal">
-        <header class="modal-header">
-          <h2>Atualizar Curso</h2>
-          <span class="close-btn" (click)="closeUpdateCourseModal()">&#10005;</span>
-        </header>
-        <div class="modal-body">
-          <!-- Nome do Curso -->
-          <input type="text" [(ngModel)]="cursoEdit.name" placeholder="Nome do Curso" />
-
-          <!-- Descrição do Curso -->
-          <textarea [(ngModel)]="cursoEdit.description" placeholder="Descrição"></textarea>
-
-          <!-- Upload da Imagem -->
-          <div class="upload-section">
-            <label for="courseImage">Imagem do Curso</label>
-            <input id="courseImage" type="file" accept="image/*" (change)="handleImageUpload($event)" />
-          </div>
-
-        <!-- Pré-visualização da Imagem -->
-        <div class="image-preview">
-          <p>Pré-visualização:</p>
-          <div *ngIf="isLoadingImage">Carregando imagem...</div>
-          <img *ngIf="!isLoadingImage && cursoEdit.imageUrl" [src]="cursoEdit.imageUrl" alt="Imagem Atual do Curso" />
-        </div>
-
-
-
-          <!-- Loader -->
-          <div class="loading-spinner" *ngIf="isLoading">
-            <p>Enviando para a nuvem...</p>
-            <div class="spinner"></div>
-          </div>
-
-        </div>
-        <br>
-        <footer class="modal-footer">
-          <button class="btn-orange" (click)="updateCourse()" [disabled]="isLoading">Salvar</button>
-        </footer>
-      </div>
-
-
 
       <!-- Aba de Dados do Instrutor -->
-      <div *ngIf="activeTab === 'dadosInstrutor'">
-        <h1>Dados do Instrutor</h1>
-        <div class="instructor-data">
-          <p><strong>Nome:</strong> {{ instrutor.name }}</p>
-          <p><strong>Email:</strong> {{ instrutor.email }}</p>
-          <p><strong>CPF:</strong> {{ instrutor.cpf }}</p>
-          <button class="btn-orange" (click)="editInstructor()">Editar Dados</button>
+      <div *ngIf="activeTab === 'dadosInstrutor'" class="tab-content">
+        <div class="content-header">
+          <h1>
+            <span class="material-icons">badge</span>
+            Meus Dados
+          </h1>
+          <p class="subtitle">Visualize e edite suas informações pessoais</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-row">
+            <div class="info-label">
+              <span class="material-icons">person</span>
+              <span>Nome</span>
+            </div>
+            <div class="info-value">{{ instrutor.name }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">
+              <span class="material-icons">email</span>
+              <span>Email</span>
+            </div>
+            <div class="info-value">{{ instrutor.email }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">
+              <span class="material-icons">credit_card</span>
+              <span>CPF</span>
+            </div>
+            <div class="info-value">{{ instrutor.cpf | mask: '000.000.000-00' }}</div>
+          </div>
+
+          <button class="btn-edit-profile" (click)="editInstructor()">
+            <span class="material-icons">edit</span>
+            <span>Editar Dados</span>
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal para Atualizar Curso -->
+  <div class="modal-overlay" *ngIf="showUpdateCourseModal" (click)="closeUpdateCourseModal()"></div>
+  <div class="modal" *ngIf="showUpdateCourseModal" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>
+        <span class="material-icons">edit</span>
+        Atualizar Curso
+      </h2>
+      <button class="close-btn" (click)="closeUpdateCourseModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <div class="input-group">
+        <span class="material-icons">title</span>
+        <input type="text" [(ngModel)]="cursoEdit.name" placeholder="Nome do Curso" />
+      </div>
+
+      <div class="input-group">
+        <span class="material-icons">description</span>
+        <textarea [(ngModel)]="cursoEdit.description" placeholder="Descrição do curso"></textarea>
+      </div>
+
+      <div class="upload-section">
+        <label for="courseImage">
+          <span class="material-icons">image</span>
+          Imagem do Curso
+        </label>
+        <input id="courseImage" type="file" accept="image/*" (change)="handleImageUpload($event)" />
+      </div>
+
+      <div class="image-preview" *ngIf="cursoEdit.imageUrl || isLoadingImage">
+        <p><span class="material-icons">photo</span> Pré-visualização:</p>
+        <div *ngIf="isLoadingImage" class="loading-image">
+          <div class="spinner"></div>
+          <p>Carregando imagem...</p>
+        </div>
+        <img *ngIf="!isLoadingImage && cursoEdit.imageUrl" [src]="cursoEdit.imageUrl" alt="Imagem do Curso" />
+      </div>
+
+      <div class="loading-overlay" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Enviando para a nuvem...</p>
+      </div>
+    </div>
+
+    <footer class="modal-footer">
+      <button class="btn-modal-save" (click)="updateCourse()" [disabled]="isLoading">
+        <span class="material-icons">save</span>
+        <span>Salvar</span>
+      </button>
+      <button class="btn-modal-cancel" (click)="closeUpdateCourseModal()">
+        <span class="material-icons">cancel</span>
+        <span>Cancelar</span>
+      </button>
+    </footer>
+  </div>
+
+  <!-- Modal para Editar Dados do Instrutor -->
+  <div class="modal-overlay" *ngIf="showEditInstructorModal" (click)="closeEditInstructorModal()"></div>
+  <div class="modal" *ngIf="showEditInstructorModal" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>
+        <span class="material-icons">edit</span>
+        Editar Dados
+      </h2>
+      <button class="close-btn" (click)="closeEditInstructorModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <div class="input-group">
+        <span class="material-icons">person</span>
+        <input type="text" [(ngModel)]="instrutorEdit.name" placeholder="Nome Completo" />
+      </div>
+
+      <div class="input-group">
+        <span class="material-icons">email</span>
+        <input type="email" [(ngModel)]="instrutorEdit.email" placeholder="E-mail" />
+      </div>
+
+      <div class="input-group">
+        <span class="material-icons">credit_card</span>
+        <input type="text" [(ngModel)]="instrutorEdit.cpf" placeholder="000.000.000-00" mask="000.000.000-00" />
+      </div>
+    </div>
+
+    <footer class="modal-footer">
+      <button class="btn-modal-save" (click)="updateInstructor()">
+        <span class="material-icons">save</span>
+        <span>Salvar</span>
+      </button>
+      <button class="btn-modal-cancel" (click)="closeEditInstructorModal()">
+        <span class="material-icons">cancel</span>
+        <span>Cancelar</span>
+      </button>
+    </footer>
+  </div>
+
+  <!-- Modal de Confirmação -->
+  <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmation()">
+    <div class="modal confirm-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="confirm-icon logout">
+          <span class="material-icons">logout</span>
         </div>
       </div>
 
-      <!-- Modal para Editar Dados do Instrutor -->
-      <div class="modal-overlay" *ngIf="showEditInstructorModal" (click)="closeEditInstructorModal()"></div>
-      <div class="modal" *ngIf="showEditInstructorModal">
-        <header class="modal-header">
-          <h2>Editar Dados do Instrutor</h2>
-          <span class="close-btn" (click)="closeEditInstructorModal()">&#10005;</span>
-        </header>
-        <div class="modal-body">
-          <input type="text" [(ngModel)]="instrutorEdit.name" placeholder="Nome" />
-          <input type="email" [(ngModel)]="instrutorEdit.email" placeholder="Email" />
-          <input type="text" [(ngModel)]="instrutorEdit.cpf" placeholder="CPF" />
-        </div>
-        <footer class="modal-footer">
-          <button class="btn-orange" (click)="updateInstructor()">Salvar</button>
-        </footer>
+      <div class="confirm-content">
+        <h2>{{ confirmationTitle }}</h2>
+        <p>{{ confirmationMessage }}</p>
       </div>
+
+      <div class="confirm-actions">
+        <button class="btn-cancel" (click)="cancelConfirmation()">
+          <span class="material-icons">close</span>
+          <span>Cancelar</span>
+        </button>
+        <button class="btn-confirm logout" (click)="confirmAction()">
+          <span class="material-icons">logout</span>
+          <span>Sair</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

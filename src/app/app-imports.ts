@@ -7,6 +7,7 @@ import {HttpClient, HttpClientModule} from "@angular/common/http";
 import { PdfViewerModule } from "ng2-pdf-viewer";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ToastrModule } from "ngx-toastr";
+import { provideNgxMask, NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 
 
 export const APP_IMPORTS = [
@@ -18,6 +19,8 @@ export const APP_IMPORTS = [
   HttpClientModule,
   RouterOutlet,
   PdfViewerModule,
+  NgxMaskDirective,
+  NgxMaskPipe,
   ToastrModule.forRoot({
     timeOut: 3000,
     positionClass: 'toast-top-right',
