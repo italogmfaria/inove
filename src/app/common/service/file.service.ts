@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { map, Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ContentDTO } from '../dto/ContentDTO';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class FileService {
   private baseUrl = `${environment.apiBaseUrl}/cursos`;
 
@@ -13,18 +16,27 @@ export class FileService {
     const formData = new FormData();
     formData.append('imagem', file);
 
-    return this.http.post<any>(`${this.baseUrl}/${courseId}/upload-imagem-curso`, formData).pipe(
-      map(response => {
-        if (!response || !response.imageUrl) {
-          throw new Error('URL da imagem não recebida do servidor');
-        }
-        return response.imageUrl;
-      }),
-      catchError((error: HttpErrorResponse) => {
-        const message = error.error?.message || 'Erro ao fazer upload da imagem';
-        return throwError(() => new Error(message));
-      })
-    );
+    const headers = new HttpHeaders({
+      'ngrok-skip-browser-warning': 'true'
+    });
+
+    return this.http.post<any>(`${this.baseUrl}/${courseId}/upload-imagem-curso`, formData, { headers })
+      .pipe(
+        map(response => {
+          if (!response || !response.imageUrl) {
+            throw new Error('URL da imagem não recebida do servidor');
+          }
+          return response.imageUrl;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Erro detalhado do upload:', error);
+          let errorMessage = 'Erro ao fazer upload da imagem';
+          if (error.error && error.error.message) {
+            errorMessage = error.error.message;
+          }
+          return throwError(() => new Error(errorMessage));
+        })
+      );
   }
 
   getStreamUrl(fileName: string): string {
@@ -32,10 +44,15 @@ export class FileService {
   }
 
   getCourseImage(courseId: number): Observable<{ imageUrl: string }> {
-    return this.http.get<{ imageUrl: string }>(`${this.baseUrl}/${courseId}/preview-imagem`).pipe(
-      catchError((error: HttpErrorResponse) => {
-        return throwError(() => new Error('Não foi possível carregar a imagem do curso'));
-      })
-    );
+    const headers = new HttpHeaders({
+      'ngrok-skip-browser-warning': 'true'
+    });
+    return this.http.get<{ imageUrl: string }>(`${this.baseUrl}/${courseId}/preview-imagem`, { headers })
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Erro ao obter imagem do curso:', error);
+          return throwError(() => new Error('Não foi possível carregar a imagem do curso'));
+        })
+      );
   }
 }

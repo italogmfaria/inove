@@ -1,27 +1,36 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import {LoginResponseDTO} from "../dto/LoginResponseDTO";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {Observable} from "rxjs";
 import {environment} from "../../../environments/environment";
+import {LoginResponseDTO} from "../dto/LoginResponseDTO";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
+
   private baseUrl = `${environment.apiBaseUrl}/auth/login`;
 
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<LoginResponseDTO> {
-    return this.http.post<LoginResponseDTO>(this.baseUrl, { email, password });
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
+    });
+    return this.http.post<LoginResponseDTO>(this.baseUrl, { email, password }, { headers });
   }
 
-  saveTokens(token: string, refreshToken: string): void {
+  saveTokens(token: string, refreshToken: string) {
     localStorage.setItem('authToken', token);
     localStorage.setItem('refreshToken', refreshToken);
   }
 
-  saveUserId(userId: number | undefined): void {
+  saveUserId(userId: number | undefined) {
     if (userId !== undefined && userId !== null) {
       localStorage.setItem('userId', userId.toString());
+    } else {
+      console.error('Erro: userId está indefinido ou nulo.');
     }
   }
 
@@ -29,6 +38,7 @@ export class AuthService {
     const userId = localStorage.getItem('userId');
     return userId ? parseInt(userId, 10) : null;
   }
+
 
   getToken(): string | null {
     return localStorage.getItem('authToken');
@@ -38,7 +48,7 @@ export class AuthService {
     return localStorage.getItem('refreshToken');
   }
 
-  logout(): void {
+  logout() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userId');
@@ -46,12 +56,16 @@ export class AuthService {
 
   getRole(): string | null {
     const token = this.getToken();
-    if (!token) return null;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.role;
-    } catch {
-      return null;
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.role;
+      } catch (e) {
+        console.error('Erro ao decodificar o token:', e);
+        return null;
+      }
     }
+    return null;
   }
+
 }
