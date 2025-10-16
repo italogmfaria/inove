@@ -72,7 +72,7 @@ export class UserService {
     return this.http.delete<void>(`${this.baseUrl}/${userId}/cursos/${courseId}`, { headers });
   }
 
-  updateUser(user: { id: number; name: string; email: string }): Observable<void> {
+  updateUser(user: { id: number; name: string; email: string; cpf: string }): Observable<void> {
     const headers = this.createHeaders();
     return this.http.put<void>(`${this.baseUrl}/${user.id}`, user, { headers });
   }

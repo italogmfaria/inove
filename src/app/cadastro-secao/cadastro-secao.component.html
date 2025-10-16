@@ -1,12 +1,10 @@
 <div class="section-container">
-  <!-- Background Decorations -->
   <div class="background-decoration">
     <div class="circle circle-1"></div>
     <div class="circle circle-2"></div>
     <div class="circle circle-3"></div>
   </div>
 
-  <!-- Header -->
   <header class="header">
     <button class="back-btn" (click)="goBack()">
       <span class="material-icons">arrow_back</span>
@@ -15,7 +13,6 @@
     <img src="assets/logowhite.png" alt="Logotipo INOVE" class="logo">
   </header>
 
-  <!-- Main Content -->
   <main class="main-content">
     <div class="content-wrapper">
       <div class="content-header">
@@ -32,17 +29,14 @@
         </button>
       </div>
 
-      <!-- Empty State -->
       <div *ngIf="secoes.length === 0" class="empty-state">
         <span class="material-icons empty-icon">folder_open</span>
         <h3>Nenhuma seção criada</h3>
         <p>Comece criando uma nova seção para organizar o conteúdo do curso</p>
       </div>
 
-      <!-- Sections List -->
       <div class="sections-list" *ngIf="secoes.length > 0">
         <div class="section-card" *ngFor="let secao of secoes; let i = index">
-          <!-- Section Header -->
           <div class="section-card-header" (click)="toggleSection(i)">
             <div class="section-info">
               <div class="section-number">
@@ -64,9 +58,7 @@
             </div>
           </div>
 
-          <!-- Section Body -->
           <div class="section-card-body" *ngIf="secao.isOpen">
-            <!-- Contents Table -->
             <div class="contents-table" *ngIf="secao.contents && secao.contents.length > 0">
               <div class="table-header">
                 <div class="col-name">
@@ -110,13 +102,11 @@
               </div>
             </div>
 
-            <!-- Empty Contents State -->
             <div class="empty-contents" *ngIf="!secao.contents || secao.contents.length === 0">
               <span class="material-icons">inbox</span>
               <p>Nenhum conteúdo nesta seção</p>
             </div>
 
-            <!-- Add Content Button -->
             <button class="btn-add-content" (click)="adicionarConteudo(secao.id)">
               <span class="material-icons">add</span>
               <span>Adicionar Conteúdo</span>
@@ -127,7 +117,6 @@
     </div>
   </main>
 
-  <!-- Modal para Editar Seção -->
   <div class="modal-overlay" *ngIf="showEditSecaoModal" (click)="closeEditSecaoModal()"></div>
   <div class="modal" *ngIf="showEditSecaoModal" (click)="$event.stopPropagation()">
     <header class="modal-header">
@@ -157,9 +146,8 @@
     </footer>
   </div>
 
-  <!-- Modal para Conteúdo -->
   <div class="modal-overlay" *ngIf="showContentModal" (click)="closeContentModal()"></div>
-  <div class="modal large-modal" *ngIf="showContentModal" (click)="$event.stopPropagation()">
+  <div class="modal content-modal" *ngIf="showContentModal" (click)="$event.stopPropagation()">
     <header class="modal-header">
       <h2>
         <span class="material-icons">{{ editingContent ? 'edit' : 'add_circle' }}</span>
@@ -218,7 +206,6 @@
         />
       </div>
 
-      <!-- Upload Progress -->
       <div class="upload-progress-container" *ngIf="uploadProgress > 0 && uploadProgress < 100">
         <div class="progress-info">
           <span class="material-icons uploading-icon">cloud_upload</span>
@@ -244,30 +231,28 @@
     </footer>
   </div>
 
-  <!-- Modal de Confirmação -->
-  <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmation()">
-    <div class="modal confirm-modal" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <div class="confirm-icon delete">
-          <span class="material-icons">warning</span>
-        </div>
+  <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmation()"></div>
+  <div class="modal confirm-modal" *ngIf="showConfirmModal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="confirm-icon delete">
+        <span class="material-icons">warning</span>
       </div>
+    </div>
 
-      <div class="confirm-content">
-        <h2>{{ confirmationTitle }}</h2>
-        <p>{{ confirmationMessage }}</p>
-      </div>
+    <div class="confirm-content">
+      <h2>{{ confirmationTitle }}</h2>
+      <p>{{ confirmationMessage }}</p>
+    </div>
 
-      <div class="confirm-actions">
-        <button class="btn-cancel" (click)="cancelConfirmation()">
-          <span class="material-icons">close</span>
-          <span>Cancelar</span>
-        </button>
-        <button class="btn-confirm delete" (click)="confirmAction()">
-          <span class="material-icons">delete_forever</span>
-          <span>Excluir</span>
-        </button>
-      </div>
+    <div class="confirm-actions">
+      <button class="btn-cancel" (click)="cancelConfirmation()">
+        <span class="material-icons">close</span>
+        <span>Cancelar</span>
+      </button>
+      <button class="btn-confirm delete" (click)="confirmAction()">
+        <span class="material-icons">delete_forever</span>
+        <span>Excluir</span>
+      </button>
     </div>
   </div>
 </div>

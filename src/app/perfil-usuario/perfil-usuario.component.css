@@ -809,7 +809,7 @@ body {
 }
 
 .confirm-icon.logout {
-    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(41, 128, 185, 0.1) 100%);
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
 .confirm-icon .material-icons {
@@ -821,16 +821,7 @@ body {
 }
 
 .confirm-icon.logout .material-icons {
-    color: #3498db;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
+  color: white;
 }
 
 .confirm-content h2 {
@@ -891,7 +882,7 @@ body {
 }
 
 .btn-confirm.logout {
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
 }
 
 .btn-confirm:hover {
@@ -904,7 +895,7 @@ body {
 }
 
 .btn-confirm.logout:hover {
-    background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
 }
 
 .btn-cancel .material-icons,
@@ -1008,7 +999,7 @@ body {
 }
 
 .confirm-icon.logout {
-    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(41, 128, 185, 0.1) 100%);
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
 .confirm-icon .material-icons {
@@ -1020,16 +1011,7 @@ body {
 }
 
 .confirm-icon.logout .material-icons {
-    color: #3498db;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
+    color: white;
 }
 
 .confirm-content h2 {
@@ -1090,7 +1072,7 @@ body {
 }
 
 .btn-confirm.logout {
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
 }
 
 .btn-confirm:hover {
@@ -1103,7 +1085,7 @@ body {
 }
 
 .btn-confirm.logout:hover {
-    background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
 }
 
 .btn-cancel .material-icons,

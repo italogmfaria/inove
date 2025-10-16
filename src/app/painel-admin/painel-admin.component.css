@@ -966,7 +966,7 @@ tbody tr:last-child td {
 }
 
 .confirm-icon.logout {
-    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(41, 128, 185, 0.1) 100%);
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
 .confirm-icon .material-icons {
@@ -978,17 +978,9 @@ tbody tr:last-child td {
 }
 
 .confirm-icon.logout .material-icons {
-    color: #3498db;
+    color: white;
 }
 
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-}
 
 .confirm-content {
     padding: 0 1.5rem;
@@ -1053,7 +1045,7 @@ tbody tr:last-child td {
 }
 
 .btn-confirm.logout {
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
 .btn-confirm:hover {

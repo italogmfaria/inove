@@ -35,6 +35,10 @@ export class PainelCursoComponent implements OnInit {
   isLoggedIn: boolean = false;
   isContentLoading: boolean = false;
 
+  // Propriedades para o modal de confirmação
+  showConfirmModal: boolean = false;
+  private pendingAction: (() => void) | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -153,11 +157,18 @@ export class PainelCursoComponent implements OnInit {
       this.feedbackService.getFeedbacksByCourse(this.courseId).subscribe({
         next: (feedbacks) => {
           if (this.course) {
-            this.course.feedBacks = feedbacks;
+            // Garantir que cada feedback tenha o objeto student
+            this.course.feedBacks = feedbacks.map(feedback => {
+              // Se o feedback não tem student, mas é do usuário atual, adicionar
+              if (!feedback.student && this.userFeedback && feedback.id === this.userFeedback.id) {
+                feedback.student = this.userFeedback.student;
+              }
+              return feedback;
+            });
             this.loadUserFeedback();
           }
         },
-        error: (error) => console.error('Erro ao recarregar comentários:', error)
+        error: (error) => console.error('Erro ao recarregar feedbacks:', error)
       });
     }
   }
@@ -168,21 +179,26 @@ export class PainelCursoComponent implements OnInit {
     if (this.userFeedback) {
       // Editar feedback existente
       this.feedbackService.updateFeedback(this.userFeedback.id, this.userId, this.newComment).subscribe({
-        next: (updatedFeedback) => {
-          window.location.reload();
+        next: () => {
+          // Recarregar os feedbacks do servidor para ter dados completos
+          this.refreshComments();
+          this.resetCommentForm();
         },
         error: (error) => {
-          window.location.reload();
+          console.error('Erro ao atualizar feedback:', error);
+          this.toastr.error('Não foi possível atualizar o feedback. Tente novamente.', 'Erro');
         }
       });
     } else {
       // Criar novo feedback
       this.feedbackService.addFeedback(this.userId, this.courseId, this.newComment).subscribe({
-        next: (newFeedback) => {
-          window.location.reload();
+        next: () => {
+          this.refreshComments();
+          this.resetCommentForm();
         },
         error: (error) => {
-          window.location.reload();
+          console.error('Erro ao adicionar feedback:', error);
+          this.toastr.error('Não foi possível adicionar o feedback. Tente novamente.', 'Erro');
         }
       });
     }
@@ -190,14 +206,11 @@ export class PainelCursoComponent implements OnInit {
 
   deleteFeedback(): void {
     if (this.userFeedback) {
-      // Mostrar toast de confirmação usando um modal customizado ou diretamente deletar com feedback
-      this.toastr.info('Tem certeza que deseja excluir seu comentário?', 'Confirmação', {
-        timeOut: 5000,
-        closeButton: true,
-        tapToDismiss: false
-      }).onTap.subscribe(() => {
+      // Configurar e exibir o modal de confirmação
+      this.pendingAction = () => {
         this.confirmDeleteFeedback();
-      });
+      };
+      this.showConfirmModal = true;
     }
   }
 
@@ -210,11 +223,10 @@ export class PainelCursoComponent implements OnInit {
           }
           this.userFeedback = undefined;
           this.resetCommentForm();
-          this.toastr.success('Comentário excluído com sucesso!', 'Sucesso');
         },
         error: (error) => {
-          console.error('Erro ao excluir comentário:', error);
-          this.toastr.error('Erro ao excluir comentário. Tente novamente.', 'Erro');
+          console.error('Erro ao excluir feedback:', error);
+          this.toastr.error('Erro ao excluir feedback. Tente novamente.', 'Erro');
         }
       });
     }
@@ -236,6 +248,21 @@ export class PainelCursoComponent implements OnInit {
 
   cancelEdit(): void {
     this.resetCommentForm();
+  }
+
+  // Confirmar a ação pendente
+  confirmAction(): void {
+    if (this.pendingAction) {
+      this.pendingAction();
+      this.pendingAction = null;
+    }
+    this.showConfirmModal = false;
+  }
+
+  // Cancelar a confirmação
+  cancelConfirmation(): void {
+    this.pendingAction = null;
+    this.showConfirmModal = false;
   }
 
   navigateTo(path: string): void {

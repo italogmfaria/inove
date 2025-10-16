@@ -184,6 +184,7 @@ export class PainelAdminComponent {
       id: this.selectedUser.id,
       name: this.selectedUser.name,
       email: this.selectedUser.email,
+      cpf: this.selectedUser.cpf
     };
 
     this.userService.updateUser(userPayload).subscribe(
@@ -317,18 +318,35 @@ getCourses(): void {
 
 
   getInstructors(): void {
-    this.userService.getInstructors().subscribe((response) => {
-      this.instrutores = response;
-    });
+    this.userService.getInstructors().subscribe(
+      (response) => {
+        this.instrutores = response;
+      },
+      (error) => {
+        console.error('Erro ao buscar instrutores:', error);
+        this.toastr.error('Erro ao carregar instrutores.', 'Erro');
+      }
+    );
   }
 
   addCourse(): void {
-    if (!this.newCourse.name || !this.newCourse.description || this.newCourse.instructors.length === 0) {
-      this.toastr.warning('Por favor, preencha todos os campos obrigatórios.', 'Atenção');
+    if (!this.newCourse.name || !this.newCourse.description || !this.selectedInstructorId) {
+      this.toastr.warning('Por favor, preencha todos os campos obrigatórios, incluindo o instrutor.', 'Atenção');
       return;
     }
 
-    this.courseService.addCourse(this.newCourse).subscribe(
+    const instructor = this.instrutores.find(i => i.id === Number(this.selectedInstructorId));
+    if (!instructor) {
+      this.toastr.error('Instrutor não encontrado.', 'Erro');
+      return;
+    }
+
+    const coursePayload = {
+      ...this.newCourse,
+      instructors: [instructor]
+    };
+
+    this.courseService.addCourse(coursePayload).subscribe(
       () => {
         this.getCourses();
         this.closeAddCourseModal();
@@ -343,13 +361,20 @@ getCourses(): void {
 
   updateCourse(): void {
     if (!this.selectedCourse.name || !this.selectedCourse.description) {
-      this.toastr.warning('Por favor, preencha os campos obrigatórios.', 'Atenção');
+      this.toastr.warning('Por favor, preencha o título e a descrição do curso.', 'Atenção');
       return;
     }
 
+    // Find the selected instructor from the list
+    const instructor = this.selectedInstructorId ?
+      this.instrutores.find(i => i.id === Number(this.selectedInstructorId)) :
+      null;
+
     const coursePayload = {
+      id: this.selectedCourse.id,
       name: this.selectedCourse.name,
       description: this.selectedCourse.description,
+      instructors: instructor ? [instructor] : []
     };
 
     this.courseService.updateCourse(this.selectedCourse.id, coursePayload).subscribe(
@@ -365,11 +390,20 @@ getCourses(): void {
     );
   }
 
-
-
   openAddCourseModal(): void {
+    this.getInstructors();
     this.newCourse = this.resetNewCourse();
+    this.selectedInstructorId = null;
     this.showAddCourseModal = true;
+  }
+
+  openUpdateCourseModal(course: CursoDTO): void {
+    this.getInstructors();
+    this.selectedCourse = { ...course };
+    // Set the selected instructor from the course's current instructor
+    const currentInstructor = course.instructors && course.instructors.length > 0 ? course.instructors[0] : null;
+    this.selectedInstructorId = currentInstructor ? currentInstructor.id : null;
+    this.showUpdateCourseModal = true;
   }
 
   closeAddCourseModal(): void {
@@ -378,13 +412,9 @@ getCourses(): void {
     this.showAddCourseModal = false;
   }
 
-  openUpdateCourseModal(course: CursoDTO): void {
-    this.selectedCourse = { ...course };
-    this.showUpdateCourseModal = true;
-  }
-
   closeUpdateCourseModal(): void {
     this.selectedCourse = this.resetNewCourse();
+    this.selectedInstructorId = null;
     this.showUpdateCourseModal = false;
   }
 

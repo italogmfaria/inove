@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ContentDTO } from '../common/dto/ContentDTO';
 import { ContentType } from '../common/dto/ContentType';
 import { SectionDTO } from '../common/dto/SectionDTO';
 import { ContentService } from '../common/service/content.service';
 import { FileService } from '../common/service/file.service';
 import { SectionService } from '../common/service/section.service';
+import { CourseService } from '../common/service/course.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -14,13 +16,13 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class CadastroSecaoComponent implements OnInit {
   secoes: SectionDTO[] = [];
-  courseId: number = 1;
+  courseId: number = 0;
   showEditSecaoModal = false;
   showContentModal = false;
   isUploading = false;
   editingContent = false;
   uploadProgress = 0;
-  secaoEdit: SectionDTO = { id: 0, title: '', description: '', courseId: this.courseId, contents: [] };
+  secaoEdit: SectionDTO;
   currentContent: ContentDTO = { id: 0, title: '', description: '', contentType: ContentType.VIDEO, fileUrl: '', fileName: '', sectionId: 0 };
   selectedFile?: File;
   ContentType = ContentType;
@@ -32,14 +34,44 @@ export class CadastroSecaoComponent implements OnInit {
   private pendingAction: (() => void) | null = null;
 
   constructor(
+    private route: ActivatedRoute,
+    private router: Router,
     private sectionService: SectionService,
     private contentService: ContentService,
+    private courseService: CourseService,
     private fileService: FileService,
     private toastr: ToastrService
-  ) {}
+  ) {
+    this.secaoEdit = { id: 0, title: '', description: '', courseId: 0, contents: [] };
+  }
 
   ngOnInit(): void {
-    this.listarSecoes();
+    // Use paramMap instead of params for better type safety
+    this.route.paramMap.subscribe(params => {
+      const courseId = params.get('id');
+      if (!courseId) {
+        this.toastr.error('ID do curso não fornecido');
+        this.router.navigate(['/cursos']);
+        return;
+      }
+
+      this.courseId = parseInt(courseId);
+      this.secaoEdit.courseId = this.courseId;
+      this.loadCourseAndSections();
+    });
+  }
+
+  private loadCourseAndSections(): void {
+    this.courseService.getCourseById(this.courseId).subscribe({
+      next: (_) => {
+        this.listarSecoes();
+      },
+      error: (error) => {
+        console.error('Erro ao carregar curso:', error);
+        this.toastr.error('Curso não encontrado ou você não tem acesso a ele');
+        this.router.navigate(['/cursos']);
+      }
+    });
   }
 
   selecionarTipoConteudo(tipo: string): void {
@@ -47,15 +79,35 @@ export class CadastroSecaoComponent implements OnInit {
   }
 
   listarSecoes(): void {
-    this.sectionService.getSections(this.courseId).subscribe(secoes => {
-      this.secoes = secoes.map(secao => ({ ...secao, isOpen: false }));
+    this.sectionService.getSections(this.courseId).subscribe({
+      next: (secoes) => {
+        this.secoes = secoes.map(secao => ({ ...secao, isOpen: false }));
+      },
+      error: (error) => {
+        console.error('Erro ao listar seções:', error);
+        this.toastr.error('Erro ao carregar as seções do curso');
+      }
     });
   }
 
   criarNovaSecao(): void {
-    const novaSecao: SectionDTO = { id: 0, title: 'Nova Seção', description: '', courseId: this.courseId, contents: [] };
-    this.sectionService.createSection(this.courseId, novaSecao).subscribe(secaoCriada => {
-      this.secoes.push(secaoCriada);
+    const novaSecao: SectionDTO = {
+      id: 0,
+      title: 'Nova Seção',
+      description: '',
+      courseId: this.courseId,
+      contents: []
+    };
+
+    this.sectionService.createSection(this.courseId, novaSecao).subscribe({
+      next: (secaoCriada) => {
+        this.secoes.push(secaoCriada);
+        this.toastr.success('Seção criada com sucesso');
+      },
+      error: (error) => {
+        console.error('Erro ao criar seção:', error);
+        this.toastr.error('Erro ao criar a seção');
+      }
     });
   }
 

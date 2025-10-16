@@ -22,7 +22,7 @@ export class FeedbackService {
   addFeedback(userId: number, courseId: number, comment: string): Observable<FeedBackDTO> {
     return this.http.post<FeedBackDTO>(`${this.apiUrl}?userId=${userId}&courseId=${courseId}`, comment, {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain',
         'ngrok-skip-browser-warning': 'true'
       }
     });
@@ -31,7 +31,7 @@ export class FeedbackService {
   updateFeedback(feedbackId: number, userId: number, newComment: string): Observable<FeedBackDTO> {
     return this.http.put<FeedBackDTO>(`${this.apiUrl}/${feedbackId}?userId=${userId}`, newComment, {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain',
         'ngrok-skip-browser-warning': 'true'
       }
     });
@@ -42,5 +42,12 @@ export class FeedbackService {
       'ngrok-skip-browser-warning': 'true'
     });
     return this.http.delete<void>(`${this.apiUrl}/${feedbackId}?userId=${userId}`, { headers });
+  }
+
+  deleteFeedbackByUserAndCourse(userId: number, courseId: number): Observable<void> {
+    const headers = new HttpHeaders({
+      'ngrok-skip-browser-warning': 'true'
+    });
+    return this.http.delete<void>(`${this.apiUrl}/by-user-and-course?userId=${userId}&courseId=${courseId}`, { headers });
   }
 }

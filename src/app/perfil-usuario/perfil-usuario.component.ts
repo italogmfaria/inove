@@ -2,10 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../common/service/auth.service';
 import { UserService } from '../common/service/user.service';
-import { UserDTO } from '../common/dto/UserDTO';
-import { CourseService } from '../common/service/course.service';
-import { UserRole } from '../common/dto/UserRole';
 import { FileService } from '../common/service/file.service';
+import { FeedbackService } from '../common/service/feedback.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -16,6 +14,7 @@ import { ToastrService } from 'ngx-toastr';
 export class PerfilUsuarioComponent implements OnInit {
   activePanel: 'cursos' | 'dados' = 'cursos';
   isEditing: boolean = false;
+  showEditModal: boolean = false;
   user: any = {};
   userCourses: any[] = [];
   courseImages: { [key: number]: string } = {};
@@ -32,6 +31,7 @@ export class PerfilUsuarioComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private fileService: FileService,
+    private feedbackService: FeedbackService,
     private toastr: ToastrService
   ) {}
 
@@ -84,6 +84,12 @@ export class PerfilUsuarioComponent implements OnInit {
 
   toggleEdit(): void {
     this.isEditing = !this.isEditing;
+    this.showEditModal = !this.showEditModal;
+  }
+
+  closeEditModal(): void {
+    this.showEditModal = false;
+    this.isEditing = false;
   }
 
   saveUserData(): void {
@@ -112,20 +118,40 @@ export class PerfilUsuarioComponent implements OnInit {
     // Configurar o modal de confirmação
     this.confirmationType = 'delete';
     this.confirmationTitle = 'Remover Curso';
-    this.confirmationMessage = `Tem certeza que deseja remover "${courseName}" dos seus cursos? Esta ação não pode ser desfeita.`;
+    this.confirmationMessage = `Tem certeza que deseja remover "${courseName}" dos seus cursos? Esta ação não pode ser desfeita e seu feedback neste curso será removido.`;
 
     // Armazenar a ação pendente
     this.pendingAction = () => {
       const userId = Number(localStorage.getItem('userId'));
 
-      this.userService.removeUserCourse(userId, courseId).subscribe({
+      // Primeiro, deletar o feedback do curso (se existir)
+      this.feedbackService.deleteFeedbackByUserAndCourse(userId, courseId).subscribe({
         next: () => {
-          this.userCourses = this.userCourses.filter((course) => course.id !== courseId);
-          this.toastr.success(`O curso "${courseName}" foi removido com sucesso!`, 'Curso Removido');
+          // Após deletar o feedback, remover o curso
+          this.userService.removeUserCourse(userId, courseId).subscribe({
+            next: () => {
+              this.userCourses = this.userCourses.filter((course) => course.id !== courseId);
+              this.toastr.success(`O curso "${courseName}" e seu feedback foram removidos com sucesso!`, 'Curso Removido');
+            },
+            error: (err) => {
+              console.error("Erro ao remover curso:", err);
+              this.toastr.error("Não foi possível remover o curso. Tente novamente.", 'Erro');
+            }
+          });
         },
         error: (err) => {
-          console.error("Erro ao remover curso:", err);
-          this.toastr.error("Não foi possível remover o curso. Tente novamente.", 'Erro');
+          // Se não houver feedback ou houver erro ao deletar, continuar removendo o curso
+          console.log("Nenhum feedback para remover ou erro ao deletar feedback, continuando...");
+          this.userService.removeUserCourse(userId, courseId).subscribe({
+            next: () => {
+              this.userCourses = this.userCourses.filter((course) => course.id !== courseId);
+              this.toastr.success(`O curso "${courseName}" foi removido com sucesso!`, 'Curso Removido');
+            },
+            error: (err) => {
+              console.error("Erro ao remover curso:", err);
+              this.toastr.error("Não foi possível remover o curso. Tente novamente.", 'Erro');
+            }
+          });
         }
       });
     };

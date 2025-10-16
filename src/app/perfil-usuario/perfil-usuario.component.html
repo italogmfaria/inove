@@ -1,5 +1,4 @@
 <body>
-    <!-- Background Decorations -->
     <div class="background-decoration">
         <div class="circle circle-1"></div>
         <div class="circle circle-2"></div>
@@ -7,7 +6,6 @@
     </div>
 
     <div class="perfil-container">
-        <!-- Header -->
         <header class="header">
             <button class="back-btn" (click)="navigateTo('/cursos')">
                 <span class="material-icons">arrow_back</span>
@@ -16,9 +14,7 @@
             <img src="assets/logowhite.png" alt="Logotipo INOVE" class="logo">
         </header>
 
-        <!-- Content -->
         <div class="content">
-            <!-- Side Panel -->
             <aside class="side-panel">
                 <div class="panel-header">
                     <h2>Painel do Usuário</h2>
@@ -41,9 +37,7 @@
                 </button>
             </aside>
 
-            <!-- Main Panel -->
             <main class="main-panel">
-                <!-- Meus Cursos Panel -->
                 <div *ngIf="activePanel === 'cursos'" class="panel-content">
                     <div class="panel-title">
                         <span class="material-icons title-icon">school</span>
@@ -86,7 +80,6 @@
                     </div>
                 </div>
 
-                <!-- Meus Dados Panel -->
                 <div *ngIf="activePanel === 'dados'" class="panel-content">
                     <div class="panel-title">
                         <span class="material-icons title-icon">badge</span>
@@ -126,63 +119,60 @@
         </div>
     </div>
 
-    <!-- Modal de Edição -->
-    <div class="modal-overlay" *ngIf="isEditing" (click)="toggleEdit()">
-        <div class="modal" (click)="$event.stopPropagation()">
-            <div class="modal-header">
-                <h2>
-                    <span class="material-icons">edit</span>
-                    Editar Dados
-                </h2>
-                <button class="close-btn" (click)="toggleEdit()">
-                    <span class="material-icons">close</span>
-                </button>
+    <div class="modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()"></div>
+    <div class="modal" *ngIf="showEditModal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>
+                <span class="material-icons">edit</span>
+                Editar Dados
+            </h2>
+            <button class="close-btn" (click)="toggleEdit()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+
+        <form class="modal-form">
+            <div class="input-group">
+                <span class="material-icons input-icon">person</span>
+                <input
+                    id="edit-nome"
+                    type="text"
+                    name="name"
+                    [(ngModel)]="user.name"
+                    placeholder="Digite seu nome completo"
+                    class="input-field" />
             </div>
 
-            <form class="modal-form">
-                <div class="input-group">
-                    <span class="material-icons input-icon">person</span>
-                    <input
-                        id="edit-nome"
-                        type="text"
-                        name="name"
-                        [(ngModel)]="user.name"
-                        placeholder="Digite seu nome completo"
-                        class="input-field" />
-                </div>
+            <div class="input-group">
+                <span class="material-icons input-icon">email</span>
+                <input
+                    id="edit-email"
+                    type="email"
+                    name="email"
+                    [(ngModel)]="user.email"
+                    placeholder="Digite seu e-mail"
+                    class="input-field" />
+            </div>
 
-                <div class="input-group">
-                    <span class="material-icons input-icon">email</span>
-                    <input
-                        id="edit-email"
-                        type="email"
-                        name="email"
-                        [(ngModel)]="user.email"
-                        placeholder="Digite seu e-mail"
-                        class="input-field" />
-                </div>
+            <div class="input-group">
+                <span class="material-icons input-icon">credit_card</span>
+                <input
+                    id="edit-cpf"
+                    type="text"
+                    name="cpf"
+                    [(ngModel)]="user.cpf"
+                    mask="000.000.000-00"
+                    placeholder="000.000.000-00"
+                    class="input-field" />
+            </div>
 
-                <div class="input-group">
-                    <span class="material-icons input-icon">credit_card</span>
-                    <input
-                        id="edit-cpf"
-                        type="text"
-                        name="cpf"
-                        [(ngModel)]="user.cpf"
-                        mask="000.000.000-00"
-                        placeholder="000.000.000-00"
-                        class="input-field" />
-                </div>
-
-                <button type="button" class="btn-save" (click)="saveUserData()">
-                    <span class="material-icons">save</span>
-                    <span>Salvar Alterações</span>
-                </button>
-            </form>
-        </div>
+            <button type="button" class="btn-save" (click)="saveUserData()">
+                <span class="material-icons">save</span>
+                <span>Salvar Alterações</span>
+            </button>
+        </form>
     </div>
 
-    <!-- Modal de Confirmação -->
     <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmation()">
         <div class="modal confirm-modal" (click)="$event.stopPropagation()">
             <div class="modal-header">

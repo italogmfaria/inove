@@ -1,6 +1,5 @@
 @import 'ngx-toastr/toastr';
 
-/* Material Icons - garantir carregamento */
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;
@@ -19,7 +18,6 @@
   font-feature-settings: 'liga';
 }
 
-/* Proteção de imagens - bloquear arrasto e seleção */
 img {
   user-select: none;
   -webkit-user-select: none;
@@ -34,7 +32,6 @@ img {
   -webkit-touch-callout: none;
 }
 
-/* Prevenir seleção de texto em elementos de marca */
 .logo, .footer-logo {
   user-select: none;
   -webkit-user-select: none;

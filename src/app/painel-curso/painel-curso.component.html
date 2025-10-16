@@ -1,5 +1,4 @@
 <body>
-    <!-- Background Decorations -->
     <div class="background-decoration">
         <div class="circle circle-1"></div>
         <div class="circle circle-2"></div>
@@ -7,7 +6,6 @@
     </div>
 
     <div class="curso-container">
-        <!-- Header -->
         <header class="header">
             <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
             <h1 class="course-header-title">{{ courseTitle }}</h1>
@@ -17,26 +15,21 @@
             </button>
         </header>
 
-        <!-- Main Content -->
         <div class="main-wrapper">
             <div class="content-grid">
-                <!-- Área de Visualização -->
                 <div class="viewer-card">
                     <div class="viewer" *ngIf="currentContentUrl">
-                        <!-- Loading Spinner -->
                         <div class="loading-spinner" *ngIf="isContentLoading">
                             <div class="spinner"></div>
                             <p>Carregando conteúdo...</p>
                         </div>
 
-                        <!-- Exibição de Vídeo -->
                         <video class="video-area" *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.mp4') && !isContentLoading"
                                controls preload="metadata" (loadeddata)="onContentLoaded()">
                             <source [src]="currentContentUrl" type="video/mp4">
                             Seu navegador não suporta vídeos.
                         </video>
 
-                        <!-- Exibição de PDF -->
                         <div class="pdf-container" *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.pdf') && !isContentLoading">
                             <pdf-viewer class="pdf-area"
                                         [src]="currentContentUrl"
@@ -45,7 +38,6 @@
                         </div>
                     </div>
 
-                    <!-- Empty State -->
                     <div class="empty-viewer" *ngIf="!currentContentUrl">
                         <span class="material-icons empty-icon">play_circle_outline</span>
                         <h3>Nenhum conteúdo selecionado</h3>
@@ -53,7 +45,6 @@
                     </div>
                 </div>
 
-                <!-- Painel de Conteúdo -->
                 <aside class="content-panel">
                     <div class="panel-header">
                         <span class="material-icons">list</span>
@@ -83,7 +74,6 @@
                 </aside>
             </div>
 
-            <!-- Course Info Footer -->
             <div class="course-info-card">
                 <div class="info-header">
                     <span class="material-icons">info</span>
@@ -121,38 +111,18 @@
                 </div>
             </div>
 
-            <!-- Comments Section -->
             <section class="comments-section">
                 <div class="comments-header">
                     <span class="material-icons">chat_bubble</span>
-                    <h2>Avaliações dos Alunos</h2>
+                    <h2>Feedbacks</h2>
                     <span class="comments-count" *ngIf="course && course.feedBacks">({{ course.feedBacks.length }})</span>
                 </div>
 
-                <div class="comments-list" *ngIf="course && course.feedBacks && course.feedBacks.length > 0">
-                    <div class="comment" *ngFor="let feedback of course.feedBacks; let i = index"
-                         [style.animation-delay]="(i * 0.1) + 's'">
-                        <div class="comment-avatar">
-                            <span class="material-icons">account_circle</span>
-                        </div>
-                        <div class="comment-content">
-                            <p class="comment-user">{{ feedback.student.name }}</p>
-                            <p class="comment-text">{{ feedback.comment }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="empty-comments" *ngIf="!course || !course.feedBacks || course.feedBacks.length === 0">
-                    <span class="material-icons">rate_review</span>
-                    <p>Nenhuma avaliação ainda. Seja o primeiro!</p>
-                </div>
-
-                <!-- User Comment Section -->
                 <div class="user-comment-section">
                     <div *ngIf="userFeedback && !isEditing" class="existing-comment">
                         <div class="comment-header-edit">
                             <span class="material-icons">edit_note</span>
-                            <strong>Seu comentário:</strong>
+                            <strong>Seu feedback:</strong>
                         </div>
                         <p>{{ userFeedback.comment }}</p>
                         <div class="comment-actions">
@@ -170,7 +140,7 @@
                     <div *ngIf="!userFeedback && !isEditing" class="add-comment-prompt">
                         <button class="btn-add-comment" (click)="isEditing = true">
                             <span class="material-icons">add_comment</span>
-                            Adicionar Comentário
+                            Adicionar Feedback
                         </button>
                     </div>
 
@@ -178,7 +148,7 @@
                         <div class="textarea-wrapper">
                             <span class="material-icons textarea-icon">edit</span>
                             <textarea [(ngModel)]="newComment"
-                                      placeholder="Escreva seu comentário sobre o curso..."
+                                      placeholder="Escreva seu feedback sobre o curso..."
                                       rows="4"></textarea>
                         </div>
                         <div class="comment-box-actions">
@@ -193,8 +163,51 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="comments-list" *ngIf="course && course.feedBacks && course.feedBacks.length > 0">
+                    <div class="comment" *ngFor="let feedback of course.feedBacks; let i = index"
+                         [style.animation-delay]="(i * 0.1) + 's'">
+                        <div class="comment-avatar">
+                            <span class="material-icons">account_circle</span>
+                        </div>
+                        <div class="comment-content">
+                            <p class="comment-user">{{ feedback.student.name }}</p>
+                            <p class="comment-text">{{ feedback.comment }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="empty-comments" *ngIf="!course || !course.feedBacks || course.feedBacks.length === 0">
+                    <span class="material-icons">rate_review</span>
+                    <p>Nenhum feedback ainda. Seja o primeiro!</p>
+                </div>
             </section>
         </div>
     </div>
-</body>
 
+    <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmation()">
+        <div class="modal confirm-modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div class="confirm-icon delete">
+                    <span class="material-icons">warning</span>
+                </div>
+            </div>
+
+            <div class="confirm-content">
+                <h2>Excluir Feedback</h2>
+                <p>Tem certeza que deseja excluir seu feedback? Esta ação não pode ser desfeita.</p>
+            </div>
+
+            <div class="confirm-actions">
+                <button class="btn-cancel" (click)="cancelConfirmation()">
+                    <span class="material-icons">close</span>
+                    <span>Cancelar</span>
+                </button>
+                <button class="btn-confirm delete" (click)="confirmAction()">
+                    <span class="material-icons">delete_forever</span>
+                    <span>Excluir</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>

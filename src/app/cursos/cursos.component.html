@@ -1,12 +1,10 @@
 <body>
-    <!-- Background Decorations -->
     <div class="background-decoration">
         <div class="circle circle-1"></div>
         <div class="circle circle-2"></div>
         <div class="circle circle-3"></div>
     </div>
 
-    <!-- Header -->
     <header class="header">
         <div class="header-left">
             <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
@@ -28,22 +26,18 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="gallery">
-        <!-- Error Message -->
         <div *ngIf="errorMessage" class="error-container">
             <span class="material-icons error-icon">error_outline</span>
             <p class="error-message">{{ errorMessage }}</p>
         </div>
 
-        <!-- Empty State -->
         <div *ngIf="!errorMessage && filteredCursos.length === 0 && searchQuery" class="empty-state">
             <span class="material-icons empty-icon">search_off</span>
             <h3>Nenhum curso encontrado</h3>
             <p>Tente ajustar sua pesquisa ou explorar outros cursos disponíveis</p>
         </div>
 
-        <!-- Courses Grid -->
         <div *ngIf="!errorMessage && filteredCursos.length > 0" class="courses-section">
             <div class="section-header">
                 <h2>{{ searchQuery ? 'Resultados da pesquisa' : 'Cursos disponíveis' }}</h2>
@@ -77,4 +71,3 @@
         </div>
     </main>
 </body>
-

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../common/service/auth.service';
 import { UserService } from '../common/service/user.service';
@@ -92,20 +92,41 @@ export class PainelInstrutorComponent implements OnInit {
   }
 
   updateCourse(): void {
+    // Client-side validation
+    if (!this.cursoEdit.name || this.cursoEdit.name.trim().length === 0) {
+      this.toastr.warning('O nome do curso é obrigatório.', 'Atenção');
+      return;
+    }
+
     this.isLoading = true;
 
     if (this.selectedImageFile) {
-      this.fileService.uploadCourseImage(this.cursoEdit.id, this.selectedImageFile).subscribe(
-        (imageUrl) => {
+      // Validate file size and type before upload
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (this.selectedImageFile.size > maxSize) {
+        this.toastr.error('A imagem deve ter no máximo 5MB', 'Erro');
+        this.isLoading = false;
+        return;
+      }
+
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      if (!allowedTypes.includes(this.selectedImageFile.type)) {
+        this.toastr.error('Formato de imagem não suportado. Use JPG ou PNG', 'Erro');
+        this.isLoading = false;
+        return;
+      }
+
+      this.fileService.uploadCourseImage(this.cursoEdit.id, this.selectedImageFile).subscribe({
+        next: (imageUrl) => {
           this.cursoEdit.imageUrl = imageUrl;
           this.updateCourseData();
         },
-        (error) => {
-          console.error('Erro ao fazer upload da imagem:', error);
-          this.toastr.error('Erro ao enviar a imagem. Tente novamente.', 'Erro');
+        error: (error) => {
+          console.error('Erro detalhado ao fazer upload da imagem:', error);
+          this.toastr.error(error.message || 'Erro ao enviar a imagem. Tente novamente.', 'Erro');
           this.isLoading = false;
         }
-      );
+      });
     } else {
       this.updateCourseData();
     }
@@ -138,13 +159,25 @@ export class PainelInstrutorComponent implements OnInit {
     if (userId) {
       this.courseService.getInstructorCourses(+userId).subscribe((cursos) => {
         this.cursos = cursos;
+        // Carregar as imagens para cada curso
+        this.cursos.forEach(curso => {
+          this.fileService.getCourseImage(curso.id).subscribe(
+            (response) => {
+              curso.imageUrl = response.imageUrl;
+            },
+            (error) => {
+              console.error('Erro ao carregar imagem do curso:', error);
+              curso.imageUrl = 'assets/placeholder.png';
+            }
+          );
+        });
       });
     }
   }
 
   createSections(curso: any): void {
     if (curso && curso.id) {
-      this.router.navigate(['/cadastro-secao'], { queryParams: { cursoId: curso.id } });
+      this.router.navigate(['/cadastro-secao', curso.id]);
     } else {
       this.toastr.error('Erro ao redirecionar para o cadastro de seções.', 'Erro');
       console.error("Erro: curso.id está indefinido.");
@@ -181,16 +214,19 @@ export class PainelInstrutorComponent implements OnInit {
   }
 
   updateInstructor(): void {
-    if (!this.instrutorEdit.name || !this.instrutorEdit.email) {
-      this.toastr.warning('Nome e Email são obrigatórios!', 'Atenção');
+    if (!this.instrutorEdit.name || !this.instrutorEdit.email || !this.instrutorEdit.cpf) {
+      this.toastr.warning('Nome, Email e CPF são obrigatórios!', 'Atenção');
       return;
     }
 
-    this.userService.updateUser({
+    const userUpdate = {
       id: this.instrutor.id,
       name: this.instrutorEdit.name,
-      email: this.instrutorEdit.email
-    }).subscribe(() => {
+      email: this.instrutorEdit.email,
+      cpf: this.instrutorEdit.cpf
+    };
+
+    this.userService.updateUser(userUpdate).subscribe(() => {
       this.instrutor = { ...this.instrutorEdit };
       this.toastr.success('Dados do instrutor atualizados com sucesso!', 'Sucesso');
       this.closeEditInstructorModal();
@@ -230,5 +266,15 @@ export class PainelInstrutorComponent implements OnInit {
   navigateTo(path: string): void {
     this.router.navigate([path]);
   }
-}
 
+  @HostListener('document:keydown.escape', ['$event'])
+  handleEscape(event: KeyboardEvent) {
+    if (this.showUpdateCourseModal) {
+      this.closeUpdateCourseModal();
+    } else if (this.showEditInstructorModal) {
+      this.closeEditInstructorModal();
+    } else if (this.showConfirmModal) {
+      this.cancelConfirmation();
+    }
+  }
+}

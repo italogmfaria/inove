@@ -1,12 +1,10 @@
 <body>
-    <!-- Background Decorations -->
     <div class="background-decoration">
         <div class="circle circle-1"></div>
         <div class="circle circle-2"></div>
         <div class="circle circle-3"></div>
     </div>
 
-    <!-- Header -->
     <header class="header">
         <button class="back-btn" (click)="navigateTo('/cursos')">
             <span class="material-icons">arrow_back</span>
@@ -19,9 +17,7 @@
         </button>
     </header>
 
-    <!-- Main Content -->
     <main class="main-content">
-        <!-- Course Hero Section -->
         <section class="course-hero">
             <div class="hero-content">
                 <div class="course-badge">
@@ -52,16 +48,12 @@
             </div>
         </section>
 
-        <!-- Course Details Section -->
         <section class="course-details-container">
-            <!-- About Course Section with Image -->
             <div class="about-course-section">
-                <!-- Course Image -->
                 <div class="course-image-wrapper">
                     <img [src]="courseImageUrl" [alt]="course?.name" class="course-thumbnail">
                 </div>
 
-                <!-- Course Details -->
                 <div class="details-card">
                     <div class="card-header">
                         <span class="material-icons header-icon">description</span>
@@ -73,7 +65,6 @@
                 </div>
             </div>
 
-            <!-- Comments Section -->
             <div class="comments-card" *ngIf="course && course.feedBacks && course.feedBacks.length > 0">
                 <div class="card-header">
                     <span class="material-icons header-icon">chat_bubble</span>
@@ -97,7 +88,6 @@
                 </div>
             </div>
 
-            <!-- Empty State for Comments -->
             <div class="comments-card" *ngIf="!course || !course.feedBacks || course.feedBacks.length === 0">
                 <div class="card-header">
                     <span class="material-icons header-icon">chat_bubble</span>
@@ -114,4 +104,3 @@
         </section>
     </main>
 </body>
-

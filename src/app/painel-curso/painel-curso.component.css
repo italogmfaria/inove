@@ -593,50 +593,66 @@ body {
 
 /* User Comment Section */
 .user-comment-section {
-    border-top: 2px solid #e8ecef;
-    padding-top: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #e8ecef;
 }
 
 .existing-comment {
     background: linear-gradient(145deg, #e8f4fd 0%, #f0f8ff 100%);
-    padding: 1.5rem;
-    border-radius: 12px;
-    border-left: 4px solid #3261a8;
-    margin-bottom: 1.5rem;
+    padding: 1.75rem;
+    border-radius: 16px;
+    border: 2px solid #d4e6f7;
+    box-shadow: 0 6px 20px rgba(50, 97, 168, 0.08);
+    transition: all 0.3s ease;
+}
+
+.existing-comment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(50, 97, 168, 0.12);
 }
 
 .comment-header-edit {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 1rem;
     color: #3261a8;
+    font-size: 1.05rem;
 }
 
 .comment-header-edit .material-icons {
-    font-size: 24px;
+    font-size: 26px;
+}
+
+.comment-header-edit strong {
+    font-weight: 700;
 }
 
 .existing-comment p {
     color: #2c3e50;
     font-size: 1rem;
-    line-height: 1.7;
-    margin-bottom: 1rem;
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
 }
 
 .comment-actions {
     display: flex;
     gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .btn-edit,
 .btn-delete {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 0.75rem 1.5rem;
+    gap: 8px;
+    padding: 0.875rem 1.75rem;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 0.95rem;
     font-weight: 600;
     font-family: 'Inter', sans-serif;
@@ -647,105 +663,124 @@ body {
 .btn-edit {
     background: linear-gradient(135deg, #3261a8 0%, #2b4a8b 100%);
     color: #fff;
-    box-shadow: 0 4px 15px rgba(50, 97, 168, 0.2);
+    box-shadow: 0 4px 15px rgba(50, 97, 168, 0.25);
 }
 
 .btn-edit:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(50, 97, 168, 0.3);
+    box-shadow: 0 6px 20px rgba(50, 97, 168, 0.35);
 }
 
 .btn-delete {
     background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
     color: #fff;
-    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.25);
 }
 
 .btn-delete:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.35);
 }
 
 .btn-edit .material-icons,
 .btn-delete .material-icons {
-    font-size: 18px;
+    font-size: 20px;
 }
 
 /* Add Comment Prompt */
 .add-comment-prompt {
     text-align: center;
-    padding: 2rem;
+    padding: 2.5rem;
+    background: linear-gradient(145deg, #fff9f0 0%, #fffaf5 100%);
+    border-radius: 16px;
+    border: 2px dashed #f9a826;
+    transition: all 0.3s ease;
+}
+
+.add-comment-prompt:hover {
+    border-color: #e5941e;
+    background: linear-gradient(145deg, #fff7eb 0%, #fff9f0 100%);
 }
 
 .btn-add-comment {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    padding: 1rem 2rem;
+    padding: 1.125rem 2.5rem;
     background: linear-gradient(135deg, #f9a826 0%, #e5941e 100%);
     color: #fff;
     border: none;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 700;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 6px 20px rgba(249, 168, 38, 0.3);
+    box-shadow: 0 6px 25px rgba(249, 168, 38, 0.3);
 }
 
 .btn-add-comment:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(249, 168, 38, 0.4);
+    box-shadow: 0 10px 30px rgba(249, 168, 38, 0.4);
+    background: linear-gradient(135deg, #fdb43a 0%, #f9a826 100%);
 }
 
 .btn-add-comment .material-icons {
-    font-size: 22px;
+    font-size: 24px;
 }
 
 /* Comment Box */
 .comment-box {
     background: linear-gradient(145deg, #f8f9fd 0%, #ffffff 100%);
-    padding: 1.5rem;
-    border-radius: 12px;
-    border: 2px solid #e8ecef;
+    padding: 2rem;
+    border-radius: 16px;
+    border: 2px solid #d4e6f7;
+    box-shadow: 0 6px 20px rgba(50, 97, 168, 0.08);
 }
 
 .textarea-wrapper {
     position: relative;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
 }
 
 .textarea-icon {
     position: absolute;
-    top: 15px;
-    left: 15px;
+    top: 18px;
+    left: 18px;
     color: #95a5a6;
     font-size: 24px;
+    z-index: 1;
 }
 
 .comment-box textarea {
     width: 100%;
-    padding: 15px 15px 15px 50px;
+    padding: 18px 18px 18px 55px;
     border: 2px solid #e8ecef;
-    border-radius: 12px;
+    border-radius: 14px;
     font-size: 1rem;
     color: #2c3e50;
     background-color: #fff;
     font-family: 'Inter', sans-serif;
     resize: vertical;
+    min-height: 120px;
     transition: all 0.3s ease;
+    line-height: 1.6;
 }
 
 .comment-box textarea:focus {
     outline: none;
     border-color: #3261a8;
-    box-shadow: 0 0 0 4px rgba(50, 97, 168, 0.1);
+    box-shadow: 0 0 0 4px rgba(50, 97, 168, 0.12);
+}
+
+.comment-box textarea::placeholder {
+    color: #95a5a6;
 }
 
 .comment-box-actions {
     display: flex;
     gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .btn-submit,
@@ -753,9 +788,9 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 0.875rem 1.75rem;
+    padding: 1rem 2rem;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 1rem;
     font-weight: 600;
     font-family: 'Inter', sans-serif;
@@ -766,28 +801,31 @@ body {
 .btn-submit {
     background: linear-gradient(135deg, #3261a8 0%, #2b4a8b 100%);
     color: #fff;
-    box-shadow: 0 4px 15px rgba(50, 97, 168, 0.2);
+    box-shadow: 0 4px 15px rgba(50, 97, 168, 0.25);
 }
 
 .btn-submit:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(50, 97, 168, 0.3);
+    box-shadow: 0 6px 20px rgba(50, 97, 168, 0.35);
 }
 
 .btn-submit:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
 }
 
 .btn-cancel {
     background: #ecf0f1;
     color: #7f8c8d;
+    border: 2px solid #d5dbde;
 }
 
 .btn-cancel:hover {
-    background: #bdc3c7;
+    background: #d5dbde;
     color: #2c3e50;
     transform: translateY(-2px);
+    border-color: #bdc3c7;
 }
 
 .btn-submit .material-icons,
@@ -795,7 +833,172 @@ body {
     font-size: 20px;
 }
 
-/* Responsive Design */
+/* Modal de Confirmação */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(5px);
+}
+
+.modal {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 20px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.4s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.confirm-modal {
+    max-width: 450px;
+    text-align: center;
+}
+
+.confirm-modal .modal-header {
+    flex-direction: column;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 1rem;
+}
+
+.confirm-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.confirm-icon.delete {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%);
+}
+
+.confirm-icon .material-icons {
+    font-size: 42px;
+}
+
+.confirm-icon.delete .material-icons {
+    color: #e74c3c;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.confirm-content h2 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.confirm-content p {
+    font-size: 1rem;
+    color: #7f8c8d;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-cancel,
+.btn-confirm {
+    padding: 0.875rem 1.75rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 140px;
+    justify-content: center;
+}
+
+.confirm-actions .btn-cancel {
+    background: #ecf0f1;
+    color: #7f8c8d;
+}
+
+.confirm-actions .btn-cancel:hover {
+    background: #bdc3c7;
+    color: #2c3e50;
+    transform: translateY(-2px);
+}
+
+.btn-confirm {
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.btn-confirm.delete {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.btn-confirm:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-confirm.delete:hover {
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+}
+
+.confirm-actions .btn-cancel .material-icons,
+.btn-confirm .material-icons {
+    font-size: 20px;
+}
+
+@media (max-width: 768px) {
+    .modal {
+        padding: 2rem 1.5rem;
+    }
+
+    .confirm-actions {
+        flex-direction: column;
+    }
+
+    .btn-cancel,
+    .btn-confirm {
+        width: 100%;
+    }
+}
+
 @media (max-width: 1024px) {
     .content-grid {
         grid-template-columns: 1fr;

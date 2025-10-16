@@ -32,7 +32,7 @@ export const routes: Routes = [
   { path: 'painel-admin', component: PainelAdminComponent, canActivate: [AuthGuard], data: { role: 'ADMINISTRATOR' } },
   { path: 'painel-instrutor', component: PainelInstrutorComponent, canActivate: [AuthGuard], data: { role: 'INSTRUCTOR' } },
   { path: 'cadastro-escola', component: CadastroEscolaComponent },
-  { path: 'cadastro-secao', component: CadastroSecaoComponent, canActivate: [AuthGuard], data: { role: 'INSTRUCTOR' } },
+  { path: 'cadastro-secao/:id', component: CadastroSecaoComponent, canActivate: [AuthGuard], data: { role: 'INSTRUCTOR' } },
   { path: 'cadastro-instrutor', component: CadastroInstrutorComponent },
   { path: 'cadastro-estudante', component: CadastroEstudanteComponent },
   { path: 'acesso-plataforma', component: AcessoPlataformaComponent },

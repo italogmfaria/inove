@@ -1,12 +1,10 @@
 <div class="admin-container">
-  <!-- Background Decorations -->
   <div class="background-decoration">
     <div class="circle circle-1"></div>
     <div class="circle circle-2"></div>
     <div class="circle circle-3"></div>
   </div>
 
-  <!-- Header -->
   <header class="header">
     <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
     <h1 class="admin-title">Painel Administrativo</h1>
@@ -17,7 +15,6 @@
   </header>
 
   <div class="content">
-    <!-- Side Menu -->
     <aside class="side-menu">
       <h2>
         <span class="material-icons">admin_panel_settings</span>
@@ -39,9 +36,7 @@
       </ul>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
-      <!-- Usuários Tab -->
       <div *ngIf="activeTab === 'usuarios'" class="tab-content">
         <div class="content-header">
           <h1>
@@ -55,8 +50,7 @@
             type="text"
             [(ngModel)]="searchUsuarios"
             placeholder="Pesquisar por nome, email ou tipo..."
-            class="search-input"
-          />
+            class="search-input" />
           <span class="search-count">{{ filteredUsuarios.length }} {{ filteredUsuarios.length === 1 ? 'usuário' : 'usuários' }}</span>
         </div>
         <div class="table-container">
@@ -96,7 +90,6 @@
         </button>
       </div>
 
-      <!-- Escolas Tab -->
       <div *ngIf="activeTab === 'escolas'" class="tab-content">
         <div class="content-header">
           <h1>
@@ -110,8 +103,7 @@
             type="text"
             [(ngModel)]="searchEscolas"
             placeholder="Pesquisar por nome, email, cidade ou estado..."
-            class="search-input"
-          />
+            class="search-input" />
           <span class="search-count">{{ filteredEscolas.length }} {{ filteredEscolas.length === 1 ? 'escola' : 'escolas' }}</span>
         </div>
         <div class="table-container">
@@ -153,7 +145,6 @@
         </button>
       </div>
 
-      <!-- Cursos Tab -->
       <div *ngIf="activeTab === 'cursos'" class="tab-content">
         <div class="content-header">
           <h1>
@@ -167,8 +158,7 @@
             type="text"
             [(ngModel)]="searchCursos"
             placeholder="Pesquisar por título, descrição ou instrutor..."
-            class="search-input"
-          />
+            class="search-input" />
           <span class="search-count">{{ filteredCursos.length }} {{ filteredCursos.length === 1 ? 'curso' : 'cursos' }}</span>
         </div>
         <div class="table-container">
@@ -217,8 +207,6 @@
     </main>
   </div>
 
-  <!-- Modals -->
-  <!-- Adicionar Usuário Modal -->
   <div class="modal-overlay" *ngIf="showAddUserModal" (click)="closeUserModals()"></div>
   <div class="modal" *ngIf="showAddUserModal">
     <header class="modal-header">
@@ -278,7 +266,6 @@
     </footer>
   </div>
 
-  <!-- Atualizar User Modal -->
   <div class="modal-overlay" *ngIf="showUpdateUserModal" (click)="closeUserModals()"></div>
   <div class="modal" *ngIf="showUpdateUserModal">
     <header class="modal-header">
@@ -309,7 +296,6 @@
     </footer>
   </div>
 
-  <!-- Modal para Adicionar Nova Escola -->
   <div class="modal-overlay" *ngIf="showNewSchoolModal" (click)="toggleNewSchoolModal()"></div>
   <div class="modal" *ngIf="showNewSchoolModal">
     <header class="modal-header">
@@ -348,7 +334,6 @@
     </footer>
   </div>
 
-  <!-- Atualizar Escola Modal -->
   <div class="modal-overlay" *ngIf="showSchoolModal" (click)="closeSchoolModal()"></div>
   <div class="modal" *ngIf="showSchoolModal">
     <header class="modal-header">
@@ -387,7 +372,6 @@
     </footer>
   </div>
 
-  <!-- Modal para Adicionar Novo Curso -->
   <div class="modal-overlay" *ngIf="showAddCourseModal" (click)="closeAddCourseModal()"></div>
   <div class="modal" *ngIf="showAddCourseModal">
     <header class="modal-header">
@@ -408,26 +392,12 @@
       <div class="input-group">
         <span class="material-icons">person_outline</span>
         <select [(ngModel)]="selectedInstructorId">
-          <option [value]="null" disabled selected>Selecione um instrutor</option>
-          <option *ngFor="let instrutor of instrutores" [value]="instrutor.id">
+          <option [ngValue]="null">Selecione um instrutor</option>
+          <option *ngFor="let instrutor of instrutores" [ngValue]="instrutor.id">
             {{ instrutor.name }}
           </option>
         </select>
       </div>
-      <div *ngIf="newCourse.instructors.length > 0" class="selected-instructors">
-        <h4>Instrutores selecionados:</h4>
-        <div class="instructor-chips">
-          <div *ngFor="let instrutor of newCourse.instructors; let i = index" class="instructor-chip">
-            <span class="material-icons">person</span>
-            <span>{{ instrutor.name }}</span>
-            <span class="material-icons remove-chip" (click)="removeInstructor(i)">close</span>
-          </div>
-        </div>
-      </div>
-      <button type="button" class="btn-add-instructor" (click)="addInstructorToCourse()">
-        <span class="material-icons">person_add</span>
-        Adicionar Instrutor
-      </button>
     </div>
     <footer class="modal-footer">
       <button class="btn-modal-save" (click)="addCourse()">
@@ -441,7 +411,6 @@
     </footer>
   </div>
 
-  <!-- Modal para Atualizar Curso -->
   <div class="modal-overlay" *ngIf="showUpdateCourseModal" (click)="closeUpdateCourseModal()"></div>
   <div class="modal" *ngIf="showUpdateCourseModal">
     <header class="modal-header">
@@ -459,6 +428,15 @@
         <span class="material-icons">description</span>
         <textarea [(ngModel)]="selectedCourse.description" placeholder="Descrição do curso"></textarea>
       </div>
+      <div class="input-group">
+        <span class="material-icons">person_outline</span>
+        <select [(ngModel)]="selectedInstructorId">
+          <option [ngValue]="null">Selecione um instrutor</option>
+          <option *ngFor="let instrutor of instrutores" [ngValue]="instrutor.id">
+            {{ instrutor.name }}
+          </option>
+        </select>
+      </div>
     </div>
     <footer class="modal-footer">
       <button class="btn-modal-save" (click)="updateCourse()">
@@ -472,7 +450,6 @@
     </footer>
   </div>
 
-  <!-- Modal de Confirmação -->
   <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmation()">
     <div class="modal confirm-modal" (click)="$event.stopPropagation()">
       <div class="modal-header">

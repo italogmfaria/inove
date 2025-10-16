@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'https://interfulgent-coefficiently-elinore.ngrok-free.dev/api/inove',
+  apiBaseUrl: 'https://inove-production.up.railway.app/api/inove',
 };
