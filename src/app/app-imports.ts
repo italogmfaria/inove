@@ -9,7 +9,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ToastrModule } from "ngx-toastr";
 import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 import { VideoPlayerComponent } from './common/styles/video-player/video-player.component';
-import { RecaptchaModule, RecaptchaFormsModule } from 'ng-recaptcha';
+import { RecaptchaV3Module } from 'ng-recaptcha';
 
 
 export const APP_IMPORTS = [
@@ -24,8 +24,7 @@ export const APP_IMPORTS = [
   NgxMaskDirective,
   NgxMaskPipe,
   VideoPlayerComponent,
-  RecaptchaModule,
-  RecaptchaFormsModule,
+  RecaptchaV3Module,
   ToastrModule.forRoot({
     timeOut: 3000,
     positionClass: 'toast-top-right',

@@ -13,11 +13,19 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(email: string, password: string): Observable<LoginResponseDTO> {
+  login(email: string, password: string, recaptchaToken?: string): Observable<LoginResponseDTO> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
-    return this.http.post<LoginResponseDTO>(this.baseUrl, { email, password }, { headers });
+
+    const body: any = { email, password };
+
+    // Adiciona o token do reCAPTCHA se estiver presente
+    if (recaptchaToken) {
+      body.recaptchaToken = recaptchaToken;
+    }
+
+    return this.http.post<LoginResponseDTO>(this.baseUrl, body, { headers });
   }
 
   saveTokens(token: string, refreshToken: string) {

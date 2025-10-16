@@ -307,6 +307,24 @@ body {
     font-size: 0.85em;
 }
 
+/* reCAPTCHA v3 Badge Notice */
+.recaptcha-badge-notice {
+    margin-top: 20px;
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 0.75em;
+    line-height: 1.4;
+}
+
+.recaptcha-badge-notice a {
+    color: #3261a8;
+    text-decoration: none;
+}
+
+.recaptcha-badge-notice a:hover {
+    text-decoration: underline;
+}
+
 /* Submit Button */
 .submit-btn {
     font-family: 'Inter', sans-serif !important;
