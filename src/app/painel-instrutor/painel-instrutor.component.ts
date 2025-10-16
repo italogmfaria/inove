@@ -5,6 +5,7 @@ import { UserService } from '../common/service/user.service';
 import { FileService } from '../common/service/file.service';
 import { CourseService } from '../common/service/course.service';
 import { ToastrService } from 'ngx-toastr';
+import { CpfValidator } from '../common/validators/cpf.validator';
 
 @Component({
   selector: 'app-painel-instrutor',
@@ -205,7 +206,10 @@ export class PainelInstrutorComponent implements OnInit {
   }
 
   editInstructor(): void {
-    this.instrutorEdit = { ...this.instrutor };
+    this.instrutorEdit = {
+      ...this.instrutor,
+      cpf: CpfValidator.formatCpf(this.instrutor.cpf)
+    };
     this.showEditInstructorModal = true;
   }
 
@@ -223,7 +227,7 @@ export class PainelInstrutorComponent implements OnInit {
       id: this.instrutor.id,
       name: this.instrutorEdit.name,
       email: this.instrutorEdit.email,
-      cpf: this.instrutorEdit.cpf
+      cpf: CpfValidator.cleanCpf(this.instrutorEdit.cpf)
     };
 
     this.userService.updateUser(userUpdate).subscribe(() => {
@@ -268,7 +272,7 @@ export class PainelInstrutorComponent implements OnInit {
   }
 
   @HostListener('document:keydown.escape', ['$event'])
-  handleEscape(event: KeyboardEvent) {
+  handleEscape(_event: KeyboardEvent) {
     if (this.showUpdateCourseModal) {
       this.closeUpdateCourseModal();
     } else if (this.showEditInstructorModal) {

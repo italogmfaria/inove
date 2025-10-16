@@ -117,7 +117,19 @@ export class PainelCursoComponent implements OnInit {
   loadContents(sectionId: number, sectionIndex: number): void {
     this.contentService.getContents(this.courseId, sectionId).subscribe(
       (contents) => {
-        this.sections[sectionIndex].contents = contents;
+        // Processar os conteúdos e identificar o tipo correto
+        this.sections[sectionIndex].contents = contents.map(content => {
+          // Identificar tipo pela extensão do arquivo
+          if (content.fileName) {
+            const fileName = content.fileName.toLowerCase();
+            if (fileName.endsWith('.mp4') || fileName.endsWith('.avi') || fileName.endsWith('.mov') || fileName.endsWith('.mkv') || fileName.endsWith('.webm')) {
+              content.contentType = 'VIDEO' as any;
+            } else if (fileName.endsWith('.pdf')) {
+              content.contentType = 'PDF' as any;
+            }
+          }
+          return content;
+        });
       },
       (error) => {
         console.error('Erro ao carregar conteúdos:', error);

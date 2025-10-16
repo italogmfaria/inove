@@ -122,124 +122,129 @@
     </main>
   </div>
 
-  <div class="modal-overlay" *ngIf="showUpdateCourseModal" (click)="closeUpdateCourseModal()"></div>
-  <div class="modal" *ngIf="showUpdateCourseModal" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>
-        <span class="material-icons">edit</span>
-        Atualizar Curso
-      </h2>
-      <button class="close-btn" (click)="closeUpdateCourseModal()">
-        <span class="material-icons">close</span>
-      </button>
-    </div>
+  <!-- Modal de Atualizar Curso -->
+  <div class="modal-overlay" *ngIf="showUpdateCourseModal" (click)="closeUpdateCourseModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>
+          <span class="material-icons">edit</span>
+          Atualizar Curso
+        </h2>
+        <button class="close-btn" (click)="closeUpdateCourseModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
 
-    <form class="modal-form" (ngSubmit)="updateCourse()">
-      <div class="modal-body">
-        <div class="input-group">
-          <span class="material-icons input-icon">title</span>
-          <input class="input-field" type="text" [(ngModel)]="cursoEdit.name" name="courseName" placeholder="Nome do Curso" required />
-        </div>
-
-        <div class="input-group textarea-group">
-          <span class="material-icons input-icon">description</span>
-          <textarea class="input-field" [(ngModel)]="cursoEdit.description" name="courseDescription" placeholder="Descrição do curso" rows="4"></textarea>
-        </div>
-
-        <div class="upload-section">
-          <label for="courseImage" class="upload-label">
-            <span class="material-icons">image</span>
-            <span>Selecionar imagem do curso</span>
-          </label>
-          <input id="courseImage" type="file" accept="image/*" (change)="handleImageUpload($event)" />
-          <small class="upload-help">PNG, JPG até 50MB. Melhor proporção 16:9.</small>
-        </div>
-
-        <div class="image-preview" *ngIf="cursoEdit.imageUrl || isLoadingImage">
-          <p class="preview-title"><span class="material-icons">photo</span> Pré-visualização:</p>
-          <div *ngIf="isLoadingImage" class="loading-image">
-            <div class="spinner"></div>
-            <p>Carregando imagem...</p>
+      <form class="modal-form" (ngSubmit)="updateCourse()">
+        <div class="modal-body">
+          <div class="input-group">
+            <span class="material-icons input-icon">title</span>
+            <input class="input-field" type="text" [(ngModel)]="cursoEdit.name" name="courseName" placeholder="Nome do Curso" required />
           </div>
-          <img *ngIf="!isLoadingImage && cursoEdit.imageUrl" [src]="cursoEdit.imageUrl" alt="Imagem do Curso" />
+
+          <div class="input-group textarea-group">
+            <span class="material-icons input-icon">description</span>
+            <textarea class="input-field" [(ngModel)]="cursoEdit.description" name="courseDescription" placeholder="Descrição do curso" rows="4"></textarea>
+          </div>
+
+          <div class="upload-section">
+            <label for="courseImage" class="upload-label">
+              <span class="material-icons">image</span>
+              <span>Selecionar imagem do curso</span>
+            </label>
+            <input id="courseImage" type="file" accept="image/*" (change)="handleImageUpload($event)" />
+            <small class="upload-help">PNG, JPG até 50MB. Melhor proporção 16:9.</small>
+          </div>
+
+          <div class="image-preview" *ngIf="cursoEdit.imageUrl || isLoadingImage">
+            <p class="preview-title"><span class="material-icons">photo</span> Pré-visualização:</p>
+            <div *ngIf="isLoadingImage" class="loading-image">
+              <div class="spinner"></div>
+              <p>Carregando imagem...</p>
+            </div>
+            <img *ngIf="!isLoadingImage && cursoEdit.imageUrl" [src]="cursoEdit.imageUrl" alt="Imagem do Curso" />
+          </div>
         </div>
-      </div>
 
-      <footer class="modal-footer">
-        <button type="submit" class="btn-modal-save" [disabled]="isLoading">
-          <span class="material-icons">save</span>
-          Salvar
-        </button>
-        <button type="button" class="btn-modal-cancel" (click)="closeUpdateCourseModal()">
-          <span class="material-icons">cancel</span>
-          Cancelar
-        </button>
-      </footer>
-    </form>
-  </div>
-
-  <div class="modal-overlay" *ngIf="showEditInstructorModal" (click)="closeEditInstructorModal()"></div>
-  <div class="modal" *ngIf="showEditInstructorModal" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>
-        <span class="material-icons">edit</span>
-        Editar Dados
-      </h2>
-      <button class="close-btn" (click)="closeEditInstructorModal()">
-        <span class="material-icons">close</span>
-      </button>
+        <footer class="modal-footer">
+          <button type="submit" class="btn-modal-save" [disabled]="isLoading">
+            <span class="material-icons">save</span>
+            Salvar
+          </button>
+          <button type="button" class="btn-modal-cancel" (click)="closeUpdateCourseModal()">
+            <span class="material-icons">cancel</span>
+            Cancelar
+          </button>
+        </footer>
+      </form>
     </div>
-
-    <form class="modal-form" (ngSubmit)="updateInstructor()">
-      <div class="modal-body">
-        <div class="input-group">
-          <span class="material-icons input-icon">person</span>
-          <input
-            type="text"
-            name="instructorName"
-            [(ngModel)]="instrutorEdit.name"
-            placeholder="Nome completo"
-            class="input-field"
-            required />
-        </div>
-
-        <div class="input-group">
-          <span class="material-icons input-icon">email</span>
-          <input
-            type="email"
-            name="instructorEmail"
-            [(ngModel)]="instrutorEdit.email"
-            placeholder="E-mail"
-            class="input-field"
-            required />
-        </div>
-
-        <div class="input-group">
-          <span class="material-icons input-icon">credit_card</span>
-          <input
-            type="text"
-            name="instructorCpf"
-            [(ngModel)]="instrutorEdit.cpf"
-            mask="000.000.000-00"
-            placeholder="CPF"
-            class="input-field"
-            required />
-        </div>
-      </div>
-
-      <footer class="modal-footer">
-        <button type="submit" class="btn-modal-save">
-          <span class="material-icons">save</span>
-          Salvar
-        </button>
-        <button type="button" class="btn-modal-cancel" (click)="closeEditInstructorModal()">
-          <span class="material-icons">cancel</span>
-          Cancelar
-        </button>
-      </footer>
-    </form>
   </div>
 
+  <!-- Modal de Editar Instrutor -->
+  <div class="modal-overlay" *ngIf="showEditInstructorModal" (click)="closeEditInstructorModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>
+          <span class="material-icons">edit</span>
+          Editar Dados
+        </h2>
+        <button class="close-btn" (click)="closeEditInstructorModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <form class="modal-form" (ngSubmit)="updateInstructor()">
+        <div class="modal-body">
+          <div class="input-group">
+            <span class="material-icons input-icon">person</span>
+            <input
+              type="text"
+              name="instructorName"
+              [(ngModel)]="instrutorEdit.name"
+              placeholder="Nome completo"
+              class="input-field"
+              required />
+          </div>
+
+          <div class="input-group">
+            <span class="material-icons input-icon">email</span>
+            <input
+              type="email"
+              name="instructorEmail"
+              [(ngModel)]="instrutorEdit.email"
+              placeholder="E-mail"
+              class="input-field"
+              required />
+          </div>
+
+          <div class="input-group">
+            <span class="material-icons input-icon">credit_card</span>
+            <input
+              type="text"
+              name="instructorCpf"
+              [(ngModel)]="instrutorEdit.cpf"
+              cpfMask
+              placeholder="CPF"
+              class="input-field"
+              required />
+          </div>
+        </div>
+
+        <footer class="modal-footer">
+          <button type="submit" class="btn-modal-save">
+            <span class="material-icons">save</span>
+            Salvar
+          </button>
+          <button type="button" class="btn-modal-cancel" (click)="closeEditInstructorModal()">
+            <span class="material-icons">cancel</span>
+            Cancelar
+          </button>
+        </footer>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmação -->
   <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmation()">
     <div class="modal confirm-modal" (click)="$event.stopPropagation()">
       <div class="modal-header">

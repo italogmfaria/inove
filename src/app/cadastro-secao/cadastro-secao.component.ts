@@ -168,23 +168,21 @@ export class CadastroSecaoComponent implements OnInit {
   carregarConteudos(sectionId: number, sectionIndex: number): void {
     this.contentService.getContents(this.courseId, sectionId).subscribe({
       next: (conteudos) => {
-        // Para cada conteúdo, buscamos o tipo de arquivo correto
+        // Atualiza os conteúdos da seção primeiro
+        this.secoes[sectionIndex].contents = conteudos;
+
+        // Para cada conteúdo, buscamos o tipo de arquivo correto baseado na extensão
         conteudos.forEach((conteudo, index) => {
           if (conteudo.fileName) {
-            this.contentService.getFileType(conteudo.fileName).subscribe({
-              next: (response) => {
-                // Corrigindo a atribuição do tipo de conteúdo
-                conteudos[index].contentType = response.contentType.includes('video') ? ContentType.VIDEO : ContentType.PDF;
-              },
-              error: () => {
-                console.error(`Erro ao buscar tipo do arquivo: ${conteudo.fileName}`);
-              }
-            });
+            // Identificar tipo pela extensão do arquivo
+            const fileName = conteudo.fileName.toLowerCase();
+            if (fileName.endsWith('.mp4') || fileName.endsWith('.avi') || fileName.endsWith('.mov') || fileName.endsWith('.mkv') || fileName.endsWith('.webm')) {
+              this.secoes[sectionIndex].contents[index].contentType = ContentType.VIDEO;
+            } else if (fileName.endsWith('.pdf')) {
+              this.secoes[sectionIndex].contents[index].contentType = ContentType.PDF;
+            }
           }
         });
-
-        // Atualiza os conteúdos da seção
-        this.secoes[sectionIndex].contents = conteudos;
       },
       error: (error) => {
         console.error("Erro ao carregar conteúdos:", error);

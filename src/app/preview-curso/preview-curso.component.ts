@@ -4,6 +4,7 @@ import { CursoDTO } from "../common/dto/CursoDTO";
 import { CourseService } from "../common/service/course.service";
 import { AuthService } from "../common/service/auth.service";
 import { FileService } from '../common/service/file.service';
+import { UserService } from '../common/service/user.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -14,6 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 export class PreviewCursoComponent implements OnInit {
   course: CursoDTO | null = null;
   isLoggedIn: boolean = false;
+  isEnrolled: boolean = false;
   courseImageUrl: string = 'assets/placeholder.png';
 
   constructor(
@@ -22,6 +24,7 @@ export class PreviewCursoComponent implements OnInit {
     private courseService: CourseService,
     private authService: AuthService,
     private fileService: FileService,
+    private userService: UserService,
     private toastr: ToastrService
   ) {}
 
@@ -30,6 +33,23 @@ export class PreviewCursoComponent implements OnInit {
     const courseId = this.route.snapshot.paramMap.get('id');
     if (courseId) {
       this.loadCourseDetails(parseInt(courseId, 10));
+      if (this.isLoggedIn) {
+        this.checkEnrollment(parseInt(courseId, 10));
+      }
+    }
+  }
+
+  checkEnrollment(courseId: number): void {
+    const userId = Number(localStorage.getItem('userId'));
+    if (userId) {
+      this.userService.getUserCourses(userId).subscribe({
+        next: (courses) => {
+          this.isEnrolled = courses.some(course => course.id === courseId);
+        },
+        error: (err) => {
+          console.error('Erro ao verificar inscrição:', err);
+        }
+      });
     }
   }
 
@@ -85,9 +105,17 @@ export class PreviewCursoComponent implements OnInit {
       return;
     }
 
+    // Se já está inscrito, apenas navegar para o curso
+    if (this.isEnrolled) {
+      this.navigateToCurso();
+      return;
+    }
+
+    // Caso contrário, fazer a inscrição
     this.courseService.subscribeToCourse(this.course.id).subscribe({
       next: () => {
         this.toastr.success('Inscrição realizada com sucesso!', 'Sucesso');
+        this.isEnrolled = true;
         this.navigateToCurso();
       },
       error: (error) => {
@@ -97,6 +125,7 @@ export class PreviewCursoComponent implements OnInit {
           this.router.navigate(['/login']);
         } else {
           this.toastr.info('Você já está inscrito neste curso.', 'Informação');
+          this.isEnrolled = true;
           this.router.navigate([`/painel-curso/${this.course?.id}`]);
         }
       },
@@ -109,6 +138,14 @@ export class PreviewCursoComponent implements OnInit {
     } else {
       this.toastr.warning('Você precisa estar logado para se inscrever no curso.', 'Atenção');
       this.router.navigate(['/login']);
+    }
+  }
+
+  navigateToLogo() {
+    if (this.isLoggedIn) {
+      this.router.navigate(['/cursos']);
+    } else {
+      this.router.navigate(['/inicial']);
     }
   }
 

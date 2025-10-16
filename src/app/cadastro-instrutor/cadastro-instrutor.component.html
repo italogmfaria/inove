@@ -17,10 +17,6 @@
                     <span class="material-icons step-icon">email</span>
                     <span>Enviando e-mail de confirmação</span>
                 </div>
-                <div class="step">
-                    <span class="material-icons step-icon">hourglass_empty</span>
-                    <span>Aguardando aprovação</span>
-                </div>
             </div>
         </div>
     </div>
@@ -67,7 +63,7 @@
                         type="text"
                         id="cpf"
                         formControlName="cpf"
-                        mask="000.000.000-00"
+                        cpfMask
                         placeholder="000.000.000-00"
                         class="input-field"
                         [class.invalid]="isFieldInvalid('cpf')">

@@ -15,6 +15,7 @@ import {PreviewCursoComponent} from "./preview-curso/preview-curso.component";
 import {SejaInstrutorComponent} from "./seja-instrutor/seja-instrutor.component";
 import { SafeUrlPipe } from "./common/pipes/safe-url.pipe";
 import { CadastroEstudanteComponent } from "./cadastro-estudante/cadastro-estudante.component";
+import { CpfMaskDirective } from "./common/directives/cpf-mask.directive";
 
 export const APP_DECLARATIONS = [
   AppComponent,
@@ -33,5 +34,6 @@ export const APP_DECLARATIONS = [
   PreviewCursoComponent,
   SejaInstrutorComponent,
   CadastroEstudanteComponent,
-  SafeUrlPipe
+  SafeUrlPipe,
+  CpfMaskDirective
 ];

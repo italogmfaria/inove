@@ -119,63 +119,66 @@
         </div>
     </div>
 
-    <div class="modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()"></div>
-    <div class="modal" *ngIf="showEditModal" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <h2>
-                <span class="material-icons">edit</span>
-                Editar Dados
-            </h2>
-            <button class="close-btn" (click)="closeEditModal()">
-                <span class="material-icons">close</span>
-            </button>
+    <!-- Modal de Editar Dados -->
+    <div class="modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()">
+        <div class="modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>
+                    <span class="material-icons">edit</span>
+                    Editar Dados
+                </h2>
+                <button class="close-btn" (click)="closeEditModal()">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+
+            <form class="modal-form" (ngSubmit)="saveUserData()">
+                <div class="input-group">
+                    <span class="material-icons input-icon">person</span>
+                    <input
+                        id="edit-nome"
+                        type="text"
+                        name="userName"
+                        [(ngModel)]="user.name"
+                        placeholder="Digite seu nome completo"
+                        class="input-field"
+                        required />
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons input-icon">email</span>
+                    <input
+                        id="edit-email"
+                        type="email"
+                        name="userEmail"
+                        [(ngModel)]="user.email"
+                        placeholder="Digite seu e-mail"
+                        class="input-field"
+                        required />
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons input-icon">credit_card</span>
+                    <input
+                        id="edit-cpf"
+                        type="text"
+                        name="userCpf"
+                        [(ngModel)]="user.cpf"
+                        cpfMask
+                        placeholder="000.000.000-00"
+                        class="input-field"
+                        required />
+                </div>
+
+                <button type="submit" class="btn-save">
+                    <span class="material-icons">save</span>
+                    <span>Salvar Alterações</span>
+                </button>
+            </form>
         </div>
-
-        <form class="modal-form" (ngSubmit)="saveUserData()">
-            <div class="input-group">
-                <span class="material-icons input-icon">person</span>
-                <input
-                    id="edit-nome"
-                    type="text"
-                    name="userName"
-                    [(ngModel)]="user.name"
-                    placeholder="Digite seu nome completo"
-                    class="input-field"
-                    required />
-            </div>
-
-            <div class="input-group">
-                <span class="material-icons input-icon">email</span>
-                <input
-                    id="edit-email"
-                    type="email"
-                    name="userEmail"
-                    [(ngModel)]="user.email"
-                    placeholder="Digite seu e-mail"
-                    class="input-field"
-                    required />
-            </div>
-
-            <div class="input-group">
-                <span class="material-icons input-icon">credit_card</span>
-                <input
-                    id="edit-cpf"
-                    type="text"
-                    name="userCpf"
-                    [(ngModel)]="user.cpf"
-                    mask="000.000.000-00"
-                    placeholder="000.000.000-00"
-                    class="input-field"
-                    required />
-            </div>
-
-            <button type="submit" class="btn-save">
-                <span class="material-icons">save</span>
-                <span>Salvar Alterações</span>
-            </button>
-        </form>
     </div>
 
+    <!-- Modal de Confirmação -->
     <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmation()">
         <div class="modal confirm-modal" (click)="$event.stopPropagation()">
             <div class="modal-header">

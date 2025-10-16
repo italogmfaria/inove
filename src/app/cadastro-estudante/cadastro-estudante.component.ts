@@ -5,6 +5,7 @@ import { SchoolDTO } from '../common/dto/SchoolDTO';
 import { SchoolService } from '../common/service/school.service';
 import { StudentService } from '../common/service/student.service';
 import { ToastrService } from 'ngx-toastr';
+import { CpfValidator } from '../common/validators/cpf.validator';
 
 @Component({
   selector: 'app-cadastro-estudante',
@@ -28,7 +29,7 @@ export class CadastroEstudanteComponent implements OnInit {
     this.studentForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      cpf: ['', [Validators.required, this.cpfValidator]],
+      cpf: ['', [Validators.required, CpfValidator.validate]],
       password: ['', [Validators.required, Validators.minLength(6), this.passwordStrengthValidator]],
       schoolId: [undefined, [Validators.required]]
     });
@@ -36,42 +37,6 @@ export class CadastroEstudanteComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarEscolas();
-  }
-
-  // Validador de CPF
-  cpfValidator(control: AbstractControl): ValidationErrors | null {
-    const cpf = control.value?.replace(/\D/g, '');
-    if (!cpf || cpf.length !== 11) {
-      return { cpfInvalid: true };
-    }
-
-    // Verifica se todos os dígitos são iguais
-    if (/^(\d)\1{10}$/.test(cpf)) {
-      return { cpfInvalid: true };
-    }
-
-    // Validação dos dígitos verificadores
-    let sum = 0;
-    for (let i = 0; i < 9; i++) {
-      sum += parseInt(cpf.charAt(i)) * (10 - i);
-    }
-    let digit = 11 - (sum % 11);
-    if (digit >= 10) digit = 0;
-    if (digit !== parseInt(cpf.charAt(9))) {
-      return { cpfInvalid: true };
-    }
-
-    sum = 0;
-    for (let i = 0; i < 10; i++) {
-      sum += parseInt(cpf.charAt(i)) * (11 - i);
-    }
-    digit = 11 - (sum % 11);
-    if (digit >= 10) digit = 0;
-    if (digit !== parseInt(cpf.charAt(10))) {
-      return { cpfInvalid: true };
-    }
-
-    return null;
   }
 
   // Validador de força de senha
@@ -159,6 +124,7 @@ export class CadastroEstudanteComponent implements OnInit {
 
     const studentData = {
       ...this.studentForm.value,
+      cpf: CpfValidator.cleanCpf(this.studentForm.value.cpf),
       birthDate: new Date(),
       school: { id: this.studentForm.value.schoolId }
     };

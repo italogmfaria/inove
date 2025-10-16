@@ -79,13 +79,13 @@
                 <div class="content-row" *ngFor="let conteudo of secao.contents">
                   <div class="col-name">
                     <span class="material-icons content-icon">
-                      {{ conteudo.contentType && conteudo.contentType.includes('video') ? 'play_circle' : 'picture_as_pdf' }}
+                      {{ conteudo.contentType === 'VIDEO' ? 'play_circle' : 'picture_as_pdf' }}
                     </span>
-                    <span>{{ conteudo.title }}</span>
+                    <span style="color: black">{{ conteudo.title }}</span>
                   </div>
                   <div class="col-type">
-                    <span class="type-badge" [class.video]="conteudo.contentType && conteudo.contentType.includes('video')">
-                      {{ conteudo.contentType && conteudo.contentType.includes('video') ? 'Vídeo' : 'PDF' }}
+                    <span class="type-badge" [class.video]="conteudo.contentType === 'VIDEO'">
+                      {{ conteudo.contentType === 'VIDEO' ? 'Vídeo' : 'PDF' }}
                     </span>
                   </div>
                   <div class="col-actions">

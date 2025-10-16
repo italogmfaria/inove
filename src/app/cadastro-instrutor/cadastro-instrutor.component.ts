@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InstructorService } from "../common/service/instructor.service";
 import { ToastrService } from 'ngx-toastr';
+import { CpfValidator } from '../common/validators/cpf.validator';
 
 @Component({
   selector: 'app-cadastro-instrutor',
@@ -21,46 +22,10 @@ export class CadastroInstrutorComponent {
   ) {
     this.instructorForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
-      cpf: ['', [Validators.required, this.cpfValidator]],
+      cpf: ['', [Validators.required, CpfValidator.validate]],
       email: ['', [Validators.required, Validators.email]],
       motivation: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(500)]]
     });
-  }
-
-  // Validador de CPF
-  cpfValidator(control: AbstractControl): ValidationErrors | null {
-    const cpf = control.value?.replace(/\D/g, '');
-    if (!cpf || cpf.length !== 11) {
-      return { cpfInvalid: true };
-    }
-
-    // Verifica se todos os dígitos são iguais
-    if (/^(\d)\1{10}$/.test(cpf)) {
-      return { cpfInvalid: true };
-    }
-
-    // Validação dos dígitos verificadores
-    let sum = 0;
-    for (let i = 0; i < 9; i++) {
-      sum += parseInt(cpf.charAt(i)) * (10 - i);
-    }
-    let digit = 11 - (sum % 11);
-    if (digit >= 10) digit = 0;
-    if (digit !== parseInt(cpf.charAt(9))) {
-      return { cpfInvalid: true };
-    }
-
-    sum = 0;
-    for (let i = 0; i < 10; i++) {
-      sum += parseInt(cpf.charAt(i)) * (11 - i);
-    }
-    digit = 11 - (sum % 11);
-    if (digit >= 10) digit = 0;
-    if (digit !== parseInt(cpf.charAt(10))) {
-      return { cpfInvalid: true };
-    }
-
-    return null;
   }
 
   getErrorMessage(fieldName: string): string {
@@ -107,7 +72,13 @@ export class CadastroInstrutorComponent {
 
     this.isSubmitting = true;
 
-    this.instructorService.createInstructor(this.instructorForm.value).subscribe({
+    // Limpar o CPF antes de enviar (remove pontos e traços)
+    const formData = {
+      ...this.instructorForm.value,
+      cpf: CpfValidator.cleanCpf(this.instructorForm.value.cpf)
+    };
+
+    this.instructorService.createInstructor(formData).subscribe({
       next: () => {
         // Aguardar um pouco para garantir que o usuário viu o loading
         setTimeout(() => {

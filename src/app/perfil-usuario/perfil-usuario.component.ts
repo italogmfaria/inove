@@ -5,6 +5,7 @@ import { UserService } from '../common/service/user.service';
 import { FileService } from '../common/service/file.service';
 import { FeedbackService } from '../common/service/feedback.service';
 import { ToastrService } from 'ngx-toastr';
+import { CpfValidator } from '../common/validators/cpf.validator';
 
 @Component({
   selector: 'app-perfil-usuario',
@@ -43,21 +44,75 @@ export class PerfilUsuarioComponent implements OnInit {
       return;
     }
 
+    console.log('Carregando dados do usuário com ID:', userId);
+
     // Buscar dados do usuário
     this.userService.getUserById(userId).subscribe({
-      next: (user) => (this.user = user),
-      error: (err) => console.error("Erro ao buscar usuário:", err),
+      next: (user) => {
+        console.log('Dados do usuário carregados:', user);
+        this.user = user;
+      },
+      error: (err) => {
+        console.error("Erro ao buscar usuário:", err);
+        console.error("Detalhes do erro:", err.error);
+        console.error("Status:", err.status);
+        this.toastr.error('Não foi possível carregar seus dados. Tente novamente.', 'Erro');
+      }
     });
 
     // Buscar os cursos do usuário e carregar as imagens
+    console.log('Buscando cursos do usuário...');
+    this.userCourses = []; // Inicializar como array vazio
+
     this.userService.getUserCourses(userId).subscribe({
       next: (courses) => {
-        this.userCourses = courses;
-        this.userCourses.forEach((course) => {
-          this.loadCourseImage(course.id);
-        });
+        console.log('Resposta da API de cursos:', courses);
+        console.log('Tipo de courses:', typeof courses);
+        console.log('É array?', Array.isArray(courses));
+        console.log('Quantidade de cursos:', courses?.length);
+
+        if (courses && Array.isArray(courses) && courses.length > 0) {
+          // Filtrar cursos válidos (que tenham pelo menos id e name)
+          this.userCourses = courses.filter(course =>
+            course &&
+            course.id !== undefined &&
+            course.id !== null &&
+            course.name
+          );
+
+          console.log('Cursos válidos filtrados:', this.userCourses);
+
+          if (this.userCourses.length > 0) {
+            this.userCourses.forEach((course) => {
+              console.log('Carregando imagem do curso:', course.id, course.name);
+              this.loadCourseImage(course.id);
+            });
+          } else {
+            console.warn('Nenhum curso válido encontrado após filtro');
+          }
+        } else {
+          console.log('Nenhum curso encontrado ou resposta vazia');
+          this.userCourses = [];
+        }
       },
-      error: (err) => console.error("Erro ao buscar cursos:", err),
+      error: (err) => {
+        console.error("Erro ao buscar cursos:", err);
+        console.error("Detalhes do erro:", err.error);
+        console.error("Status:", err.status);
+        console.error("URL chamada:", `${err.url}`);
+        this.userCourses = [];
+
+        if (err.status === 401) {
+          this.toastr.error('Sua sessão expirou. Faça login novamente.', 'Erro de Autenticação');
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        } else if (err.status === 404) {
+          console.log('Endpoint não encontrado ou usuário sem cursos');
+          // Não mostrar erro ao usuário, pode ser normal não ter cursos
+        } else {
+          this.toastr.warning('Não foi possível carregar seus cursos.', 'Aviso');
+        }
+      }
     });
   }
 
@@ -83,6 +138,13 @@ export class PerfilUsuarioComponent implements OnInit {
   }
 
   toggleEdit(): void {
+    if (!this.isEditing) {
+      // Formatar o CPF ao abrir o modal
+      this.user = {
+        ...this.user,
+        cpf: CpfValidator.formatCpf(this.user.cpf)
+      };
+    }
     this.isEditing = !this.isEditing;
     this.showEditModal = !this.showEditModal;
   }
@@ -94,7 +156,12 @@ export class PerfilUsuarioComponent implements OnInit {
 
   saveUserData(): void {
     const userName = this.user.name;
-    this.userService.updateUser(this.user).subscribe({
+    const userUpdate = {
+      ...this.user,
+      cpf: CpfValidator.cleanCpf(this.user.cpf)
+    };
+
+    this.userService.updateUser(userUpdate).subscribe({
       next: () => {
         this.toggleEdit();
         this.toastr.success(`Seus dados foram atualizados com sucesso, ${userName}!`, 'Dados Salvos');
@@ -139,7 +206,7 @@ export class PerfilUsuarioComponent implements OnInit {
             }
           });
         },
-        error: (err) => {
+        error: (_err) => {
           // Se não houver feedback ou houver erro ao deletar, continuar removendo o curso
           console.log("Nenhum feedback para remover ou erro ao deletar feedback, continuando...");
           this.userService.removeUserCourse(userId, courseId).subscribe({

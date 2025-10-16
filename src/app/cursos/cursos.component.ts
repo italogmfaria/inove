@@ -86,6 +86,13 @@ export class CursosComponent implements OnInit {
     }
   }
 
+  navigateToLogo() {
+    if (this.isLoggedIn) {
+      this.router.navigate(['/cursos']);
+    } else {
+      this.router.navigate(['/inicial']);
+    }
+  }
 
   navigateToPreview(cursoId: number) {
     this.router.navigate(['/preview-curso', cursoId]);
