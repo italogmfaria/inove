@@ -57,6 +57,15 @@
                     <a (click)="navigateTo('/esqueci-senha')" class="btn-link">Recuperar acesso!</a>
                 </div>
 
+                <div class="recaptcha-container" *ngIf="enableRecaptcha">
+                    <re-captcha
+                        [siteKey]="recaptchaSiteKey"
+                        (resolved)="onRecaptchaResolved($event)"
+                        theme="light"
+                        size="normal">
+                    </re-captcha>
+                </div>
+
                 <button type="submit" class="submit-btn" [disabled]="isSubmitting">
                     <span *ngIf="!isSubmitting">Entrar</span>
                     <span *ngIf="isSubmitting">Entrando...</span>
@@ -70,10 +79,6 @@
             <p class="footer-text">
                 Não tem acesso?
                 <a (click)="navigateTo('/acesso-plataforma')" class="btn-link">Cadastre-se agora!</a>
-            </p>
-
-            <p *ngIf="enableRecaptcha" class="recaptcha-badge-notice">
-                <small>Este site é protegido pelo reCAPTCHA v3 e a <a href="https://policies.google.com/privacy" target="_blank">Política de Privacidade</a> e <a href="https://policies.google.com/terms" target="_blank">Termos de Serviço</a> do Google se aplicam.</small>
             </p>
         </div>
     </section>

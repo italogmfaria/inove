@@ -8,7 +8,6 @@ const recaptchaSiteKey = process.env.VITE_RECAPTCHA_SITE_KEY || '';
 
 const isValidRecaptchaKey = recaptchaSiteKey && recaptchaSiteKey.length > 0;
 
-
 const envFileContent = `// Este arquivo é gerado automaticamente pelo script generate-env.js durante o build
 // As variáveis de ambiente do Vercel são injetadas aqui
 export const environment = {
@@ -23,11 +22,13 @@ const envFilePath = path.join(__dirname, '..', 'src', 'environments', 'environme
 
 fs.writeFileSync(envFilePath, envFileContent, 'utf8');
 
-console.log('✅ Arquivo environment.prod.ts gerado com sucesso!');
+console.log('Arquivo environment.prod.ts gerado com sucesso!');
 console.log(`   API Base URL: ${apiBaseUrl}`);
 console.log(`   reCAPTCHA Site Key: ${isValidRecaptchaKey ? '***configurado***' : '(não configurado)'}`);
 console.log(`   Enable reCAPTCHA: ${isValidRecaptchaKey}`);
+console.log(`   Tipo: reCAPTCHA v2 (checkbox com desafios visuais)`);
 
 if (!isValidRecaptchaKey) {
-  console.warn('⚠️  AVISO: VITE_RECAPTCHA_SITE_KEY não está configurada. O reCAPTCHA v3 estará desabilitado.');
+  console.warn('AVISO: VITE_RECAPTCHA_SITE_KEY não está configurada. O reCAPTCHA v2 estará desabilitado.');
+  console.warn('Para ativar, obtenha uma chave v2 em: https://www.google.com/recaptcha/admin');
 }

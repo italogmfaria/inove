@@ -8,7 +8,7 @@ import {StudentService} from "./common/service/student.service";
 import {InstructorService} from "./common/service/instructor.service";
 import { FeedbackService } from "./common/service/feedback.service";
 import { provideNgxMask } from 'ngx-mask';
-import { RECAPTCHA_V3_SITE_KEY } from 'ng-recaptcha';
+import { RECAPTCHA_SETTINGS, RecaptchaSettings } from 'ng-recaptcha';
 import { environment } from '../environments/environment';
 
 export const APP_PROVIDERS = [
@@ -23,7 +23,9 @@ export const APP_PROVIDERS = [
   FeedbackService,
   provideNgxMask(),
   {
-    provide: RECAPTCHA_V3_SITE_KEY,
-    useValue: environment.recaptchaSiteKey,
+    provide: RECAPTCHA_SETTINGS,
+    useValue: {
+      siteKey: environment.recaptchaSiteKey,
+    } as RecaptchaSettings,
   }
 ];

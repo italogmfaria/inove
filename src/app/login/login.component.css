@@ -278,51 +278,12 @@ body {
     margin: 25px 0;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
-.recaptcha-placeholder {
-    background: linear-gradient(135deg, #f8f9fa, #e8ecef);
-    border: 2px dashed #cbd5e0;
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    width: 100%;
-}
-
-.recaptcha-placeholder .material-icons {
-    font-size: 36px;
-    color: #3261a8;
-    margin-bottom: 8px;
-}
-
-.recaptcha-placeholder p {
-    margin: 8px 0 4px;
-    color: #2c3e50;
-    font-weight: 600;
-    font-size: 0.95em;
-}
-
-.recaptcha-placeholder small {
-    color: #7f8c8d;
-    font-size: 0.85em;
-}
-
-/* reCAPTCHA v3 Badge Notice */
-.recaptcha-badge-notice {
-    margin-top: 20px;
-    text-align: center;
-    color: #7f8c8d;
-    font-size: 0.75em;
-    line-height: 1.4;
-}
-
-.recaptcha-badge-notice a {
-    color: #3261a8;
-    text-decoration: none;
-}
-
-.recaptcha-badge-notice a:hover {
-    text-decoration: underline;
+.recaptcha-container ::ng-deep iframe {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Submit Button */
