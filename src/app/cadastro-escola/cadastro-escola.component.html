@@ -20,60 +20,70 @@
                 <p class="subtitle">Registre sua instituição na plataforma</p>
             </div>
 
-            <form (ngSubmit)="registerSchool()">
+            <form [formGroup]="schoolForm" (ngSubmit)="registerSchool()">
                 <div class="form-row">
-                    <div class="input-group half-width">
+                    <div class="input-group half-width" [class.error]="isFieldInvalid('name')">
                         <span class="material-icons input-icon">business</span>
                         <input
                             type="text"
                             id="nome"
-                            [(ngModel)]="school.name"
-                            name="nome"
+                            formControlName="name"
                             placeholder="Nome da Escola"
                             class="input-field"
-                            required>
+                            [class.invalid]="isFieldInvalid('name')">
+                        <small class="error-message" *ngIf="isFieldInvalid('name')">
+                            {{ getErrorMessage('name') }}
+                        </small>
                     </div>
-                    <div class="input-group half-width">
+                    <div class="input-group half-width" [class.error]="isFieldInvalid('email')">
                         <span class="material-icons input-icon">email</span>
                         <input
                             type="email"
                             id="email"
-                            [(ngModel)]="school.email"
-                            name="email"
+                            formControlName="email"
                             placeholder="Email de Contato"
                             class="input-field"
-                            required>
+                            [class.invalid]="isFieldInvalid('email')">
+                        <small class="error-message" *ngIf="isFieldInvalid('email')">
+                            {{ getErrorMessage('email') }}
+                        </small>
                     </div>
                 </div>
 
                 <div class="form-row">
-                    <div class="input-group half-width">
+                    <div class="input-group half-width" [class.error]="isFieldInvalid('city')">
                         <span class="material-icons input-icon">location_city</span>
                         <input
                             type="text"
                             id="cidade"
-                            [(ngModel)]="school.city"
-                            name="cidade"
+                            formControlName="city"
                             placeholder="Cidade"
                             class="input-field"
-                            required>
+                            [class.invalid]="isFieldInvalid('city')">
+                        <small class="error-message" *ngIf="isFieldInvalid('city')">
+                            {{ getErrorMessage('city') }}
+                        </small>
                     </div>
-                    <div class="input-group half-width">
+                    <div class="input-group half-width" [class.error]="isFieldInvalid('federativeUnit')">
                         <span class="material-icons input-icon">map</span>
                         <input
                             type="text"
                             id="estado"
-                            [(ngModel)]="school.federativeUnit"
-                            name="estado"
+                            formControlName="federativeUnit"
                             placeholder="Estado (Ex: SP, RJ)"
                             class="input-field"
                             maxlength="2"
-                            required>
+                            style="text-transform: uppercase"
+                            [class.invalid]="isFieldInvalid('federativeUnit')">
+                        <small class="error-message" *ngIf="isFieldInvalid('federativeUnit')">
+                            {{ getErrorMessage('federativeUnit') }}
+                        </small>
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn">
-                    <span>Cadastrar Escola</span>
+                <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+                    <span *ngIf="!isSubmitting">Cadastrar Escola</span>
+                    <span *ngIf="isSubmitting">Cadastrando...</span>
                 </button>
             </form>
 

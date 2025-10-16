@@ -11,7 +11,7 @@
                 <span class="material-icons">arrow_back</span>
                 Voltar
             </button>
-            <img src="assets/logowhite.png" alt="Logotipo INOVE" class="logo">
+            <img src="assets/logowhite.png" alt="Logotipo INOVE" (click)="navigateTo('/cursos')" class="logo">
         </header>
 
         <div class="content">
@@ -126,21 +126,22 @@
                 <span class="material-icons">edit</span>
                 Editar Dados
             </h2>
-            <button class="close-btn" (click)="toggleEdit()">
+            <button class="close-btn" (click)="closeEditModal()">
                 <span class="material-icons">close</span>
             </button>
         </div>
 
-        <form class="modal-form">
+        <form class="modal-form" (ngSubmit)="saveUserData()">
             <div class="input-group">
                 <span class="material-icons input-icon">person</span>
                 <input
                     id="edit-nome"
                     type="text"
-                    name="name"
+                    name="userName"
                     [(ngModel)]="user.name"
                     placeholder="Digite seu nome completo"
-                    class="input-field" />
+                    class="input-field"
+                    required />
             </div>
 
             <div class="input-group">
@@ -148,10 +149,11 @@
                 <input
                     id="edit-email"
                     type="email"
-                    name="email"
+                    name="userEmail"
                     [(ngModel)]="user.email"
                     placeholder="Digite seu e-mail"
-                    class="input-field" />
+                    class="input-field"
+                    required />
             </div>
 
             <div class="input-group">
@@ -159,14 +161,15 @@
                 <input
                     id="edit-cpf"
                     type="text"
-                    name="cpf"
+                    name="userCpf"
                     [(ngModel)]="user.cpf"
                     mask="000.000.000-00"
                     placeholder="000.000.000-00"
-                    class="input-field" />
+                    class="input-field"
+                    required />
             </div>
 
-            <button type="button" class="btn-save" (click)="saveUserData()">
+            <button type="submit" class="btn-save">
                 <span class="material-icons">save</span>
                 <span>Salvar Alterações</span>
             </button>

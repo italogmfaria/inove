@@ -16,11 +16,7 @@ export class FileService {
     const formData = new FormData();
     formData.append('imagem', file);
 
-    const headers = new HttpHeaders({
-      'ngrok-skip-browser-warning': 'true'
-    });
-
-    return this.http.post<any>(`${this.baseUrl}/${courseId}/upload-imagem-curso`, formData, { headers })
+    return this.http.post<any>(`${this.baseUrl}/${courseId}/upload-imagem-curso`, formData)
       .pipe(
         map(response => {
           if (!response || !response.imageUrl) {
@@ -44,10 +40,7 @@ export class FileService {
   }
 
   getCourseImage(courseId: number): Observable<{ imageUrl: string }> {
-    const headers = new HttpHeaders({
-      'ngrok-skip-browser-warning': 'true'
-    });
-    return this.http.get<{ imageUrl: string }>(`${this.baseUrl}/${courseId}/preview-imagem`, { headers })
+    return this.http.get<{ imageUrl: string }>(`${this.baseUrl}/${courseId}/preview-imagem`)
       .pipe(
         catchError((error: HttpErrorResponse) => {
           console.error('Erro ao obter imagem do curso:', error);

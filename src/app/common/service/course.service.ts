@@ -80,8 +80,7 @@ export class CourseService {
   private createHeaders(): HttpHeaders {
     const token = localStorage.getItem('authToken');
     let headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'ngrok-skip-browser-warning': 'true'
+      'Content-Type': 'application/json'
     });
 
     if (token) {

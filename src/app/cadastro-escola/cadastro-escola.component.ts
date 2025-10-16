@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { SchoolDTO } from '../common/dto/SchoolDTO';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SchoolService } from '../common/service/school.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -11,34 +11,82 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./cadastro-escola.component.css']
 })
 export class CadastroEscolaComponent {
-  school: SchoolDTO = {
-    id: 0,
-    name: '',
-    city: '',
-    email: '',
-    federativeUnit: '',
-    students: []
-  };
+  schoolForm: FormGroup;
+  isSubmitting = false;
 
   constructor(
     private router: Router,
     private schoolService: SchoolService,
-    private toastr: ToastrService
-  ) {}
+    private toastr: ToastrService,
+    private fb: FormBuilder
+  ) {
+    this.schoolForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      city: ['', [Validators.required, Validators.minLength(2)]],
+      federativeUnit: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2), Validators.pattern(/^[A-Z]{2}$/)]]
+    });
+  }
 
   navigateTo(path: string) {
     this.router.navigate([path]);
   }
 
+  getErrorMessage(fieldName: string): string {
+    const field = this.schoolForm.get(fieldName);
+    if (field?.hasError('required')) {
+      return 'Este campo é obrigatório';
+    }
+    if (field?.hasError('email')) {
+      return 'Digite um e-mail válido';
+    }
+    if (field?.hasError('minlength')) {
+      const minLength = field.errors?.['minlength'].requiredLength;
+      return `Deve ter no mínimo ${minLength} caracteres`;
+    }
+    if (field?.hasError('maxlength')) {
+      return 'Máximo de 2 caracteres';
+    }
+    if (field?.hasError('pattern')) {
+      return 'Digite a sigla do estado (ex: SP, RJ)';
+    }
+    return '';
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.schoolForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
   registerSchool() {
-    this.schoolService.addSchool(this.school).subscribe({
+    // Marcar todos os campos como touched
+    Object.keys(this.schoolForm.controls).forEach(key => {
+      this.schoolForm.get(key)?.markAsTouched();
+    });
+
+    if (this.schoolForm.invalid) {
+      this.toastr.warning('Por favor, preencha todos os campos corretamente', 'Atenção');
+      return;
+    }
+
+    this.isSubmitting = true;
+
+    const schoolData = {
+      id: 0,
+      ...this.schoolForm.value,
+      students: []
+    };
+
+    this.schoolService.addSchool(schoolData).subscribe({
       next: () => {
         this.toastr.success('Escola cadastrada com sucesso!', 'Sucesso');
         this.router.navigate(['/cadastro-estudante']);
+        this.isSubmitting = false;
       },
       error: (err) => {
         console.error('Erro ao cadastrar escola', err);
         this.toastr.error('Erro ao cadastrar escola. Tente novamente.', 'Erro');
+        this.isSubmitting = false;
       }
     });
   }

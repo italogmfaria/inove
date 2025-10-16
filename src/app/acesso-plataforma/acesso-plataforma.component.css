@@ -210,6 +210,7 @@ body {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    text-align: justify;
 }
 
 .info-card::before {

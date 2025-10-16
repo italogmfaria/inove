@@ -70,16 +70,14 @@ export class ContentService {
     const token = localStorage.getItem('authToken');
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'ngrok-skip-browser-warning': 'true'
+      'Authorization': `Bearer ${token}`
     });
   }
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('authToken');
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'ngrok-skip-browser-warning': 'true'
+      'Authorization': `Bearer ${token}`
     });
   }
 }

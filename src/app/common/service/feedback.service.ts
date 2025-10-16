@@ -13,17 +13,13 @@ export class FeedbackService {
   constructor(private http: HttpClient) {}
 
   getFeedbacksByCourse(courseId: number): Observable<FeedBackDTO[]> {
-    const headers = new HttpHeaders({
-      'ngrok-skip-browser-warning': 'true'
-    });
-    return this.http.get<FeedBackDTO[]>(`${this.apiUrl}/course/${courseId}`, { headers });
+    return this.http.get<FeedBackDTO[]>(`${this.apiUrl}/course/${courseId}`);
   }
 
   addFeedback(userId: number, courseId: number, comment: string): Observable<FeedBackDTO> {
     return this.http.post<FeedBackDTO>(`${this.apiUrl}?userId=${userId}&courseId=${courseId}`, comment, {
       headers: {
-        'Content-Type': 'text/plain',
-        'ngrok-skip-browser-warning': 'true'
+        'Content-Type': 'text/plain'
       }
     });
   }
@@ -31,23 +27,16 @@ export class FeedbackService {
   updateFeedback(feedbackId: number, userId: number, newComment: string): Observable<FeedBackDTO> {
     return this.http.put<FeedBackDTO>(`${this.apiUrl}/${feedbackId}?userId=${userId}`, newComment, {
       headers: {
-        'Content-Type': 'text/plain',
-        'ngrok-skip-browser-warning': 'true'
+        'Content-Type': 'text/plain'
       }
     });
   }
 
   deleteFeedback(feedbackId: number, userId: number): Observable<void> {
-    const headers = new HttpHeaders({
-      'ngrok-skip-browser-warning': 'true'
-    });
-    return this.http.delete<void>(`${this.apiUrl}/${feedbackId}?userId=${userId}`, { headers });
+    return this.http.delete<void>(`${this.apiUrl}/${feedbackId}?userId=${userId}`);
   }
 
   deleteFeedbackByUserAndCourse(userId: number, courseId: number): Observable<void> {
-    const headers = new HttpHeaders({
-      'ngrok-skip-browser-warning': 'true'
-    });
-    return this.http.delete<void>(`${this.apiUrl}/by-user-and-course?userId=${userId}&courseId=${courseId}`, { headers });
+    return this.http.delete<void>(`${this.apiUrl}/by-user-and-course?userId=${userId}&courseId=${courseId}`);
   }
 }

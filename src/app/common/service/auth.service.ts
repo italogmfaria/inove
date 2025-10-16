@@ -15,8 +15,7 @@ export class AuthService {
 
   login(email: string, password: string): Observable<LoginResponseDTO> {
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'ngrok-skip-browser-warning': 'true'
+      'Content-Type': 'application/json'
     });
     return this.http.post<LoginResponseDTO>(this.baseUrl, { email, password }, { headers });
   }

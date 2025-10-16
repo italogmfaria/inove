@@ -6,7 +6,7 @@
   </div>
 
   <header class="header">
-    <img src="assets/logowhite.png" (click)="navigateTo('/inicial')" alt="Logotipo INOVE" class="logo">
+    <img src="assets/logowhite.png" (click)="navigateTo('/painel-instrutor')" alt="Logotipo INOVE" class="logo">
     <h1 class="page-title">Painel do Instrutor</h1>
     <button class="btn-logout" (click)="logout()">
       <span class="material-icons">logout</span>
@@ -190,33 +190,54 @@
       </button>
     </div>
 
-    <div class="modal-body">
-      <div class="input-group">
-        <span class="material-icons">person</span>
-        <input type="text" [(ngModel)]="instrutorEdit.name" placeholder="Nome completo" />
+    <form class="modal-form" (ngSubmit)="updateInstructor()">
+      <div class="modal-body">
+        <div class="input-group">
+          <span class="material-icons input-icon">person</span>
+          <input
+            type="text"
+            name="instructorName"
+            [(ngModel)]="instrutorEdit.name"
+            placeholder="Nome completo"
+            class="input-field"
+            required />
+        </div>
+
+        <div class="input-group">
+          <span class="material-icons input-icon">email</span>
+          <input
+            type="email"
+            name="instructorEmail"
+            [(ngModel)]="instrutorEdit.email"
+            placeholder="E-mail"
+            class="input-field"
+            required />
+        </div>
+
+        <div class="input-group">
+          <span class="material-icons input-icon">credit_card</span>
+          <input
+            type="text"
+            name="instructorCpf"
+            [(ngModel)]="instrutorEdit.cpf"
+            mask="000.000.000-00"
+            placeholder="CPF"
+            class="input-field"
+            required />
+        </div>
       </div>
 
-      <div class="input-group">
-        <span class="material-icons">email</span>
-        <input type="email" [(ngModel)]="instrutorEdit.email" placeholder="E-mail" />
-      </div>
-
-      <div class="input-group">
-        <span class="material-icons">credit_card</span>
-        <input type="text" [(ngModel)]="instrutorEdit.cpf" mask="000.000.000-00" placeholder="CPF" />
-      </div>
-    </div>
-
-    <footer class="modal-footer">
-      <button class="btn-modal-save" (click)="updateInstructor()">
-        <span class="material-icons">save</span>
-        Salvar
-      </button>
-      <button class="btn-modal-cancel" (click)="closeEditInstructorModal()">
-        <span class="material-icons">cancel</span>
-        Cancelar
-      </button>
-    </footer>
+      <footer class="modal-footer">
+        <button type="submit" class="btn-modal-save">
+          <span class="material-icons">save</span>
+          Salvar
+        </button>
+        <button type="button" class="btn-modal-cancel" (click)="closeEditInstructorModal()">
+          <span class="material-icons">cancel</span>
+          Cancelar
+        </button>
+      </footer>
+    </form>
   </div>
 
   <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmation()">

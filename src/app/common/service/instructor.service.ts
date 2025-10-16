@@ -15,8 +15,7 @@ export class InstructorService {
   createInstructor(instructorData: any): Observable<string> {
     const url = `${this.baseUrl}/instrutor`;
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'ngrok-skip-browser-warning': 'true'
+      'Content-Type': 'application/json'
     });
     return this.http.post(url, instructorData, { headers, responseType: 'text' });
   }

@@ -1,13 +1,13 @@
 import {RouterModule, RouterOutlet} from "@angular/router";
 import {BrowserModule} from "@angular/platform-browser";
 import {CommonModule} from "@angular/common";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {routes} from "./app.routes";
-import {HttpClient, HttpClientModule} from "@angular/common/http";
+import {HttpClientModule} from "@angular/common/http";
 import { PdfViewerModule } from "ng2-pdf-viewer";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ToastrModule } from "ngx-toastr";
-import { provideNgxMask, NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
+import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 
 
 export const APP_IMPORTS = [
@@ -16,6 +16,7 @@ export const APP_IMPORTS = [
   BrowserAnimationsModule,
   CommonModule,
   FormsModule,
+  ReactiveFormsModule,
   HttpClientModule,
   RouterOutlet,
   PdfViewerModule,

@@ -20,74 +20,84 @@
                 <p class="subtitle">Crie sua conta e comece a aprender hoje</p>
             </div>
 
-            <form (submit)="cadastrarEstudante()">
+            <form [formGroup]="studentForm" (ngSubmit)="cadastrarEstudante()">
                 <div class="form-row">
-                    <div class="input-group half-width">
+                    <div class="input-group half-width" [class.error]="isFieldInvalid('name')">
                         <span class="material-icons input-icon">person</span>
                         <input
                             type="text"
                             id="nome"
-                            [(ngModel)]="newUser.name"
-                            name="name"
+                            formControlName="name"
                             placeholder="Digite seu nome"
                             class="input-field"
-                            required>
+                            [class.invalid]="isFieldInvalid('name')">
+                        <small class="error-message" *ngIf="isFieldInvalid('name')">
+                            {{ getErrorMessage('name') }}
+                        </small>
                     </div>
-                    <div class="input-group half-width">
+                    <div class="input-group half-width" [class.error]="isFieldInvalid('email')">
                         <span class="material-icons input-icon">email</span>
                         <input
                             type="email"
                             id="email"
-                            [(ngModel)]="newUser.email"
-                            name="email"
+                            formControlName="email"
                             placeholder="Digite seu email"
                             class="input-field"
-                            required>
+                            [class.invalid]="isFieldInvalid('email')">
+                        <small class="error-message" *ngIf="isFieldInvalid('email')">
+                            {{ getErrorMessage('email') }}
+                        </small>
                     </div>
                 </div>
 
                 <div class="form-row">
-                    <div class="input-group half-width">
+                    <div class="input-group half-width" [class.error]="isFieldInvalid('cpf')">
                         <span class="material-icons input-icon">badge</span>
                         <input
                             type="text"
                             id="cpf"
-                            [(ngModel)]="newUser.cpf"
-                            name="cpf"
+                            formControlName="cpf"
                             placeholder="Digite seu CPF"
                             mask="000.000.000-00"
                             class="input-field"
-                            required>
+                            [class.invalid]="isFieldInvalid('cpf')">
+                        <small class="error-message" *ngIf="isFieldInvalid('cpf')">
+                            {{ getErrorMessage('cpf') }}
+                        </small>
                     </div>
-                    <div class="input-group half-width">
+                    <div class="input-group half-width" [class.error]="isFieldInvalid('password')">
                         <span class="material-icons input-icon">lock</span>
                         <div class="password-wrapper">
                             <input
                                 [type]="showPassword ? 'text' : 'password'"
                                 id="senha"
-                                [(ngModel)]="newUser.password"
-                                name="password"
+                                formControlName="password"
                                 placeholder="Digite sua senha"
                                 class="input-field"
-                                required>
+                                [class.invalid]="isFieldInvalid('password')">
                             <span class="material-icons password-toggle-icon" (click)="togglePasswordVisibility()">
                                 {{ showPassword ? 'visibility_off' : 'visibility' }}
                             </span>
                         </div>
+                        <small class="error-message" *ngIf="isFieldInvalid('password')">
+                            {{ getErrorMessage('password') }}
+                        </small>
                     </div>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group" [class.error]="isFieldInvalid('schoolId')">
                     <span class="material-icons input-icon">school</span>
                     <select
                         id="school"
-                        [(ngModel)]="newUser.schoolId"
-                        name="schoolId"
+                        formControlName="schoolId"
                         class="input-field select-field"
-                        required>
+                        [class.invalid]="isFieldInvalid('schoolId')">
                         <option [ngValue]="undefined" disabled>Escolha sua escola</option>
                         <option *ngFor="let escola of escolas" [value]="escola.id">{{ escola.name }}</option>
                     </select>
+                    <small class="error-message" *ngIf="isFieldInvalid('schoolId')">
+                        {{ getErrorMessage('schoolId') }}
+                    </small>
                 </div>
 
                 <p class="help-text">
@@ -96,8 +106,9 @@
                     <a class="btn-link" (click)="navigateTo('/cadastro-escola')">Cadastre aqui!</a>
                 </p>
 
-                <button type="submit" class="submit-btn">
-                    <span>Cadastrar</span>
+                <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+                    <span *ngIf="!isSubmitting">Cadastrar</span>
+                    <span *ngIf="isSubmitting">Cadastrando...</span>
                 </button>
             </form>
 

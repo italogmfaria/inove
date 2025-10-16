@@ -20,8 +20,7 @@ export class UserService {
     }
 
     let headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'ngrok-skip-browser-warning': 'true'
+      'Content-Type': 'application/json'
     });
 
     if (token) {

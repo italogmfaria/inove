@@ -17,8 +17,7 @@ export class SectionService {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'ngrok-skip-browser-warning': 'true'
+      'Authorization': `Bearer ${token}`
     });
 
     return this.http.get<SectionDTO[]>(`${this.baseUrl}/${courseId}/secoes`, { headers });
@@ -28,8 +27,7 @@ export class SectionService {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'ngrok-skip-browser-warning': 'true'
+      'Authorization': `Bearer ${token}`
     });
 
     return this.http.get<SectionDTO>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`, { headers });
@@ -39,8 +37,7 @@ export class SectionService {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'ngrok-skip-browser-warning': 'true'
+      'Authorization': `Bearer ${token}`
     });
 
     return this.http.post<SectionDTO>(`${this.baseUrl}/${courseId}/secoes`, section, { headers });
@@ -50,8 +47,7 @@ export class SectionService {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'ngrok-skip-browser-warning': 'true'
+      'Authorization': `Bearer ${token}`
     });
 
     return this.http.put<SectionDTO>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`, section, { headers });
@@ -66,8 +62,7 @@ export class SectionService {
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'ngrok-skip-browser-warning': 'true'
+      'Authorization': `Bearer ${token}`
     });
 
     return this.http.delete<void>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`, { headers });

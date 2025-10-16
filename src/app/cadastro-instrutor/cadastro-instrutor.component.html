@@ -1,4 +1,30 @@
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" *ngIf="isSubmitting">
+        <div class="loading-container">
+            <div class="spinner-container">
+                <div class="spinner"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <h2 class="loading-title">Processando sua solicitação...</h2>
+            <p class="loading-message">Estamos enviando seus dados e preparando sua conta de instrutor.</p>
+            <div class="loading-steps">
+                <div class="step">
+                    <span class="material-icons step-icon">check_circle</span>
+                    <span>Validando informações</span>
+                </div>
+                <div class="step">
+                    <span class="material-icons step-icon">email</span>
+                    <span>Enviando e-mail de confirmação</span>
+                </div>
+                <div class="step">
+                    <span class="material-icons step-icon">hourglass_empty</span>
+                    <span>Aguardando aprovação</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <header class="header">
         <button class="back-btn" (click)="goBack()">
             <span class="material-icons">arrow_back</span>
@@ -20,58 +46,68 @@
                 <p class="subtitle">Compartilhe seu conhecimento e transforme vidas</p>
             </div>
 
-            <form (ngSubmit)="submitForm()">
-                <div class="input-group">
+            <form [formGroup]="instructorForm" (ngSubmit)="submitForm()">
+                <div class="input-group" [class.error]="isFieldInvalid('name')">
                     <span class="material-icons input-icon">person</span>
                     <input
                         type="text"
                         id="nome"
-                        [(ngModel)]="instructor.name"
-                        name="name"
+                        formControlName="name"
                         placeholder="Digite seu nome completo"
                         class="input-field"
-                        required>
+                        [class.invalid]="isFieldInvalid('name')">
+                    <small class="error-message" *ngIf="isFieldInvalid('name')">
+                        {{ getErrorMessage('name') }}
+                    </small>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group" [class.error]="isFieldInvalid('cpf')">
                     <span class="material-icons input-icon">badge</span>
                     <input
                         type="text"
                         id="cpf"
-                        [(ngModel)]="instructor.cpf"
-                        name="cpf"
+                        formControlName="cpf"
                         mask="000.000.000-00"
                         placeholder="000.000.000-00"
                         class="input-field"
-                        required>
+                        [class.invalid]="isFieldInvalid('cpf')">
+                    <small class="error-message" *ngIf="isFieldInvalid('cpf')">
+                        {{ getErrorMessage('cpf') }}
+                    </small>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group" [class.error]="isFieldInvalid('email')">
                     <span class="material-icons input-icon">email</span>
                     <input
                         type="email"
                         id="email"
-                        [(ngModel)]="instructor.email"
-                        name="email"
+                        formControlName="email"
                         placeholder="Digite seu e-mail"
                         class="input-field"
-                        required>
+                        [class.invalid]="isFieldInvalid('email')">
+                    <small class="error-message" *ngIf="isFieldInvalid('email')">
+                        {{ getErrorMessage('email') }}
+                    </small>
                 </div>
 
-                <div class="input-group textarea-group">
+                <div class="input-group textarea-group" [class.error]="isFieldInvalid('motivation')">
                     <span class="material-icons input-icon">description</span>
                     <textarea
                         id="motivacao"
-                        [(ngModel)]="instructor.motivation"
-                        name="motivation"
+                        formControlName="motivation"
                         rows="5"
-                        placeholder="Conte-nos porque você quer ser um instrutor e o que deseja ensinar..."
+                        placeholder="Conte-nos porque você quer ser um instrutor e o que deseja ensinar... (mínimo 20 caracteres)"
                         class="input-field textarea-field"
-                        required></textarea>
+                        [class.invalid]="isFieldInvalid('motivation')"></textarea>
+                    <small class="error-message" *ngIf="isFieldInvalid('motivation')">
+                        {{ getErrorMessage('motivation') }}
+                    </small>
                 </div>
 
-                <button type="submit" class="submit-btn">
-                    <span>Enviar Solicitação</span>
+                <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+                    <span class="material-icons" *ngIf="!isSubmitting">send</span>
+                    <span *ngIf="!isSubmitting">Enviar Solicitação</span>
+                    <span *ngIf="isSubmitting">Enviando...</span>
                 </button>
             </form>
 

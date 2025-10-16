@@ -20,32 +20,36 @@
                 <p class="subtitle">Entre com suas credenciais para continuar</p>
             </div>
 
-            <form (submit)="onLogin($event)">
-                <div class="input-group">
+            <form [formGroup]="loginForm" (ngSubmit)="onLogin($event)">
+                <div class="input-group" [class.error]="isFieldInvalid('email')">
                     <span class="material-icons input-icon">email</span>
                     <input
                         type="email"
                         placeholder="Digite seu e-mail"
-                        name="email"
-                        [(ngModel)]="email"
-                        required
-                        class="input-field">
+                        formControlName="email"
+                        class="input-field"
+                        [class.invalid]="isFieldInvalid('email')">
+                    <small class="error-message" *ngIf="isFieldInvalid('email')">
+                        {{ getErrorMessage('email') }}
+                    </small>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group" [class.error]="isFieldInvalid('password')">
                     <span class="material-icons input-icon">lock</span>
                     <div class="password-wrapper">
                         <input
                             [type]="showPassword ? 'text' : 'password'"
                             placeholder="Digite sua senha"
-                            name="password"
-                            [(ngModel)]="password"
-                            required
-                            class="input-field">
+                            formControlName="password"
+                            class="input-field"
+                            [class.invalid]="isFieldInvalid('password')">
                         <span class="material-icons password-toggle-icon" (click)="togglePasswordVisibility()">
                             {{ showPassword ? 'visibility_off' : 'visibility' }}
                         </span>
                     </div>
+                    <small class="error-message" *ngIf="isFieldInvalid('password')">
+                        {{ getErrorMessage('password') }}
+                    </small>
                 </div>
 
                 <div class="forgot-password-link">
@@ -61,8 +65,9 @@
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn">
-                    <span>Entrar</span>
+                <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+                    <span *ngIf="!isSubmitting">Entrar</span>
+                    <span *ngIf="isSubmitting">Entrando...</span>
                 </button>
             </form>
 
