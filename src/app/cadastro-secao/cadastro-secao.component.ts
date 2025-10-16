@@ -27,11 +27,14 @@ export class CadastroSecaoComponent implements OnInit {
   selectedFile?: File;
   ContentType = ContentType;
 
-  // Propriedades para o modal de confirmação
   showConfirmModal: boolean = false;
   confirmationTitle: string = '';
   confirmationMessage: string = '';
   private pendingAction: (() => void) | null = null;
+
+
+  private readonly MAX_VIDEO_SIZE = 50 * 1024 * 1024;
+  private readonly MAX_PDF_SIZE = 50 * 1024 * 1024;
 
   constructor(
     private route: ActivatedRoute,
@@ -46,7 +49,6 @@ export class CadastroSecaoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Use paramMap instead of params for better type safety
     this.route.paramMap.subscribe(params => {
       const courseId = params.get('id');
       if (!courseId) {
@@ -119,11 +121,9 @@ export class CadastroSecaoComponent implements OnInit {
   }
 
   excluirSecao(sectionId: number): void {
-    // Configurar o modal de confirmação
     this.confirmationTitle = 'Remover Seção';
     this.confirmationMessage = 'Tem certeza que deseja remover esta seção? Esta ação não pode ser desfeita e todos os conteúdos vinculados serão perdidos.';
 
-    // Armazenar a ação pendente
     this.pendingAction = () => {
       this.sectionService.deleteSection(this.courseId, sectionId).subscribe({
         next: () => {
@@ -136,7 +136,6 @@ export class CadastroSecaoComponent implements OnInit {
       });
     };
 
-    // Exibir o modal
     this.showConfirmModal = true;
   }
 
@@ -168,13 +167,10 @@ export class CadastroSecaoComponent implements OnInit {
   carregarConteudos(sectionId: number, sectionIndex: number): void {
     this.contentService.getContents(this.courseId, sectionId).subscribe({
       next: (conteudos) => {
-        // Atualiza os conteúdos da seção primeiro
         this.secoes[sectionIndex].contents = conteudos;
 
-        // Para cada conteúdo, buscamos o tipo de arquivo correto baseado na extensão
         conteudos.forEach((conteudo, index) => {
           if (conteudo.fileName) {
-            // Identificar tipo pela extensão do arquivo
             const fileName = conteudo.fileName.toLowerCase();
             if (fileName.endsWith('.mp4') || fileName.endsWith('.avi') || fileName.endsWith('.mov') || fileName.endsWith('.mkv') || fileName.endsWith('.webm')) {
               this.secoes[sectionIndex].contents[index].contentType = ContentType.VIDEO;
@@ -195,7 +191,6 @@ export class CadastroSecaoComponent implements OnInit {
 
 
   excluirConteudo(contentId: number, sectionId: number): void {
-    // Buscar o nome do conteúdo para exibir na confirmação
     let contentName = 'este conteúdo';
     const section = this.secoes.find(s => s.id === sectionId);
     if (section && section.contents) {
@@ -205,16 +200,12 @@ export class CadastroSecaoComponent implements OnInit {
       }
     }
 
-    // Configurar o modal de confirmação
     this.confirmationTitle = 'Remover Conteúdo';
     this.confirmationMessage = `Tem certeza que deseja remover ${contentName}? Esta ação não pode ser desfeita.`;
 
-    // Armazenar a ação pendente
     this.pendingAction = () => {
-      console.log('Tentando excluir conteúdo:', { courseId: this.courseId, sectionId, contentId });
       this.contentService.deleteContent(this.courseId, sectionId, contentId).subscribe({
-        next: (response) => {
-          console.log('Conteúdo excluído com sucesso:', response);
+        next: () => {
           this.toastr.success("Conteúdo excluído com sucesso!", 'Sucesso');
           const sectionIndex = this.secoes.findIndex(s => s.id === sectionId);
           if (sectionIndex !== -1) {
@@ -222,13 +213,11 @@ export class CadastroSecaoComponent implements OnInit {
           }
         },
         error: (err) => {
-          console.error('Erro detalhado ao excluir conteúdo:', err);
           this.toastr.error(`Erro ao excluir o conteúdo: ${err.message || err.error?.message || 'Erro desconhecido'}`, 'Erro');
         }
       });
     };
 
-    // Exibir o modal
     this.showConfirmModal = true;
   }
 
@@ -240,52 +229,165 @@ export class CadastroSecaoComponent implements OnInit {
     }
     this.showContentModal = true;
     this.editingContent = true;
+    this.selectedFile = undefined; // Limpar arquivo selecionado
   }
-
-////////
 
   adicionarConteudo(sectionId: number): void {
     this.currentContent = { id: 0, title: '', description: '', contentType: ContentType.VIDEO, fileUrl: '', fileName: '', sectionId };
     this.showContentModal = true;
     this.editingContent = false;
+    this.selectedFile = undefined; // Limpar arquivo selecionado
   }
 
   handleFileUpload(event: any): void {
-    this.selectedFile = event.target.files[0];
+    const file = event.target.files[0];
+
+    if (!file) {
+      return;
+    }
+
+    // Validar tamanho do arquivo
+    const maxSize = this.currentContent.contentType === ContentType.VIDEO
+      ? this.MAX_VIDEO_SIZE
+      : this.MAX_PDF_SIZE;
+
+    const maxSizeMB = maxSize / (1024 * 1024);
+    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+
+    if (file.size > maxSize) {
+      const tipoArquivo = this.currentContent.contentType === ContentType.VIDEO ? 'vídeos' : 'PDFs';
+      this.toastr.error(
+        `O arquivo selecionado (${fileSizeMB} MB) excede o tamanho máximo permitido de ${maxSizeMB} MB para ${tipoArquivo}.`,
+        'Arquivo muito grande'
+      );
+      // Limpar o input de arquivo
+      event.target.value = '';
+      this.selectedFile = undefined;
+      return;
+    }
+
+    this.selectedFile = file;
+    this.toastr.success(`Arquivo "${file.name}" (${fileSizeMB} MB) selecionado com sucesso!`, 'Arquivo pronto');
+  }
+
+  // Métodos para preview de conteúdo
+  showPreviewModal: boolean = false;
+
+  getContentPreviewUrl(): string {
+    if (this.currentContent.fileName) {
+      return this.fileService.getStreamUrl(this.currentContent.fileName);
+    }
+    return '';
+  }
+
+  hasExistingContent(): boolean {
+    return this.editingContent && !!this.currentContent.fileName;
+  }
+
+  openPreviewModal(): void {
+    this.showPreviewModal = true;
+  }
+
+  closePreviewModal(): void {
+    this.showPreviewModal = false;
+  }
+
+  isVideo(): boolean {
+    return this.currentContent.contentType === ContentType.VIDEO;
+  }
+
+  isPDF(): boolean {
+    return this.currentContent.contentType === ContentType.PDF;
   }
 
   saveContent(): void {
+    // Validações antes de iniciar o upload
     if (!this.currentContent.title || !this.currentContent.description) {
       this.toastr.warning("Por favor, preencha todos os campos.", 'Atenção');
+      this.isUploading = false;
       return;
+    }
+
+    // Para criação de novo conteúdo, validar se tem arquivo
+    if (!this.editingContent && !this.selectedFile) {
+      this.toastr.warning("Por favor, selecione um arquivo antes de continuar.", 'Atenção');
+      this.isUploading = false;
+      return;
+    }
+
+    // Validar tamanho do arquivo novamente antes de enviar
+    if (this.selectedFile) {
+      const maxSize = this.currentContent.contentType === ContentType.VIDEO
+        ? this.MAX_VIDEO_SIZE
+        : this.MAX_PDF_SIZE;
+
+      if (this.selectedFile.size > maxSize) {
+        const maxSizeMB = maxSize / (1024 * 1024);
+        const tipoArquivo = this.currentContent.contentType === ContentType.VIDEO ? 'vídeos' : 'PDFs';
+        this.toastr.error(
+          `O arquivo excede o tamanho máximo permitido de ${maxSizeMB} MB para ${tipoArquivo}.`,
+          'Arquivo muito grande'
+        );
+        this.isUploading = false;
+        return;
+      }
     }
 
     this.isUploading = true;
     this.uploadProgress = 0;
 
     if (this.editingContent) {
-      // Atualizar conteúdo existente
-      this.contentService.updateContent(this.courseId, this.currentContent.sectionId, this.currentContent.id, this.currentContent)
-        .subscribe({
+      if (this.selectedFile) {
+        const progressInterval = setInterval(() => {
+          this.uploadProgress += 10;
+          if (this.uploadProgress >= 90) {
+            clearInterval(progressInterval);
+          }
+        }, 200);
+
+        this.contentService.updateContentWithFile(
+          this.courseId,
+          this.currentContent.sectionId,
+          this.currentContent.id,
+          this.selectedFile,
+          this.currentContent
+        ).subscribe({
           next: () => {
-            this.toastr.success("Conteúdo atualizado com sucesso!", 'Sucesso');
-            this.isUploading = false;
-            this.listarSecoes();
-            this.closeContentModal();
+            clearInterval(progressInterval);
+            this.uploadProgress = 100;
+            setTimeout(() => {
+              this.toastr.success("Conteúdo e arquivo atualizados com sucesso!", 'Sucesso');
+              this.isUploading = false;
+              this.uploadProgress = 0;
+              this.listarSecoes();
+              this.closeContentModal();
+            }, 500);
           },
           error: (err) => {
+            clearInterval(progressInterval);
             console.error(err);
-            this.toastr.error("Erro ao atualizar o conteúdo.", 'Erro');
+            this.toastr.error("Erro ao atualizar o conteúdo com o novo arquivo.", 'Erro');
             this.isUploading = false;
+            this.uploadProgress = 0;
           }
         });
-    } else {
-      if (!this.selectedFile) {
-        this.toastr.warning("Por favor, selecione um arquivo antes de continuar.", 'Atenção');
-        return;
+      } else {
+        this.contentService.updateContent(this.courseId, this.currentContent.sectionId, this.currentContent.id, this.currentContent)
+          .subscribe({
+            next: () => {
+              this.toastr.success("Conteúdo atualizado com sucesso!", 'Sucesso');
+              this.isUploading = false;
+              this.listarSecoes();
+              this.closeContentModal();
+            },
+            error: (err) => {
+              console.error(err);
+              this.toastr.error("Erro ao atualizar o conteúdo.", 'Erro');
+              this.isUploading = false;
+            }
+          });
       }
-
-      // Simular progresso de upload
+    } else {
       const progressInterval = setInterval(() => {
         this.uploadProgress += 10;
         if (this.uploadProgress >= 90) {
@@ -293,7 +395,7 @@ export class CadastroSecaoComponent implements OnInit {
         }
       }, 200);
 
-      this.contentService.uploadContent(this.courseId, this.currentContent.sectionId, this.selectedFile, this.currentContent)
+      this.contentService.uploadContent(this.courseId, this.currentContent.sectionId, this.selectedFile!, this.currentContent)
         .subscribe({
           next: () => {
             clearInterval(progressInterval);
@@ -322,7 +424,7 @@ export class CadastroSecaoComponent implements OnInit {
     this.showContentModal = false;
   }
 
-  // Métodos de confirmação
+
   confirmAction(): void {
     if (this.pendingAction) {
       this.pendingAction();

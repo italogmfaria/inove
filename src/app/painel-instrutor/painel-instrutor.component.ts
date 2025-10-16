@@ -26,7 +26,6 @@ export class PainelInstrutorComponent implements OnInit {
   showUpdateCourseModal: boolean = false;
   selectedImageFile: File | null = null;
 
-  // Propriedades para o modal de confirmação
   showConfirmModal: boolean = false;
   confirmationTitle: string = '';
   confirmationMessage: string = '';
@@ -45,8 +44,6 @@ export class PainelInstrutorComponent implements OnInit {
     this.loadInstructorData();
     this.loadInstructorCourses();
   }
-
-  // CURSOS
 
   openUpdateCourseModal(curso: any): void {
     if (curso) {
@@ -93,7 +90,6 @@ export class PainelInstrutorComponent implements OnInit {
   }
 
   updateCourse(): void {
-    // Client-side validation
     if (!this.cursoEdit.name || this.cursoEdit.name.trim().length === 0) {
       this.toastr.warning('O nome do curso é obrigatório.', 'Atenção');
       return;
@@ -102,8 +98,7 @@ export class PainelInstrutorComponent implements OnInit {
     this.isLoading = true;
 
     if (this.selectedImageFile) {
-      // Validate file size and type before upload
-      const maxSize = 5 * 1024 * 1024; // 5MB
+      const maxSize = 5 * 1024 * 1024;
       if (this.selectedImageFile.size > maxSize) {
         this.toastr.error('A imagem deve ter no máximo 5MB', 'Erro');
         this.isLoading = false;
@@ -160,7 +155,6 @@ export class PainelInstrutorComponent implements OnInit {
     if (userId) {
       this.courseService.getInstructorCourses(+userId).subscribe((cursos) => {
         this.cursos = cursos;
-        // Carregar as imagens para cada curso
         this.cursos.forEach(curso => {
           this.fileService.getCourseImage(curso.id).subscribe(
             (response) => {
@@ -188,8 +182,6 @@ export class PainelInstrutorComponent implements OnInit {
   closeUpdateCourseModal(): void {
     this.showUpdateCourseModal = false;
   }
-
-  // INSTRUCTOR DADOS
 
   loadInstructorData(): void {
     const userId = localStorage.getItem('userId');
@@ -239,8 +231,6 @@ export class PainelInstrutorComponent implements OnInit {
       console.error(error);
     });
   }
-
-  // LOGOUT E CONFIRMAÇÃO
 
   logout(): void {
     this.confirmationTitle = 'Sair da Plataforma';

@@ -60,7 +60,6 @@ export class CadastroInstrutorComponent {
   }
 
   submitForm() {
-    // Marcar todos os campos como touched
     Object.keys(this.instructorForm.controls).forEach(key => {
       this.instructorForm.get(key)?.markAsTouched();
     });
@@ -72,7 +71,6 @@ export class CadastroInstrutorComponent {
 
     this.isSubmitting = true;
 
-    // Limpar o CPF antes de enviar (remove pontos e traços)
     const formData = {
       ...this.instructorForm.value,
       cpf: CpfValidator.cleanCpf(this.instructorForm.value.cpf)
@@ -80,7 +78,6 @@ export class CadastroInstrutorComponent {
 
     this.instructorService.createInstructor(formData).subscribe({
       next: () => {
-        // Aguardar um pouco para garantir que o usuário viu o loading
         setTimeout(() => {
           this.toastr.success('Solicitação enviada com sucesso! Aguarde a aprovação.', 'Sucesso');
           this.router.navigate(['/aguarde']);

@@ -498,6 +498,7 @@ body {
     }
 
     .gallery {
+        margin-top: 8rem;
         padding: 40px 1.5rem;
     }
 
@@ -530,7 +531,8 @@ body {
     }
 
     .gallery {
-        padding: 30px 1rem;
+
+      padding: 30px 1rem;
     }
 
     .course-grid {

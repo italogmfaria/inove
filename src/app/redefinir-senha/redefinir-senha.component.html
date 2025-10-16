@@ -2,7 +2,7 @@
     <header class="header">
         <button class="back-btn" (click)="voltarLogin()">
             <span class="material-icons">arrow_back</span>
-            Voltar
+            <span class="back-text">Voltar</span>
         </button>
         <img (click)="voltarLogin()" src="assets/logowhite.png" alt="Logotipo" class="logo">
     </header>
@@ -63,19 +63,19 @@
                     <ul class="requirements-list">
                         <li [class.valid]="passwordValidation.minLength">
                             <span class="material-icons">{{ passwordValidation.minLength ? 'check_circle' : 'cancel' }}</span>
-                            Mínimo de 8 caracteres
+                            Mínimo de 6 caracteres
                         </li>
-                        <li [class.valid]="passwordValidation.hasUpper">
-                            <span class="material-icons">{{ passwordValidation.hasUpper ? 'check_circle' : 'cancel' }}</span>
-                            Uma letra maiúscula
-                        </li>
-                        <li [class.valid]="passwordValidation.hasLower">
-                            <span class="material-icons">{{ passwordValidation.hasLower ? 'check_circle' : 'cancel' }}</span>
-                            Uma letra minúscula
+                        <li [class.valid]="passwordValidation.hasLetter">
+                            <span class="material-icons">{{ passwordValidation.hasLetter ? 'check_circle' : 'cancel' }}</span>
+                            Pelo menos uma letra
                         </li>
                         <li [class.valid]="passwordValidation.hasNumber">
                             <span class="material-icons">{{ passwordValidation.hasNumber ? 'check_circle' : 'cancel' }}</span>
-                            Um número
+                            Pelo menos um número
+                        </li>
+                        <li [class.valid]="passwordValidation.passwordsMatch" *ngIf="confirmPassword">
+                            <span class="material-icons">{{ passwordValidation.passwordsMatch ? 'check_circle' : 'cancel' }}</span>
+                            As senhas coincidem
                         </li>
                     </ul>
                 </div>

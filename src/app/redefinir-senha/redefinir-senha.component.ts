@@ -22,9 +22,9 @@ export class RedefinirSenhaComponent implements OnInit, DoCheck {
 
   passwordValidation = {
     minLength: false,
-    hasUpper: false,
-    hasLower: false,
-    hasNumber: false
+    hasNumber: false,
+    hasLetter: false,
+    passwordsMatch: false
   };
 
   constructor(
@@ -34,7 +34,6 @@ export class RedefinirSenhaComponent implements OnInit, DoCheck {
   ) {}
 
   ngOnInit(): void {
-    // Obter e-mail e código dos parâmetros da rota
     this.route.queryParams.subscribe(params => {
       this.email = params['email'] || '';
       this.code = params['code'] || '';
@@ -46,18 +45,25 @@ export class RedefinirSenhaComponent implements OnInit, DoCheck {
     });
   }
 
-  // Adicionar validação ao digitar
   ngDoCheck(): void {
     if (this.newPassword) {
       this.validatePassword();
     }
+    if (this.confirmPassword) {
+      this.checkPasswordsMatch();
+    }
   }
 
   validatePassword(): void {
-    this.passwordValidation.minLength = this.newPassword.length >= 8;
-    this.passwordValidation.hasUpper = /[A-Z]/.test(this.newPassword);
-    this.passwordValidation.hasLower = /[a-z]/.test(this.newPassword);
+    this.passwordValidation.minLength = this.newPassword.length >= 6;
     this.passwordValidation.hasNumber = /[0-9]/.test(this.newPassword);
+    this.passwordValidation.hasLetter = /[a-zA-Z]/.test(this.newPassword);
+  }
+
+  checkPasswordsMatch(): void {
+    this.passwordValidation.passwordsMatch =
+      this.newPassword === this.confirmPassword &&
+      this.confirmPassword.length > 0;
   }
 
   togglePasswordVisibility(): void {
@@ -71,18 +77,16 @@ export class RedefinirSenhaComponent implements OnInit, DoCheck {
   isFormValid(): boolean {
     const isPasswordValid =
       this.passwordValidation.minLength &&
-      this.passwordValidation.hasUpper &&
-      this.passwordValidation.hasLower &&
-      this.passwordValidation.hasNumber;
+      this.passwordValidation.hasNumber &&
+      this.passwordValidation.hasLetter;
 
     return isPasswordValid &&
-           this.newPassword === this.confirmPassword &&
-           this.newPassword.length > 0;
+           this.passwordValidation.passwordsMatch;
   }
 
   redefinirSenha(): void {
-    // Validar se as senhas são válidas
     this.validatePassword();
+    this.checkPasswordsMatch();
 
     if (!this.isFormValid()) {
       if (this.newPassword !== this.confirmPassword) {
@@ -95,11 +99,9 @@ export class RedefinirSenhaComponent implements OnInit, DoCheck {
 
     this.isLoading = true;
 
-    // Simular redefinição de senha (substituir por chamada real à API)
     setTimeout(() => {
       this.isLoading = false;
       this.toastr.success('Senha redefinida com sucesso!', 'Sucesso');
-      // Navegar para login
       this.router.navigate(['/login']);
     }, 1500);
   }

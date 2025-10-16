@@ -9,14 +9,19 @@
 
         <header class="header">
             <img src="assets/logowhite.png" alt="Inove Logo" class="logo">
-            <nav class="nav-menu">
-                <a (click)="navigateTo('/cursos')" class="nav-link">
+
+            <button class="menu-toggle" (click)="toggleMenu()">
+                <span class="material-icons">{{ isMenuOpen ? 'close' : 'menu' }}</span>
+            </button>
+
+            <nav class="nav-menu" [class.active]="isMenuOpen">
+                <a (click)="navigateAndCloseMenu('/cursos')" class="nav-link">
                     Cursos
                 </a>
-                <a (click)="navigateTo('/seja-instrutor')" class="nav-link">
+                <a (click)="navigateAndCloseMenu('/seja-instrutor')" class="nav-link">
                     Seja Instrutor
                 </a>
-                <button class="login-btn" (click)="navigateTo('/login')">
+                <button class="login-btn" (click)="navigateAndCloseMenu('/login')">
                     Login
                 </button>
             </nav>

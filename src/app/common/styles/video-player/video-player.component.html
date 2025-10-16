@@ -1,0 +1,89 @@
+<div class="video-player-container" (mousemove)="onMouseMove()" (mouseleave)="onMouseLeave()">
+  <video
+    #videoElement
+    [src]="videoUrl"
+    (timeupdate)="onTimeUpdate()"
+    (loadedmetadata)="onLoadedMetadata()"
+    (waiting)="onWaiting()"
+    (canplay)="onCanPlay()"
+    (ended)="isPlaying = false"
+    controlsList="nodownload"
+    disablePictureInPicture
+    preload="metadata">
+  </video>
+
+  <!-- Overlay de Play quando pausado -->
+  <div class="video-overlay" *ngIf="!isPlaying && !isLoading" (click)="togglePlay()">
+    <button class="play-button-large">
+      <span class="material-icons">play_arrow</span>
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Controles do Player -->
+  <div class="video-controls" [class.visible]="showControls || !isPlaying">
+    <!-- Barra de Progresso -->
+    <div class="progress-bar-container" (click)="seek($event)">
+      <div class="progress-bar-buffered" [style.width.%]="buffered"></div>
+      <div class="progress-bar-fill" [style.width.%]="progressPercentage"></div>
+      <div class="progress-handle" [style.left.%]="progressPercentage"></div>
+    </div>
+
+    <!-- Controles Inferiores -->
+    <div class="controls-bottom">
+      <div class="controls-left">
+        <!-- Play/Pause -->
+        <button class="control-btn" (click)="togglePlay()" title="{{ isPlaying ? 'Pausar' : 'Reproduzir' }}">
+          <span class="material-icons">{{ isPlaying ? 'pause' : 'play_arrow' }}</span>
+        </button>
+
+        <!-- Voltar 10s -->
+        <button class="control-btn skip-btn" (click)="skip(-10)" title="Voltar 10 segundos">
+          <span class="material-icons">replay_10</span>
+        </button>
+
+        <!-- Avançar 10s -->
+        <button class="control-btn skip-btn" (click)="skip(10)" title="Avançar 10 segundos">
+          <span class="material-icons">forward_10</span>
+        </button>
+
+        <!-- Volume -->
+        <div class="volume-container">
+          <button class="control-btn" (click)="toggleMute()" title="{{ isMuted ? 'Ativar som' : 'Silenciar' }}">
+            <span class="material-icons">
+              {{ isMuted || volume === 0 ? 'volume_off' : volume > 0.5 ? 'volume_up' : 'volume_down' }}
+            </span>
+          </button>
+          <input
+            type="range"
+            class="volume-slider"
+            min="0"
+            max="1"
+            step="0.01"
+            [value]="volume"
+            (input)="changeVolume($event)"
+            title="Controle de volume" />
+        </div>
+
+        <!-- Timer -->
+        <div class="time-display">
+          <span>{{ formattedCurrentTime }} / {{ formattedDuration }}</span>
+        </div>
+      </div>
+
+      <div class="controls-right">
+        <!-- Fullscreen -->
+        <button class="control-btn" (click)="toggleFullscreen()" title="{{ isFullscreen ? 'Sair da tela cheia' : 'Tela cheia' }}">
+          <span class="material-icons">
+            {{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

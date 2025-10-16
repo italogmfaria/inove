@@ -7,15 +7,22 @@
 
     <div class="curso-container">
         <header class="header">
-            <img src="assets/logowhite.png" (click)="navigateTo('/cursos')" alt="Logotipo INOVE" class="logo">
-            <h1 class="course-header-title">{{ courseTitle }}</h1>
             <button class="back-btn" (click)="goBack()">
                 <span class="material-icons">arrow_back</span>
-                Voltar
+                <span class="back-text">Voltar</span>
+            </button>
+            <img src="assets/logowhite.png" (click)="navigateTo('/cursos')" alt="Logotipo INOVE" class="logo">
+            <button class="profile-btn" (click)="navigateTo('/perfil-usuario')">
+                <span class="material-icons">person</span>
+                <span>Perfil</span>
             </button>
         </header>
 
         <div class="main-wrapper">
+            <div class="course-title-section">
+                <h1 class="course-title">{{ courseTitle }}</h1>
+            </div>
+
             <div class="content-grid">
                 <div class="viewer-card">
                     <div class="viewer" *ngIf="currentContentUrl">
@@ -24,11 +31,12 @@
                             <p>Carregando conteúdo...</p>
                         </div>
 
-                        <video class="video-area" *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.mp4') && !isContentLoading"
-                               controls preload="metadata" (loadeddata)="onContentLoaded()">
-                            <source [src]="currentContentUrl" type="video/mp4">
-                            Seu navegador não suporta vídeos.
-                        </video>
+                        <!-- Video Player Customizado -->
+                        <app-video-player
+                          *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.mp4') && !isContentLoading"
+                          [videoUrl]="currentContentUrl"
+                          (loadeddata)="onContentLoaded()">
+                        </app-video-player>
 
                         <div class="pdf-container" *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.pdf') && !isContentLoading">
                             <pdf-viewer class="pdf-area"
@@ -41,7 +49,7 @@
                     <div class="empty-viewer" *ngIf="!currentContentUrl">
                         <span class="material-icons empty-icon">play_circle_outline</span>
                         <h3>Nenhum conteúdo selecionado</h3>
-                        <p>Selecione um vídeo ou PDF na lista ao lado para começar</p>
+                        <p>Selecione um vídeo ou PDF no conteúdo do curso para começar</p>
                     </div>
                 </div>
 
@@ -51,7 +59,7 @@
                         <h2>Conteúdo do Curso</h2>
                     </div>
 
-                    <div class="sections-list">
+                    <div class="sections-list" *ngIf="sections && sections.length > 0">
                         <div class="section" *ngFor="let section of sections; let i = index">
                             <button class="section-toggle" (click)="toggleSection(i)">
                                 <span class="material-icons section-icon">folder</span>
@@ -70,6 +78,12 @@
                                 </li>
                             </ul>
                         </div>
+                    </div>
+
+                    <div class="empty-content-panel" *ngIf="!sections || sections.length === 0">
+                        <span class="material-icons empty-content-icon">folder_open</span>
+                        <h3>Nenhum conteúdo disponível</h3>
+                        <p>Este curso ainda não possui seções ou conteúdos cadastrados.</p>
                     </div>
                 </aside>
             </div>

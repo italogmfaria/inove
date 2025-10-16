@@ -145,10 +145,28 @@
     box-shadow: 0 6px 20px rgba(249, 168, 38, 0.4);
 }
 
+/* Menu Toggle (Hamburguer) */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.menu-toggle .material-icons {
+    font-size: 28px;
+}
+
+.menu-toggle:hover {
+    transform: scale(1.1);
+}
+
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, #3261a8 0%, #2b4a8b 100%);
-    color: #fff;
+    background: linear-gradient(135deg, #3261a8 0%, #2b4a8b 100%);    color: #fff;
     padding: 150px 2rem 100px;
     position: relative;
     overflow: hidden;
@@ -805,12 +823,43 @@
         padding: 15px 1.5rem;
     }
 
-    .nav-menu {
-        gap: 1rem;
+    .menu-toggle {
+        display: block;
     }
 
-    .nav-link span:not(.material-icons) {
-        display: none;
+    .nav-menu {
+        position: fixed;
+        top: 75px;
+        right: -100%;
+        width: 280px;
+        height: calc(100vh - 75px);
+        background: linear-gradient(135deg, #3261a8 0%, #2b4a8b 100%);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 2rem 0;
+        transition: right 0.4s ease;
+        overflow-y: auto;
+    }
+
+    .nav-menu.active {
+        right: 0;
+    }
+
+    .nav-link {
+        padding: 1rem 2rem;
+        border-radius: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: none;
+    }
+
+    .login-btn {
+        margin: 1rem 2rem;
+        justify-content: center;
     }
 
     .hero {
@@ -832,6 +881,10 @@
 
     .stat-item {
         flex-direction: column;
+        text-align: center;
+    }
+
+    .stat-item div {
         text-align: center;
     }
 
@@ -857,12 +910,85 @@
 }
 
 @media (max-width: 480px) {
-    .login-btn span:not(.material-icons) {
+    .header {
+        padding: 12px 1rem;
+    }
+
+    .nav-menu {
+        width: 100%;
+        right: -100%;
+    }
+
+    .nav-menu.active {
+        right: 0;
+    }
+
+    .hero {
+        padding: 100px 1rem 60px;
+    }
+
+    .hero h1 br,
+    .hero-subtitle br {
         display: none;
     }
 
-    .login-btn {
-        padding: 0.75rem;
-        border-radius: 50%;
+    .hero-badge {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .hero-stats {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .stat-item {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .features,
+    .partnership,
+    .about {
+        padding: 40px 1rem;
+    }
+
+    .section-header {
+        margin-bottom: 40px;
+    }
+
+    .feature-card {
+        padding: 2rem;
+    }
+
+    .cta-section {
+        margin: 40px 1rem;
+        padding: 2.5rem 1rem;
+        border-radius: 20px;
+    }
+
+    .cta-icon {
+        font-size: 48px;
+    }
+
+    .about-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .about-card {
+        padding: 2rem;
+    }
+
+    .footer {
+        padding: 40px 1rem 20px;
+    }
+
+    .footer-content {
+        gap: 2rem;
+    }
+
+    .footer-links {
+        gap: 2rem;
     }
 }

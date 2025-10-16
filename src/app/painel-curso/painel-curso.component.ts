@@ -35,7 +35,6 @@ export class PainelCursoComponent implements OnInit {
   isLoggedIn: boolean = false;
   isContentLoading: boolean = false;
 
-  // Propriedades para o modal de confirmação
   showConfirmModal: boolean = false;
   private pendingAction: (() => void) | null = null;
 
@@ -117,9 +116,7 @@ export class PainelCursoComponent implements OnInit {
   loadContents(sectionId: number, sectionIndex: number): void {
     this.contentService.getContents(this.courseId, sectionId).subscribe(
       (contents) => {
-        // Processar os conteúdos e identificar o tipo correto
         this.sections[sectionIndex].contents = contents.map(content => {
-          // Identificar tipo pela extensão do arquivo
           if (content.fileName) {
             const fileName = content.fileName.toLowerCase();
             if (fileName.endsWith('.mp4') || fileName.endsWith('.avi') || fileName.endsWith('.mov') || fileName.endsWith('.mkv') || fileName.endsWith('.webm')) {
@@ -145,7 +142,6 @@ export class PainelCursoComponent implements OnInit {
     console.log("Conteúdo selecionado:", content);
     console.log("URL carregada:", this.currentContentUrl);
 
-    // Auto-hide loading after 2 seconds as fallback
     setTimeout(() => {
       this.isContentLoading = false;
     }, 2000);
@@ -169,9 +165,7 @@ export class PainelCursoComponent implements OnInit {
       this.feedbackService.getFeedbacksByCourse(this.courseId).subscribe({
         next: (feedbacks) => {
           if (this.course) {
-            // Garantir que cada feedback tenha o objeto student
             this.course.feedBacks = feedbacks.map(feedback => {
-              // Se o feedback não tem student, mas é do usuário atual, adicionar
               if (!feedback.student && this.userFeedback && feedback.id === this.userFeedback.id) {
                 feedback.student = this.userFeedback.student;
               }
@@ -189,10 +183,8 @@ export class PainelCursoComponent implements OnInit {
     if (!this.newComment.trim()) return;
 
     if (this.userFeedback) {
-      // Editar feedback existente
       this.feedbackService.updateFeedback(this.userFeedback.id, this.userId, this.newComment).subscribe({
         next: () => {
-          // Recarregar os feedbacks do servidor para ter dados completos
           this.refreshComments();
           this.resetCommentForm();
         },
@@ -202,7 +194,6 @@ export class PainelCursoComponent implements OnInit {
         }
       });
     } else {
-      // Criar novo feedback
       this.feedbackService.addFeedback(this.userId, this.courseId, this.newComment).subscribe({
         next: () => {
           this.refreshComments();
@@ -218,7 +209,6 @@ export class PainelCursoComponent implements OnInit {
 
   deleteFeedback(): void {
     if (this.userFeedback) {
-      // Configurar e exibir o modal de confirmação
       this.pendingAction = () => {
         this.confirmDeleteFeedback();
       };
@@ -262,7 +252,6 @@ export class PainelCursoComponent implements OnInit {
     this.resetCommentForm();
   }
 
-  // Confirmar a ação pendente
   confirmAction(): void {
     if (this.pendingAction) {
       this.pendingAction();
@@ -271,7 +260,6 @@ export class PainelCursoComponent implements OnInit {
     this.showConfirmModal = false;
   }
 
-  // Cancelar a confirmação
   cancelConfirmation(): void {
     this.pendingAction = null;
     this.showConfirmModal = false;

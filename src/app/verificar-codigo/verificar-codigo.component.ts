@@ -28,7 +28,6 @@ export class VerificarCodigoComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Obter e-mail dos parâmetros da rota
     this.route.queryParams.subscribe(params => {
       this.email = params['email'] || '';
       if (!this.email) {
@@ -37,7 +36,6 @@ export class VerificarCodigoComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Iniciar contagem regressiva
     this.startCountdown();
   }
 
@@ -64,19 +62,15 @@ export class VerificarCodigoComponent implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     let value = input.value;
 
-    // Remover tudo que não é número
     value = value.replace(/[^0-9]/g, '');
 
-    // Se tiver mais de 1 caractere, pegar apenas o último
     if (value.length > 1) {
       value = value.charAt(value.length - 1);
     }
 
-    // Atualizar o input e o array
     input.value = value;
     this.codeDigits[index] = value;
 
-    // Se digitou um número, mover para o próximo campo
     if (value && index < 5) {
       const inputs = this.codeInputs.toArray();
       setTimeout(() => {
@@ -86,7 +80,6 @@ export class VerificarCodigoComponent implements OnInit, OnDestroy {
   }
 
   onFocus(event: any): void {
-    // Selecionar o conteúdo do campo ao focar
     const input = event.target as HTMLInputElement;
     setTimeout(() => {
       input.select();
@@ -97,23 +90,19 @@ export class VerificarCodigoComponent implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     const inputs = this.codeInputs.toArray();
 
-    // Backspace
     if (event.key === 'Backspace') {
       if (!input.value && index > 0) {
-        // Se o campo está vazio, volta pro anterior
         event.preventDefault();
         this.codeDigits[index - 1] = '';
         inputs[index - 1].nativeElement.value = '';
         inputs[index - 1].nativeElement.focus();
       } else {
-        // Se tem valor, permite o backspace deletar
         setTimeout(() => {
           this.codeDigits[index] = input.value;
         }, 0);
       }
     }
 
-    // Delete
     if (event.key === 'Delete') {
       setTimeout(() => {
         input.value = '';
@@ -121,19 +110,16 @@ export class VerificarCodigoComponent implements OnInit, OnDestroy {
       }, 0);
     }
 
-    // Arrow Left
     if (event.key === 'ArrowLeft' && index > 0) {
       event.preventDefault();
       inputs[index - 1].nativeElement.focus();
     }
 
-    // Arrow Right
     if (event.key === 'ArrowRight' && index < 5) {
       event.preventDefault();
       inputs[index + 1].nativeElement.focus();
     }
 
-    // Se digitar um número em um campo que já tem valor, substituir
     if (/^[0-9]$/.test(event.key) && input.value) {
       input.value = '';
       this.codeDigits[index] = '';
@@ -152,7 +138,6 @@ export class VerificarCodigoComponent implements OnInit, OnDestroy {
         inputs[index + i].nativeElement.value = pastedData[i];
       }
 
-      // Focar no próximo campo vazio ou no último
       const nextIndex = Math.min(index + pastedData.length, 5);
       inputs[nextIndex].nativeElement.focus();
     }
@@ -171,11 +156,9 @@ export class VerificarCodigoComponent implements OnInit, OnDestroy {
     const code = this.codeDigits.join('');
     this.isLoading = true;
 
-    // Simular verificação de código (substituir por chamada real à API)
     setTimeout(() => {
       this.isLoading = false;
       this.toastr.success('Código verificado com sucesso!', 'Sucesso');
-      // Navegar para redefinir senha
       this.router.navigate(['/redefinir-senha'], {
         queryParams: {
           email: this.email,
@@ -188,14 +171,12 @@ export class VerificarCodigoComponent implements OnInit, OnDestroy {
   reenviarCodigo(): void {
     this.isResending = true;
 
-    // Simular reenvio de código (substituir por chamada real à API)
     setTimeout(() => {
       this.isResending = false;
       this.toastr.success('Código reenviado para seu e-mail!', 'Sucesso');
       this.codeDigits = ['', '', '', '', '', ''];
       this.startCountdown();
 
-      // Limpar e focar no primeiro input
       setTimeout(() => {
         const inputs = this.codeInputs.toArray();
         inputs.forEach(input => input.nativeElement.value = '');

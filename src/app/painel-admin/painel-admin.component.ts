@@ -273,7 +273,6 @@ export class PainelAdminComponent {
       email: '',
       city: '',
       federativeUnit: '',
-      // password: '',
       students: []
     };
   }
@@ -400,7 +399,6 @@ getCourses(): void {
   openUpdateCourseModal(course: CursoDTO): void {
     this.getInstructors();
     this.selectedCourse = { ...course };
-    // Set the selected instructor from the course's current instructor
     const currentInstructor = course.instructors && course.instructors.length > 0 ? course.instructors[0] : null;
     this.selectedInstructorId = currentInstructor ? currentInstructor.id : null;
     this.showUpdateCourseModal = true;
@@ -462,14 +460,11 @@ getCourses(): void {
     this.toastr.info('Instrutor removido.', 'Info');
   }
 
-  // Delete methods
   deleteUser(user: UserDTO): void {
-    // Configurar o modal de confirmação
     this.confirmationType = 'delete';
     this.confirmationTitle = 'Remover Usuário';
     this.confirmationMessage = `Tem certeza que deseja remover o usuário "${user.name}"? Esta ação não pode ser desfeita e pode afetar dados relacionados.`;
 
-    // Armazenar a ação pendente
     this.pendingAction = () => {
       this.userService.deleteUser(user.id).subscribe(
         () => {
@@ -483,17 +478,14 @@ getCourses(): void {
       );
     };
 
-    // Exibir o modal
     this.showConfirmModal = true;
   }
 
   deleteSchool(school: SchoolDTO): void {
-    // Configurar o modal de confirmação
     this.confirmationType = 'delete';
     this.confirmationTitle = 'Remover Escola';
     this.confirmationMessage = `Tem certeza que deseja remover a escola "${school.name}"? Esta ação não pode ser desfeita e pode afetar estudantes vinculados.`;
 
-    // Armazenar a ação pendente
     this.pendingAction = () => {
       this.schoolService.deleteSchool(school.id).subscribe(
         () => {
@@ -507,35 +499,30 @@ getCourses(): void {
       );
     };
 
-    // Exibir o modal
     this.showConfirmModal = true;
   }
 
   deleteCourse(course: CursoDTO): void {
-    // Configurar o modal de confirmação
     this.confirmationType = 'delete';
     this.confirmationTitle = 'Remover Curso';
     this.confirmationMessage = `Tem certeza que deseja remover o curso "${course.name}"? Esta ação não pode ser desfeita e afetará todos os alunos inscritos.`;
 
-    // Armazenar a ação pendente
     this.pendingAction = () => {
-      this.courseService.deleteCourse(course.id).subscribe(
+      this.courseService.forceDeleteCourse(course.id).subscribe(
         () => {
           this.getCourses();
           this.toastr.success(`O curso "${course.name}" foi removido com sucesso!`, 'Curso Removido');
         },
         (error) => {
           console.error('Erro ao remover curso:', error);
-          this.toastr.error('Erro ao remover curso. Verifique se o curso possui alunos inscritos.', 'Erro');
+          this.toastr.error('Erro ao remover curso. Tente novamente.', 'Erro');
         }
       );
     };
 
-    // Exibir o modal
     this.showConfirmModal = true;
   }
 
-  // Confirmar a ação pendente
   confirmAction(): void {
     if (this.pendingAction) {
       this.pendingAction();
@@ -544,7 +531,6 @@ getCourses(): void {
     this.showConfirmModal = false;
   }
 
-  // Cancelar a confirmação
   cancelConfirmation(): void {
     this.pendingAction = null;
     this.showConfirmModal = false;

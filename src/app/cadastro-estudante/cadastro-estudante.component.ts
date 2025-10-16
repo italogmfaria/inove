@@ -14,7 +14,7 @@ import { CpfValidator } from '../common/validators/cpf.validator';
 })
 export class CadastroEstudanteComponent implements OnInit {
   studentForm: FormGroup;
-  escolas: SchoolDTO[] = []; // Lista de escolas carregadas do back-end
+  escolas: SchoolDTO[] = [];
   carregandoEscolas: boolean = false;
   showPassword = false;
   isSubmitting = false;
@@ -39,7 +39,6 @@ export class CadastroEstudanteComponent implements OnInit {
     this.carregarEscolas();
   }
 
-  // Validador de força de senha
   passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.value;
     if (!password) {
@@ -104,7 +103,6 @@ export class CadastroEstudanteComponent implements OnInit {
   }
 
   cadastrarEstudante(): void {
-    // Marcar todos os campos como touched
     Object.keys(this.studentForm.controls).forEach(key => {
       this.studentForm.get(key)?.markAsTouched();
     });

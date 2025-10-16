@@ -105,13 +105,11 @@ export class PreviewCursoComponent implements OnInit {
       return;
     }
 
-    // Se já está inscrito, apenas navegar para o curso
     if (this.isEnrolled) {
       this.navigateToCurso();
       return;
     }
 
-    // Caso contrário, fazer a inscrição
     this.courseService.subscribeToCourse(this.course.id).subscribe({
       next: () => {
         this.toastr.success('Inscrição realizada com sucesso!', 'Sucesso');

@@ -21,6 +21,9 @@
     "lib": [
       "ES2022",
       "dom"
+    ],
+    "types": [
+      "vite/client"
     ]
   },
   "angularCompilerOptions": {
@@ -28,5 +31,9 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/vite-env.d.ts"
+  ]
 }

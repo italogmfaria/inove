@@ -47,7 +47,6 @@ export class ContentService {
 
   deleteContent(courseId: number, sectionId: number, contentId: number): Observable<void> {
     const url = `${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos/${contentId}`;
-    console.log('URL de exclusão:', url);
     return this.http.delete<void>(url, { headers: this.getAuthHeaders() });
   }
 
@@ -65,6 +64,19 @@ export class ContentService {
     );
   }
 
+  updateContentWithFile(courseId: number, sectionId: number, contentId: number, file: File, contentData: ContentDTO): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('title', contentData.title);
+    formData.append('description', contentData.description);
+    formData.append('contentType', contentData.contentType);
+
+    return this.http.put(
+      `${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos/${contentId}/upload`,
+      formData,
+      { headers: this.getAuthHeaders(), responseType: 'text' }
+    );
+  }
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('authToken');

@@ -38,7 +38,6 @@ export class CursosComponent implements OnInit {
         if (data && data.length > 0) {
           this.cursos = data;
           this.filteredCursos = data;
-          // Chamar método para carregar imagens de cada curso
           this.loadCourseImages();
         } else {
           this.errorMessage = 'Nenhum curso disponível no momento.';

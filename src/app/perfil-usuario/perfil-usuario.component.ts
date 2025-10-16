@@ -124,7 +124,7 @@ export class PerfilUsuarioComponent implements OnInit {
       },
       error: (err) => {
         console.error(`Erro ao carregar imagem do curso ${courseId}:`, err);
-        this.courseImages[courseId] = 'assets/placeholder.png'; // Imagem padrão caso não consiga carregar
+        this.courseImages[courseId] = 'assets/placeholder.png';
       },
     });
   }
@@ -178,72 +178,44 @@ export class PerfilUsuarioComponent implements OnInit {
   }
 
   removeCourse(courseId: number): void {
-    // Buscar o nome do curso para exibir na confirmação
     const course = this.userCourses.find(c => c.id === courseId);
     const courseName = course ? course.name : 'este curso';
 
-    // Configurar o modal de confirmação
     this.confirmationType = 'delete';
     this.confirmationTitle = 'Remover Curso';
-    this.confirmationMessage = `Tem certeza que deseja remover "${courseName}" dos seus cursos? Esta ação não pode ser desfeita e seu feedback neste curso será removido.`;
+    this.confirmationMessage = `Tem certeza que deseja remover "${courseName}" dos seus cursos? Esta ação não pode ser desfeita.`;
 
-    // Armazenar a ação pendente
     this.pendingAction = () => {
       const userId = Number(localStorage.getItem('userId'));
 
-      // Primeiro, deletar o feedback do curso (se existir)
-      this.feedbackService.deleteFeedbackByUserAndCourse(userId, courseId).subscribe({
+      this.userService.removeUserCourse(userId, courseId).subscribe({
         next: () => {
-          // Após deletar o feedback, remover o curso
-          this.userService.removeUserCourse(userId, courseId).subscribe({
-            next: () => {
-              this.userCourses = this.userCourses.filter((course) => course.id !== courseId);
-              this.toastr.success(`O curso "${courseName}" e seu feedback foram removidos com sucesso!`, 'Curso Removido');
-            },
-            error: (err) => {
-              console.error("Erro ao remover curso:", err);
-              this.toastr.error("Não foi possível remover o curso. Tente novamente.", 'Erro');
-            }
-          });
+          this.userCourses = this.userCourses.filter((course) => course.id !== courseId);
+          this.toastr.success(`O curso "${courseName}" foi removido com sucesso!`, 'Curso Removido');
         },
-        error: (_err) => {
-          // Se não houver feedback ou houver erro ao deletar, continuar removendo o curso
-          console.log("Nenhum feedback para remover ou erro ao deletar feedback, continuando...");
-          this.userService.removeUserCourse(userId, courseId).subscribe({
-            next: () => {
-              this.userCourses = this.userCourses.filter((course) => course.id !== courseId);
-              this.toastr.success(`O curso "${courseName}" foi removido com sucesso!`, 'Curso Removido');
-            },
-            error: (err) => {
-              console.error("Erro ao remover curso:", err);
-              this.toastr.error("Não foi possível remover o curso. Tente novamente.", 'Erro');
-            }
-          });
+        error: (err) => {
+          console.error("Erro ao remover curso:", err);
+          this.toastr.error("Não foi possível remover o curso. Tente novamente.", 'Erro');
         }
       });
     };
 
-    // Exibir o modal
     this.showConfirmModal = true;
   }
 
   logout(): void {
-    // Configurar o modal de confirmação
     this.confirmationType = 'logout';
     this.confirmationTitle = 'Sair da Plataforma';
     this.confirmationMessage = 'Tem certeza que deseja sair? Você precisará fazer login novamente para acessar a plataforma.';
 
-    // Armazenar a ação pendente
     this.pendingAction = () => {
       this.authService.logout();
       this.router.navigate(['/login']);
     };
 
-    // Exibir o modal
     this.showConfirmModal = true;
   }
 
-  // Confirmar a ação pendente
   confirmAction(): void {
     if (this.pendingAction) {
       this.pendingAction();
@@ -252,7 +224,6 @@ export class PerfilUsuarioComponent implements OnInit {
     this.showConfirmModal = false;
   }
 
-  // Cancelar a confirmação
   cancelConfirmation(): void {
     this.pendingAction = null;
     this.showConfirmModal = false;

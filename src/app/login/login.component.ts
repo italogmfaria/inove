@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from "../common/service/auth.service";
 import { LoginResponseDTO } from "../common/dto/LoginResponseDTO";
 import { ToastrService } from 'ngx-toastr';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,9 @@ export class LoginComponent {
   loginForm: FormGroup;
   showPassword: boolean = false;
   isSubmitting: boolean = false;
+  recaptchaSiteKey: string = environment.recaptchaSiteKey;
+  recaptchaToken: string | null = null;
+  enableRecaptcha: boolean = environment.enableRecaptcha;
 
   constructor(
     private authService: AuthService,
@@ -54,16 +58,24 @@ export class LoginComponent {
     return !!(field && field.invalid && (field.dirty || field.touched));
   }
 
+  onRecaptchaResolved(token: string | null): void {
+    this.recaptchaToken = token;
+  }
+
   onLogin(event: Event): void {
     event.preventDefault();
 
-    // Marcar todos os campos como touched para mostrar erros
     Object.keys(this.loginForm.controls).forEach(key => {
       this.loginForm.get(key)?.markAsTouched();
     });
 
     if (this.loginForm.invalid) {
       this.toastr.warning('Por favor, preencha todos os campos corretamente', 'Atenção');
+      return;
+    }
+
+    if (this.enableRecaptcha && !this.recaptchaToken) {
+      this.toastr.warning('Por favor, complete a verificação reCAPTCHA', 'Atenção');
       return;
     }
 
