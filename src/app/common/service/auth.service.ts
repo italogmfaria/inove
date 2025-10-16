@@ -1,36 +1,27 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Observable} from "rxjs";
-import {environment} from "../../../environments/environment";
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import {LoginResponseDTO} from "../dto/LoginResponseDTO";
+import {environment} from "../../../environments/environment";
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-
   private baseUrl = `${environment.apiBaseUrl}/auth/login`;
 
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<LoginResponseDTO> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'ngrok-skip-browser-warning': 'true'
-    });
-    return this.http.post<LoginResponseDTO>(this.baseUrl, { email, password }, { headers });
+    return this.http.post<LoginResponseDTO>(this.baseUrl, { email, password });
   }
 
-  saveTokens(token: string, refreshToken: string) {
+  saveTokens(token: string, refreshToken: string): void {
     localStorage.setItem('authToken', token);
     localStorage.setItem('refreshToken', refreshToken);
   }
 
-  saveUserId(userId: number | undefined) {
+  saveUserId(userId: number | undefined): void {
     if (userId !== undefined && userId !== null) {
       localStorage.setItem('userId', userId.toString());
-    } else {
-      console.error('Erro: userId está indefinido ou nulo.');
     }
   }
 
@@ -38,7 +29,6 @@ export class AuthService {
     const userId = localStorage.getItem('userId');
     return userId ? parseInt(userId, 10) : null;
   }
-
 
   getToken(): string | null {
     return localStorage.getItem('authToken');
@@ -48,7 +38,7 @@ export class AuthService {
     return localStorage.getItem('refreshToken');
   }
 
-  logout() {
+  logout(): void {
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userId');
@@ -56,16 +46,12 @@ export class AuthService {
 
   getRole(): string | null {
     const token = this.getToken();
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.role;
-      } catch (e) {
-        console.error('Erro ao decodificar o token:', e);
-        return null;
-      }
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role;
+    } catch {
+      return null;
     }
-    return null;
   }
-
 }

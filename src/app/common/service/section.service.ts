@@ -1,76 +1,32 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Observable, throwError } from 'rxjs';
 import { SectionDTO } from '../dto/SectionDTO';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class SectionService {
-
   private baseUrl = `${environment.apiBaseUrl}/cursos`;
 
   constructor(private http: HttpClient) {}
 
   getSections(courseId: number): Observable<SectionDTO[]> {
-    const token = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'ngrok-skip-browser-warning': 'true'
-    });
-
-    return this.http.get<SectionDTO[]>(`${this.baseUrl}/${courseId}/secoes`, { headers });
+    return this.http.get<SectionDTO[]>(`${this.baseUrl}/${courseId}/secoes`);
   }
 
   getSectionById(courseId: number, sectionId: number): Observable<SectionDTO> {
-    const token = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'ngrok-skip-browser-warning': 'true'
-    });
-
-    return this.http.get<SectionDTO>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`, { headers });
+    return this.http.get<SectionDTO>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`);
   }
 
   createSection(courseId: number, section: SectionDTO): Observable<SectionDTO> {
-    const token = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'ngrok-skip-browser-warning': 'true'
-    });
-
-    return this.http.post<SectionDTO>(`${this.baseUrl}/${courseId}/secoes`, section, { headers });
+    return this.http.post<SectionDTO>(`${this.baseUrl}/${courseId}/secoes`, section);
   }
 
   updateSection(courseId: number, sectionId: number, section: SectionDTO): Observable<SectionDTO> {
-    const token = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'ngrok-skip-browser-warning': 'true'
-    });
-
-    return this.http.put<SectionDTO>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`, section, { headers });
+    return this.http.put<SectionDTO>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`, section);
   }
+
   deleteSection(courseId: number, sectionId: number): Observable<void> {
-    const token = localStorage.getItem('authToken');
-
-    if (!token) {
-      console.error('Token não encontrado! O usuário pode estar deslogado.');
-      return throwError(() => new Error('Usuário não autenticado.'));
-    }
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'ngrok-skip-browser-warning': 'true'
-    });
-
-    return this.http.delete<void>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`, { headers });
+    return this.http.delete<void>(`${this.baseUrl}/${courseId}/secoes/${sectionId}`);
   }
-
 }

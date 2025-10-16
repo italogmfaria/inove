@@ -8,6 +8,8 @@ import {StudentService} from "./common/service/student.service";
 import {InstructorService} from "./common/service/instructor.service";
 import { FeedbackService } from "./common/service/feedback.service";
 import { provideNgxMask } from 'ngx-mask';
+import { HTTP_INTERCEPTORS } from "@angular/common/http";
+import {AuthInterceptor} from "./common/interceptor/auth-interceptor";
 
 export const APP_PROVIDERS = [
   LoginService,
@@ -19,5 +21,8 @@ export const APP_PROVIDERS = [
   StudentService,
   InstructorService,
   FeedbackService,
-  provideNgxMask()
+
+  provideNgxMask(),
+
+  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
 ];
