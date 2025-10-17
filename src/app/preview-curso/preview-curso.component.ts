@@ -47,7 +47,7 @@ export class PreviewCursoComponent implements OnInit {
           this.isEnrolled = courses.some(course => course.id === courseId);
         },
         error: (err) => {
-          console.error('Erro ao verificar inscrição:', err);
+          // Silently fail - user may not have courses
         }
       });
     }
@@ -75,7 +75,7 @@ export class PreviewCursoComponent implements OnInit {
         }
       },
       (error) => {
-        console.error('Erro ao carregar detalhes do curso:', error);
+        this.toastr.error('Erro ao carregar detalhes do curso.', 'Erro');
       }
     );
   }
@@ -86,7 +86,6 @@ export class PreviewCursoComponent implements OnInit {
         this.courseImageUrl = response.imageUrl;
       },
       error: (err) => {
-        console.error(`Erro ao carregar imagem do curso ${courseId}:`, err);
         this.courseImageUrl = 'assets/placeholder.png';
       },
     });
@@ -100,7 +99,6 @@ export class PreviewCursoComponent implements OnInit {
     }
 
     if (!this.course) {
-      console.error('Curso não encontrado.');
       this.toastr.error('Curso não encontrado.', 'Erro');
       return;
     }
@@ -117,7 +115,6 @@ export class PreviewCursoComponent implements OnInit {
         this.navigateToCurso();
       },
       error: (error) => {
-        console.error('Erro ao se inscrever no curso:', error);
         if (error.message === 'Usuário não está logado.') {
           this.toastr.warning('Você precisa estar logado para se inscrever no curso.', 'Atenção');
           this.router.navigate(['/login']);

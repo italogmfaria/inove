@@ -508,7 +508,7 @@ getCourses(): void {
     this.confirmationMessage = `Tem certeza que deseja remover o curso "${course.name}"? Esta ação não pode ser desfeita e afetará todos os alunos inscritos.`;
 
     this.pendingAction = () => {
-      this.courseService.forceDeleteCourse(course.id).subscribe(
+      this.courseService.deleteCourse(course.id).subscribe(
         () => {
           this.getCourses();
           this.toastr.success(`O curso "${course.name}" foi removido com sucesso!`, 'Curso Removido');

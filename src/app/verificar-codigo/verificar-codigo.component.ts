@@ -2,6 +2,7 @@ import { Component, OnInit, QueryList, ViewChildren, ElementRef, OnDestroy } fro
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
+import { PasswordRecoveryService } from '../common/service/password-recovery.service';
 
 @Component({
   selector: 'app-verificar-codigo',
@@ -24,7 +25,8 @@ export class VerificarCodigoComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private passwordRecoveryService: PasswordRecoveryService
   ) {}
 
   ngOnInit(): void {
@@ -156,35 +158,58 @@ export class VerificarCodigoComponent implements OnInit, OnDestroy {
     const code = this.codeDigits.join('');
     this.isLoading = true;
 
-    setTimeout(() => {
-      this.isLoading = false;
-      this.toastr.success('Código verificado com sucesso!', 'Sucesso');
-      this.router.navigate(['/redefinir-senha'], {
-        queryParams: {
-          email: this.email,
-          code: code
-        }
-      });
-    }, 1500);
+    this.passwordRecoveryService.verifyRecoveryCode(this.email, code).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.toastr.success('Código verificado com sucesso!', 'Sucesso');
+        this.router.navigate(['/redefinir-senha'], {
+          queryParams: {
+            email: this.email,
+            code: code
+          }
+        });
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Erro ao verificar código:', error);
+        this.toastr.error('Código inválido ou expirado.', 'Erro');
+        // Limpar os campos
+        this.codeDigits = ['', '', '', '', '', ''];
+        setTimeout(() => {
+          const inputs = this.codeInputs.toArray();
+          inputs.forEach(input => input.nativeElement.value = '');
+          if (inputs.length > 0) {
+            inputs[0].nativeElement.focus();
+          }
+        }, 100);
+      }
+    });
   }
 
   reenviarCodigo(): void {
     this.isResending = true;
 
-    setTimeout(() => {
-      this.isResending = false;
-      this.toastr.success('Código reenviado para seu e-mail!', 'Sucesso');
-      this.codeDigits = ['', '', '', '', '', ''];
-      this.startCountdown();
+    this.passwordRecoveryService.requestRecoveryCode(this.email).subscribe({
+      next: () => {
+        this.isResending = false;
+        this.toastr.success('Código reenviado para seu e-mail!', 'Sucesso');
+        this.codeDigits = ['', '', '', '', '', ''];
+        this.startCountdown();
 
-      setTimeout(() => {
-        const inputs = this.codeInputs.toArray();
-        inputs.forEach(input => input.nativeElement.value = '');
-        if (inputs.length > 0) {
-          inputs[0].nativeElement.focus();
-        }
-      }, 100);
-    }, 1500);
+        setTimeout(() => {
+          const inputs = this.codeInputs.toArray();
+          inputs.forEach(input => input.nativeElement.value = '');
+          if (inputs.length > 0) {
+            inputs[0].nativeElement.focus();
+          }
+        }, 100);
+      },
+      error: (error) => {
+        this.isResending = false;
+        console.error('Erro ao reenviar código:', error);
+        this.toastr.error('Erro ao reenviar código. Tente novamente.', 'Erro');
+      }
+    });
   }
 
   voltarEmail(): void {

@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { PasswordRecoveryService } from '../common/service/password-recovery.service';
 
 @Component({
   selector: 'app-redefinir-senha',
@@ -30,7 +31,8 @@ export class RedefinirSenhaComponent implements OnInit, DoCheck {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private passwordRecoveryService: PasswordRecoveryService
   ) {}
 
   ngOnInit(): void {
@@ -99,11 +101,21 @@ export class RedefinirSenhaComponent implements OnInit, DoCheck {
 
     this.isLoading = true;
 
-    setTimeout(() => {
-      this.isLoading = false;
-      this.toastr.success('Senha redefinida com sucesso!', 'Sucesso');
-      this.router.navigate(['/login']);
-    }, 1500);
+    this.passwordRecoveryService.resetPassword(this.email, this.code, this.newPassword).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.toastr.success('Senha redefinida com sucesso!', 'Sucesso');
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 1500);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Erro ao redefinir senha:', error);
+        const errorMessage = error?.error?.message || 'Erro ao redefinir senha. Tente novamente.';
+        this.toastr.error(errorMessage, 'Erro');
+      }
+    });
   }
 
   voltarLogin(): void {

@@ -77,11 +77,6 @@ export class CourseService {
     return this.http.delete<void>(`${this.baseUrl}/${courseId}`, { headers });
   }
 
-  forceDeleteCourse(courseId: number): Observable<void> {
-    const headers = this.createHeaders();
-    return this.http.delete<void>(`${this.baseUrl}/${courseId}/force`, { headers });
-  }
-
   private createHeaders(): HttpHeaders {
     const token = localStorage.getItem('authToken');
     let headers = new HttpHeaders({

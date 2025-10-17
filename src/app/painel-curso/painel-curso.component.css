@@ -1088,11 +1088,15 @@ app-video-player {
     }
 
     .viewer-card {
-        min-height: auto;
+        min-height: 400px;
     }
 
     .viewer {
-        min-height: auto;
+        min-height: 400px;
+    }
+
+    app-video-player {
+        min-height: 400px;
     }
 }
 
@@ -1102,7 +1106,7 @@ app-video-player {
     }
 
     .logo {
-        height: 35px;
+        height: 45px;
     }
 
     .back-btn,
@@ -1151,18 +1155,22 @@ app-video-player {
         min-height: auto;
     }
 
+    app-video-player {
+        min-height: auto;
+    }
+
     .empty-viewer {
-        min-height: 400px;
+        min-height: 350px;
     }
 }
 
 @media (max-width: 480px) {
     .header {
-        padding: 12px 0.75rem;
+        padding: 15px 1.5rem;
     }
 
     .logo {
-        height: 32px;
+        height: 45px;
     }
 
     .back-btn span:not(.material-icons),
@@ -1217,7 +1225,11 @@ app-video-player {
         min-height: auto;
     }
 
+    app-video-player {
+        min-height: auto;
+    }
+
     .empty-viewer {
-        min-height: 300px;
+        min-height: 250px;
     }
 }

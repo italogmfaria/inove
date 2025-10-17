@@ -68,8 +68,7 @@ export class CadastroSecaoComponent implements OnInit {
       next: (_) => {
         this.listarSecoes();
       },
-      error: (error) => {
-        console.error('Erro ao carregar curso:', error);
+      error: () => {
         this.toastr.error('Curso não encontrado ou você não tem acesso a ele');
         this.router.navigate(['/cursos']);
       }
@@ -85,8 +84,7 @@ export class CadastroSecaoComponent implements OnInit {
       next: (secoes) => {
         this.secoes = secoes.map(secao => ({ ...secao, isOpen: false }));
       },
-      error: (error) => {
-        console.error('Erro ao listar seções:', error);
+      error: () => {
         this.toastr.error('Erro ao carregar as seções do curso');
       }
     });
@@ -106,8 +104,7 @@ export class CadastroSecaoComponent implements OnInit {
         this.secoes.push(secaoCriada);
         this.toastr.success('Seção criada com sucesso');
       },
-      error: (error) => {
-        console.error('Erro ao criar seção:', error);
+      error: () => {
         this.toastr.error('Erro ao criar a seção');
       }
     });
@@ -180,8 +177,7 @@ export class CadastroSecaoComponent implements OnInit {
           }
         });
       },
-      error: (error) => {
-        console.error("Erro ao carregar conteúdos:", error);
+      error: () => {
         this.toastr.error("Erro ao carregar os conteúdos desta seção.", 'Erro');
       }
     });
@@ -363,9 +359,8 @@ export class CadastroSecaoComponent implements OnInit {
               this.closeContentModal();
             }, 500);
           },
-          error: (err) => {
+          error: () => {
             clearInterval(progressInterval);
-            console.error(err);
             this.toastr.error("Erro ao atualizar o conteúdo com o novo arquivo.", 'Erro');
             this.isUploading = false;
             this.uploadProgress = 0;
@@ -380,8 +375,7 @@ export class CadastroSecaoComponent implements OnInit {
               this.listarSecoes();
               this.closeContentModal();
             },
-            error: (err) => {
-              console.error(err);
+            error: () => {
               this.toastr.error("Erro ao atualizar o conteúdo.", 'Erro');
               this.isUploading = false;
             }
@@ -408,9 +402,8 @@ export class CadastroSecaoComponent implements OnInit {
               this.closeContentModal();
             }, 500);
           },
-          error: (err) => {
+          error: () => {
             clearInterval(progressInterval);
-            console.error(err);
             this.toastr.error("Erro ao enviar o conteúdo.", 'Erro');
             this.isUploading = false;
             this.uploadProgress = 0;
@@ -422,6 +415,7 @@ export class CadastroSecaoComponent implements OnInit {
 
   closeContentModal(): void {
     this.showContentModal = false;
+    this.showPreviewModal = false;
   }
 
 

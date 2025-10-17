@@ -18,10 +18,11 @@ import { EsqueciSenhaComponent } from './esqueci-senha/esqueci-senha.component';
 import { VerificarCodigoComponent } from './verificar-codigo/verificar-codigo.component';
 import { RedefinirSenhaComponent } from './redefinir-senha/redefinir-senha.component';
 import { AuthGuard } from './common/guards/auth.guard';
+import { LoggedInGuard } from './common/guards/logged-in.guard';
 
 export const routes: Routes = [
   { path: '', component: InicialComponent },
-  { path: 'login', component: LoginComponent },
+  { path: 'login', component: LoginComponent, canActivate: [LoggedInGuard] },
   { path: 'esqueci-senha', component: EsqueciSenhaComponent },
   { path: 'verificar-codigo', component: VerificarCodigoComponent },
   { path: 'redefinir-senha', component: RedefinirSenhaComponent },

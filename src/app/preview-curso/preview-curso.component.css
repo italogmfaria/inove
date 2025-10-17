@@ -613,6 +613,7 @@ body {
 
     .btn-subscribe {
         width: 100%;
+        justify-content: center;
     }
 
     .course-image-wrapper {

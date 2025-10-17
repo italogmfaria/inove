@@ -39,38 +39,25 @@ export class PerfilUsuarioComponent implements OnInit {
   ngOnInit(): void {
     const userId = Number(localStorage.getItem('userId'));
     if (!userId || userId === 0) {
-      console.error("Erro: Usuário não autenticado.");
       this.router.navigate(['/login']);
       return;
     }
 
-    console.log('Carregando dados do usuário com ID:', userId);
-
     // Buscar dados do usuário
     this.userService.getUserById(userId).subscribe({
       next: (user) => {
-        console.log('Dados do usuário carregados:', user);
         this.user = user;
       },
       error: (err) => {
-        console.error("Erro ao buscar usuário:", err);
-        console.error("Detalhes do erro:", err.error);
-        console.error("Status:", err.status);
         this.toastr.error('Não foi possível carregar seus dados. Tente novamente.', 'Erro');
       }
     });
 
     // Buscar os cursos do usuário e carregar as imagens
-    console.log('Buscando cursos do usuário...');
     this.userCourses = []; // Inicializar como array vazio
 
     this.userService.getUserCourses(userId).subscribe({
       next: (courses) => {
-        console.log('Resposta da API de cursos:', courses);
-        console.log('Tipo de courses:', typeof courses);
-        console.log('É array?', Array.isArray(courses));
-        console.log('Quantidade de cursos:', courses?.length);
-
         if (courses && Array.isArray(courses) && courses.length > 0) {
           // Filtrar cursos válidos (que tenham pelo menos id e name)
           this.userCourses = courses.filter(course =>
@@ -80,26 +67,16 @@ export class PerfilUsuarioComponent implements OnInit {
             course.name
           );
 
-          console.log('Cursos válidos filtrados:', this.userCourses);
-
           if (this.userCourses.length > 0) {
             this.userCourses.forEach((course) => {
-              console.log('Carregando imagem do curso:', course.id, course.name);
               this.loadCourseImage(course.id);
             });
-          } else {
-            console.warn('Nenhum curso válido encontrado após filtro');
           }
         } else {
-          console.log('Nenhum curso encontrado ou resposta vazia');
           this.userCourses = [];
         }
       },
       error: (err) => {
-        console.error("Erro ao buscar cursos:", err);
-        console.error("Detalhes do erro:", err.error);
-        console.error("Status:", err.status);
-        console.error("URL chamada:", `${err.url}`);
         this.userCourses = [];
 
         if (err.status === 401) {
@@ -107,7 +84,6 @@ export class PerfilUsuarioComponent implements OnInit {
           this.authService.logout();
           this.router.navigate(['/login']);
         } else if (err.status === 404) {
-          console.log('Endpoint não encontrado ou usuário sem cursos');
           // Não mostrar erro ao usuário, pode ser normal não ter cursos
         } else {
           this.toastr.warning('Não foi possível carregar seus cursos.', 'Aviso');
@@ -123,7 +99,6 @@ export class PerfilUsuarioComponent implements OnInit {
         this.courseImages[courseId] = response.imageUrl;
       },
       error: (err) => {
-        console.error(`Erro ao carregar imagem do curso ${courseId}:`, err);
         this.courseImages[courseId] = 'assets/placeholder.png';
       },
     });
@@ -167,7 +142,6 @@ export class PerfilUsuarioComponent implements OnInit {
         this.toastr.success(`Seus dados foram atualizados com sucesso, ${userName}!`, 'Dados Salvos');
       },
       error: (err) => {
-        console.error("Erro ao salvar dados:", err);
         this.toastr.error("Não foi possível salvar seus dados. Tente novamente.", 'Erro');
       }
     });
@@ -194,7 +168,6 @@ export class PerfilUsuarioComponent implements OnInit {
           this.toastr.success(`O curso "${courseName}" foi removido com sucesso!`, 'Curso Removido');
         },
         error: (err) => {
-          console.error("Erro ao remover curso:", err);
           this.toastr.error("Não foi possível remover o curso. Tente novamente.", 'Erro');
         }
       });

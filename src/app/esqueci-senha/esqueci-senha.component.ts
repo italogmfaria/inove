@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { PasswordRecoveryService } from '../common/service/password-recovery.service';
 
 @Component({
   selector: 'app-esqueci-senha',
@@ -17,7 +18,8 @@ export class EsqueciSenhaComponent {
 
   constructor(
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private passwordRecoveryService: PasswordRecoveryService
   ) {}
 
   enviarCodigo(): void {
@@ -35,19 +37,28 @@ export class EsqueciSenhaComponent {
 
     this.isLoading = true;
 
-    // Simular envio de código (substituir por chamada real à API)
-    setTimeout(() => {
-      this.isLoading = false;
-      this.toastr.success('Código enviado para seu e-mail!', 'Sucesso');
-      // Navegar para verificar código passando o e-mail
-      this.router.navigate(['/verificar-codigo'], {
-        queryParams: { email: this.email }
-      });
-    }, 1500);
+    this.passwordRecoveryService.requestRecoveryCode(this.email).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.toastr.success('Código enviado para seu e-mail!', 'Sucesso');
+        // Navegar para verificar código passando o e-mail
+        this.router.navigate(['/verificar-codigo'], {
+          queryParams: { email: this.email }
+        });
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Erro ao enviar código:', error);
+        // Por segurança, mesmo em erro mostramos mensagem de sucesso
+        this.toastr.success('Se o e-mail estiver cadastrado, você receberá o código.', 'Enviado');
+        this.router.navigate(['/verificar-codigo'], {
+          queryParams: { email: this.email }
+        });
+      }
+    });
   }
 
   voltarLogin(): void {
     this.router.navigate(['/login']);
   }
 }
-

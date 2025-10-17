@@ -60,7 +60,6 @@ export class LoginComponent {
 
   onRecaptchaResolved(token: string | null): void {
     this.recaptchaToken = token;
-    console.log('✅ reCAPTCHA v2 resolvido! Token:', token?.substring(0, 50) + '...');
   }
 
   onLogin(event: Event): void {
@@ -85,14 +84,11 @@ export class LoginComponent {
 
     this.authService.login(email, password, this.recaptchaToken || '').subscribe({
       next: (response: LoginResponseDTO) => {
-        console.log('Resposta do login:', response);
-
         this.authService.saveTokens(response.token, response.refreshToken);
 
         if (response.userId) {
           this.authService.saveUserId(response.userId);
         } else {
-          console.error('Erro: userId não encontrado na resposta do login.');
           this.toastr.error('Erro ao recuperar informações do usuário. Tente novamente mais tarde.', 'Erro');
           this.isSubmitting = false;
           return;
@@ -110,14 +106,12 @@ export class LoginComponent {
             this.router.navigate(['/painel-admin']);
             break;
           default:
-            console.error('Papel desconhecido:', role);
             this.toastr.error('Erro ao determinar o papel do usuário.', 'Erro');
             this.router.navigate(['/']);
         }
         this.isSubmitting = false;
       },
-      error: (error) => {
-        console.error('Erro ao autenticar', error);
+      error: () => {
         this.toastr.error('Credenciais inválidas', 'Erro');
         this.isSubmitting = false;
       },
