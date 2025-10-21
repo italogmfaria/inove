@@ -27,7 +27,17 @@ export class StudentService {
 
   registerStudent(studentData: any): Observable<any> {
     const headers = this.createHeaders();
-    return this.http.post(this.baseUrl, studentData, { headers });
+    const transformedData = {
+      name: studentData.name,
+      email: studentData.email,
+      cpf: studentData.cpf,
+      password: studentData.password,
+      school: {
+        id: studentData.schoolId
+      },
+      role: 'STUDENT'
+    };
+    return this.http.post(this.baseUrl, transformedData, { headers });
   }
 
 }
