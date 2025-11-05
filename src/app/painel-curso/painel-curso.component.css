@@ -483,6 +483,17 @@ app-video-player {
     transform: translateX(5px);
 }
 
+.content-btn.active {
+    background: linear-gradient(145deg, #e8f0ff 0%, #f0f4ff 100%);
+    border-color: #3261a8;
+    transform: translateX(8px);
+}
+
+.content-btn.active:hover {
+    background: linear-gradient(145deg, #d4e6f7 0%, #e8f4fd 100%);
+    transform: translateX(10px);
+}
+
 .content-type-icon {
     font-size: 20px;
     color: #3261a8;
@@ -1099,6 +1110,249 @@ app-video-player {
         min-height: 400px;
     }
 }
+
+.course-progress-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fd 100%);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(50, 97, 168, 0.12);
+    border: 2px solid #e8ecef;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    animation: fadeIn 0.8s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.course-progress-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(50, 97, 168, 0.03) 0%, rgba(249, 168, 38, 0.03) 100%);
+    z-index: 0;
+}
+
+.course-progress-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.progress-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.progress-title .material-icons {
+    font-size: 32px;
+    color: #3261a8;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.progress-title h3 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    font-weight: 700;
+    margin: 0;
+}
+
+.progress-percentage {
+    font-size: 2rem;
+    font-weight: 800;
+    background: #3261a8;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@keyframes shimmer {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* Progress Bar */
+.progress-bar-container {
+    width: 100%;
+    height: 20px;
+    background: linear-gradient(145deg, #e8ecef 0%, #f0f4f8 100%);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1rem;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: #3261a8;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(50, 97, 168, 0.3);
+}
+
+.progress-bar-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+    );
+}
+
+@keyframes shine {
+    0% {
+        left: -100%;
+    }
+    50%, 100% {
+        left: 100%;
+    }
+}
+
+.progress-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #5a6c7d;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.progress-info .material-icons {
+    font-size: 22px;
+    color: #3261a8;
+}
+
+/* Conteúdos Concluídos */
+.content-btn.completed {
+    background: linear-gradient(145deg, #f8f9fd 0%, #ffffff 100%);
+    border: 2px solid #e8ecef;
+    position: relative;
+}
+
+.content-btn.completed::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #27ae60 0%, #229954 100%);
+    border-radius: 10px 0 0 10px;
+}
+
+.content-btn.completed:hover {
+    background: linear-gradient(145deg, #e8f0ff 0%, #f0f4ff 100%);
+    border-color: #3261a8;
+    transform: translateX(5px);
+}
+
+/* Quando está ativo E concluído */
+.content-btn.active.completed {
+    background: linear-gradient(145deg, #e8f0ff 0%, #f0f4ff 100%);
+    border-color: #3261a8;
+    transform: translateX(8px);
+}
+
+.content-btn.active.completed::before {
+    background: linear-gradient(180deg, #27ae60 0%, #229954 100%);
+}
+
+.content-btn .check-icon {
+    color: #27ae60;
+    font-size: 24px;
+    animation: checkPop 0.5s ease-out;
+}
+
+@keyframes checkPop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.content-btn.completed .content-title {
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.content-btn.completed .content-type-icon {
+    color: #3261a8;
+}
+
+/* Animação de conclusão de progresso */
+@keyframes progressComplete {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.course-progress-card.complete {
+    animation: progressComplete 0.6s ease-out;
+    border-color: #27ae60;
+    box-shadow: 0 15px 50px rgba(39, 174, 96, 0.2);
+}
+
+/* Responsividade para barra de progresso */
+@media (max-width: 768px) {
+    .progress-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .progress-percentage {
+        font-size: 1.75rem;
+    }
+
+    .progress-title h3 {
+        font-size: 1.25rem;
+    }
+
+    .progress-bar-container {
+        height: 16px;
+    }
+}
+
 
 @media (max-width: 768px) {
     .header {

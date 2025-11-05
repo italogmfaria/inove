@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../common/service/user.service';
 import { SchoolDTO } from '../common/dto/SchoolDTO';
 import { UserDTO } from '../common/dto/UserDTO';
@@ -9,6 +10,7 @@ import { CourseService } from '../common/service/course.service';
 import { UserRole } from '../common/dto/UserRole';
 import { AuthService } from '../common/service/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { CpfValidator } from '../common/validators/cpf.validator';
 
 @Component({
   selector: 'app-painel-admin',
@@ -57,6 +59,14 @@ export class PainelAdminComponent {
   cursos: CursoDTO[] = [];
   instrutores: UserDTO[] = [];
 
+  // Reactive Forms
+  addUserForm!: FormGroup;
+  updateUserForm!: FormGroup;
+  addSchoolForm!: FormGroup;
+  updateSchoolForm!: FormGroup;
+  addCourseForm!: FormGroup;
+  updateCourseForm!: FormGroup;
+
 
   constructor(
     private router: Router,
@@ -64,7 +74,8 @@ export class PainelAdminComponent {
     private schoolService: SchoolService,
     private courseService: CourseService,
     private authService: AuthService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private fb: FormBuilder
   ) {
     this.loadAllData();
   }
@@ -122,23 +133,25 @@ export class PainelAdminComponent {
         return;
     }
 
-    const userPayload = {
-        ...this.newUser,
+    // Preparar o payload sem o campo school
+    const userPayload: any = {
+        name: this.newUser.name,
+        email: this.newUser.email,
+        cpf: this.newUser.cpf,
+        password: this.newUser.password,
         role: this.newUser.role,
-        school: this.newUser.role === 'STUDENT' ? { id: this.newUser.schoolId } : null,
+        birthDate: this.newUser.birthDate,
+        studentCourses: [],
+        adminCourses: [],
+        instructorCourses: []
     };
 
-    let addUserObservable;
-    if (['ADMINISTRATOR', 'INSTRUCTOR'].includes(this.newUser.role)) {
-        addUserObservable = this.userService.addUser(userPayload);
-    } else if (this.newUser.role === 'STUDENT') {
-        addUserObservable = this.userService.addUser(userPayload);
-    } else {
-        this.toastr.error('Papel do usuário inválido.', 'Erro');
-        return;
+    // Adicionar schoolId apenas se for STUDENT e tiver escola selecionada
+    if (this.newUser.role === 'STUDENT' && this.newUser.schoolId) {
+        userPayload.schoolId = this.newUser.schoolId;
     }
 
-    addUserObservable.subscribe(
+    this.userService.addUser(userPayload).subscribe(
         () => {
             this.getUsers();
             this.closeUserModals();
@@ -155,6 +168,14 @@ export class PainelAdminComponent {
 
   toggleAddUserModal(): void {
     this.newUser = this.resetNewUser();
+    this.addUserForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      email: ['', [Validators.required, Validators.email]],
+      cpf: ['', [Validators.required, CpfValidator.validate]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      role: [UserRole.STUDENT, [Validators.required]],
+      schoolId: [null]
+    });
     this.showAddUserModal = true;
   }
 
@@ -166,7 +187,6 @@ export class PainelAdminComponent {
       cpf: '',
       password: '',
       role: UserRole.STUDENT,
-      schoolId: null as any,
       birthDate: new Date(),
       adminCourses: [],
       instructorCourses: [],
@@ -205,6 +225,11 @@ export class PainelAdminComponent {
 
   toggleUpdateUserModal(user: UserDTO): void {
     this.selectedUser = { ...user };
+    this.updateUserForm = this.fb.group({
+      name: [user.name || '', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      email: [user.email || '', [Validators.required, Validators.email]],
+      cpf: [user.cpf || '', [CpfValidator.validate]]
+    });
     this.showAddUserModal = false;
     this.showUpdateUserModal = true;
   }
@@ -279,11 +304,23 @@ export class PainelAdminComponent {
 
   toggleNewSchoolModal(): void {
     this.newSchool = this.resetNewSchool();
+    this.addSchoolForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+      email: ['', [Validators.required, Validators.email]],
+      city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+      federativeUnit: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]]
+    });
     this.showNewSchoolModal = !this.showNewSchoolModal;
   }
 
   toggleSchoolModal(school: SchoolDTO): void {
     this.selectedSchool = { ...school };
+    this.updateSchoolForm = this.fb.group({
+      name: [school.name || '', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+      email: [school.email || '', [Validators.required, Validators.email]],
+      city: [school.city || '', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+      federativeUnit: [school.federativeUnit || '', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]]
+    });
     this.showSchoolModal = true;
   }
 
@@ -393,6 +430,11 @@ getCourses(): void {
     this.getInstructors();
     this.newCourse = this.resetNewCourse();
     this.selectedInstructorId = null;
+    this.addCourseForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+      description: ['', [Validators.required, Validators.maxLength(1000)]],
+      instructorId: [null, [Validators.required]]
+    });
     this.showAddCourseModal = true;
   }
 
@@ -401,6 +443,11 @@ getCourses(): void {
     this.selectedCourse = { ...course };
     const currentInstructor = course.instructors && course.instructors.length > 0 ? course.instructors[0] : null;
     this.selectedInstructorId = currentInstructor ? currentInstructor.id : null;
+    this.updateCourseForm = this.fb.group({
+      name: [course.name || '', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+      description: [course.description || '', [Validators.required, Validators.maxLength(1000)]],
+      instructorId: [this.selectedInstructorId]
+    });
     this.showUpdateCourseModal = true;
   }
 
@@ -572,5 +619,54 @@ getCourses(): void {
       curso.description.toLowerCase().includes(search) ||
       curso.instructors.some(inst => inst.name.toLowerCase().includes(search))
     );
+  }
+
+  // Métodos de validação
+  getErrorMessage(fieldName: string, formType: 'user' | 'school' | 'course'): string {
+    let form: FormGroup | undefined;
+
+    if (formType === 'user') {
+      form = this.showAddUserModal ? this.addUserForm : this.updateUserForm;
+    } else if (formType === 'school') {
+      form = this.showNewSchoolModal ? this.addSchoolForm : this.updateSchoolForm;
+    } else if (formType === 'course') {
+      form = this.showAddCourseModal ? this.addCourseForm : this.updateCourseForm;
+    }
+
+    const field = form?.get(fieldName);
+
+    if (field?.hasError('required')) {
+      return 'Este campo é obrigatório';
+    }
+    if (field?.hasError('email')) {
+      return 'Digite um e-mail válido';
+    }
+    if (field?.hasError('minlength')) {
+      const minLength = field.errors?.['minlength'].requiredLength;
+      return `Deve ter no mínimo ${minLength} caracteres`;
+    }
+    if (field?.hasError('maxlength')) {
+      const maxLength = field.errors?.['maxlength'].requiredLength;
+      return `Deve ter no máximo ${maxLength} caracteres`;
+    }
+    if (field?.hasError('cpfInvalid')) {
+      return 'CPF inválido';
+    }
+    return '';
+  }
+
+  isFieldInvalid(fieldName: string, formType: 'user' | 'school' | 'course'): boolean {
+    let form: FormGroup | undefined;
+
+    if (formType === 'user') {
+      form = this.showAddUserModal ? this.addUserForm : this.updateUserForm;
+    } else if (formType === 'school') {
+      form = this.showNewSchoolModal ? this.addSchoolForm : this.updateSchoolForm;
+    } else if (formType === 'course') {
+      form = this.showAddCourseModal ? this.addCourseForm : this.updateCourseForm;
+    }
+
+    const field = form?.get(fieldName);
+    return !!(field && field.invalid && field.touched);
   }
 }

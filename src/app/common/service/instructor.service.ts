@@ -20,4 +20,9 @@ export class InstructorService {
     return this.http.post(url, instructorData, { headers, responseType: 'text' });
   }
 
+  confirmInstructor(token: string): Observable<string> {
+    const url = `${this.baseUrl}/instrutor/confirmar?token=${token}`;
+    return this.http.get(url, { responseType: 'text' });
+  }
+
 }

@@ -22,6 +22,7 @@ import { LoggedInGuard } from './common/guards/logged-in.guard';
 
 export const routes: Routes = [
   { path: '', component: InicialComponent },
+  { path: 'confirmar-instrutor', component: InicialComponent },
   { path: 'login', component: LoginComponent, canActivate: [LoggedInGuard] },
   { path: 'esqueci-senha', component: EsqueciSenhaComponent },
   { path: 'verificar-codigo', component: VerificarCodigoComponent },

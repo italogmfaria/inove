@@ -17,7 +17,6 @@
   <div class="content">
     <aside class="side-menu">
       <h2>
-        <span class="material-icons">admin_panel_settings</span>
         Administração
       </h2>
       <ul>
@@ -215,55 +214,76 @@
         <span class="material-icons">close</span>
       </span>
     </header>
-    <div class="modal-body">
-      <div class="input-group">
-        <span class="material-icons">person</span>
-        <input type="text" [(ngModel)]="newUser.name" placeholder="Nome Completo" />
-      </div>
-      <div class="input-group">
-        <span class="material-icons">email</span>
-        <input type="email" [(ngModel)]="newUser.email" placeholder="E-mail" />
-      </div>
-      <div class="input-group">
-        <span class="material-icons">badge</span>
-        <input type="text" [(ngModel)]="newUser.cpf" placeholder="000.000.000-00" mask="000.000.000-00" />
-      </div>
-      <div class="input-group">
-        <span class="material-icons">lock</span>
-        <div class="password-wrapper">
-          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="newUser.password" placeholder="Senha" />
-          <span class="material-icons password-toggle-icon" (click)="togglePasswordVisibility()">
-            {{ showPassword ? 'visibility_off' : 'visibility' }}
-          </span>
+    <form [formGroup]="addUserForm" (ngSubmit)="addUser()">
+      <div class="modal-body">
+        <div class="input-group" [class.error]="isFieldInvalid('name', 'user')">
+          <span class="material-icons">person</span>
+          <input type="text" formControlName="name" placeholder="Nome Completo"
+                 [class.invalid]="isFieldInvalid('name', 'user')" />
+          <small class="error-message" *ngIf="isFieldInvalid('name', 'user')">
+            {{ getErrorMessage('name', 'user') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('email', 'user')">
+          <span class="material-icons">email</span>
+          <input type="email" formControlName="email" placeholder="E-mail"
+                 [class.invalid]="isFieldInvalid('email', 'user')" />
+          <small class="error-message" *ngIf="isFieldInvalid('email', 'user')">
+            {{ getErrorMessage('email', 'user') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('cpf', 'user')">
+          <span class="material-icons">badge</span>
+          <input type="text" formControlName="cpf" placeholder="000.000.000-00" mask="000.000.000-00"
+                 [class.invalid]="isFieldInvalid('cpf', 'user')" />
+          <small class="error-message" *ngIf="isFieldInvalid('cpf', 'user')">
+            {{ getErrorMessage('cpf', 'user') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('password', 'user')">
+          <span class="material-icons">lock</span>
+          <div class="password-wrapper">
+            <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Senha"
+                   [class.invalid]="isFieldInvalid('password', 'user')" />
+            <span class="material-icons password-toggle-icon" (click)="togglePasswordVisibility()">
+              {{ showPassword ? 'visibility_off' : 'visibility' }}
+            </span>
+          </div>
+          <small class="error-message" *ngIf="isFieldInvalid('password', 'user')">
+            {{ getErrorMessage('password', 'user') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('role', 'user')">
+          <span class="material-icons">assignment_ind</span>
+          <select formControlName="role" [class.invalid]="isFieldInvalid('role', 'user')">
+            <option value="" disabled>Selecione o tipo de usuário</option>
+            <option [value]="UserRole.STUDENT">Estudante</option>
+            <option [value]="UserRole.INSTRUCTOR">Instrutor</option>
+            <option [value]="UserRole.ADMINISTRATOR">Administrador</option>
+          </select>
+          <small class="error-message" *ngIf="isFieldInvalid('role', 'user')">
+            {{ getErrorMessage('role', 'user') }}
+          </small>
+        </div>
+        <div *ngIf="addUserForm.get('role')?.value === 'STUDENT'" class="input-group">
+          <span class="material-icons">school</span>
+          <select formControlName="schoolId">
+            <option [value]="null">Selecione a escola</option>
+            <option *ngFor="let escola of escolas" [value]="escola.id">{{ escola.name }}</option>
+          </select>
         </div>
       </div>
-      <div class="input-group">
-        <span class="material-icons">assignment_ind</span>
-        <select [(ngModel)]="newUser.role">
-          <option value="" disabled selected>Selecione o tipo de usuário</option>
-          <option [value]="UserRole.STUDENT">Estudante</option>
-          <option [value]="UserRole.INSTRUCTOR">Instrutor</option>
-          <option [value]="UserRole.ADMINISTRATOR">Administrador</option>
-        </select>
-      </div>
-      <div *ngIf="newUser.role === 'STUDENT'" class="input-group">
-        <span class="material-icons">school</span>
-        <select [(ngModel)]="newUser.schoolId">
-          <option [value]="null" disabled selected>Selecione a escola</option>
-          <option *ngFor="let escola of escolas" [value]="escola.id">{{ escola.name }}</option>
-        </select>
-      </div>
-    </div>
-    <footer class="modal-footer">
-      <button class="btn-modal-save" (click)="addUser()">
-        <span class="material-icons">save</span>
-        Salvar
-      </button>
-      <button class="btn-modal-cancel" (click)="closeUserModals()">
-        <span class="material-icons">cancel</span>
-        Cancelar
-      </button>
-    </footer>
+      <footer class="modal-footer">
+        <button type="submit" class="btn-modal-save" [disabled]="addUserForm.invalid">
+          <span class="material-icons">save</span>
+          Salvar
+        </button>
+        <button type="button" class="btn-modal-cancel" (click)="closeUserModals()">
+          <span class="material-icons">cancel</span>
+          Cancelar
+        </button>
+      </footer>
+    </form>
   </div>
 
   <div class="modal-overlay" *ngIf="showUpdateUserModal" (click)="closeUserModals()"></div>
@@ -274,26 +294,36 @@
         <span class="material-icons">close</span>
       </span>
     </header>
-    <div class="modal-body">
-      <div class="input-group">
-        <span class="material-icons">person</span>
-        <input type="text" [(ngModel)]="selectedUser.name" placeholder="Nome Completo" />
+    <form [formGroup]="updateUserForm" (ngSubmit)="updateUser()">
+      <div class="modal-body">
+        <div class="input-group" [class.error]="isFieldInvalid('name', 'user')">
+          <span class="material-icons">person</span>
+          <input type="text" formControlName="name" placeholder="Nome Completo"
+                 [class.invalid]="isFieldInvalid('name', 'user')" />
+          <small class="error-message" *ngIf="isFieldInvalid('name', 'user')">
+            {{ getErrorMessage('name', 'user') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('email', 'user')">
+          <span class="material-icons">email</span>
+          <input type="email" formControlName="email" placeholder="E-mail"
+                 [class.invalid]="isFieldInvalid('email', 'user')" />
+          <small class="error-message" *ngIf="isFieldInvalid('email', 'user')">
+            {{ getErrorMessage('email', 'user') }}
+          </small>
+        </div>
       </div>
-      <div class="input-group">
-        <span class="material-icons">email</span>
-        <input type="email" [(ngModel)]="selectedUser.email" placeholder="E-mail" />
-      </div>
-    </div>
-    <footer class="modal-footer">
-      <button class="btn-modal-save" (click)="updateUser()">
-        <span class="material-icons">save</span>
-        Salvar
-      </button>
-      <button class="btn-modal-cancel" (click)="closeUserModals()">
-        <span class="material-icons">cancel</span>
-        Cancelar
-      </button>
-    </footer>
+      <footer class="modal-footer">
+        <button type="submit" class="btn-modal-save" [disabled]="updateUserForm.invalid">
+          <span class="material-icons">save</span>
+          Salvar
+        </button>
+        <button type="button" class="btn-modal-cancel" (click)="closeUserModals()">
+          <span class="material-icons">cancel</span>
+          Cancelar
+        </button>
+      </footer>
+    </form>
   </div>
 
   <div class="modal-overlay" *ngIf="showNewSchoolModal" (click)="toggleNewSchoolModal()"></div>
@@ -304,34 +334,52 @@
         <span class="material-icons">close</span>
       </span>
     </header>
-    <div class="modal-body">
-      <div class="input-group">
-        <span class="material-icons">business</span>
-        <input type="text" [(ngModel)]="newSchool.name" placeholder="Nome da Escola" />
+    <form [formGroup]="addSchoolForm" (ngSubmit)="addNewSchool()">
+      <div class="modal-body">
+        <div class="input-group" [class.error]="isFieldInvalid('name', 'school')">
+          <span class="material-icons">business</span>
+          <input type="text" formControlName="name" placeholder="Nome da Escola"
+                 [class.invalid]="isFieldInvalid('name', 'school')" />
+          <small class="error-message" *ngIf="isFieldInvalid('name', 'school')">
+            {{ getErrorMessage('name', 'school') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('email', 'school')">
+          <span class="material-icons">email</span>
+          <input type="email" formControlName="email" placeholder="Email"
+                 [class.invalid]="isFieldInvalid('email', 'school')" />
+          <small class="error-message" *ngIf="isFieldInvalid('email', 'school')">
+            {{ getErrorMessage('email', 'school') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('city', 'school')">
+          <span class="material-icons">location_city</span>
+          <input type="text" formControlName="city" placeholder="Cidade"
+                 [class.invalid]="isFieldInvalid('city', 'school')" />
+          <small class="error-message" *ngIf="isFieldInvalid('city', 'school')">
+            {{ getErrorMessage('city', 'school') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('federativeUnit', 'school')">
+          <span class="material-icons">map</span>
+          <input type="text" formControlName="federativeUnit" placeholder="Estado (UF)" maxlength="2"
+                 [class.invalid]="isFieldInvalid('federativeUnit', 'school')" />
+          <small class="error-message" *ngIf="isFieldInvalid('federativeUnit', 'school')">
+            {{ getErrorMessage('federativeUnit', 'school') }}
+          </small>
+        </div>
       </div>
-      <div class="input-group">
-        <span class="material-icons">email</span>
-        <input type="email" [(ngModel)]="newSchool.email" placeholder="Email" />
-      </div>
-      <div class="input-group">
-        <span class="material-icons">location_city</span>
-        <input type="text" [(ngModel)]="newSchool.city" placeholder="Cidade" />
-      </div>
-      <div class="input-group">
-        <span class="material-icons">map</span>
-        <input type="text" [(ngModel)]="newSchool.federativeUnit" placeholder="Estado (UF)" />
-      </div>
-    </div>
-    <footer class="modal-footer">
-      <button class="btn-modal-save" (click)="addNewSchool()">
-        <span class="material-icons">save</span>
-        Salvar
-      </button>
-      <button class="btn-modal-cancel" (click)="toggleNewSchoolModal()">
-        <span class="material-icons">cancel</span>
-        Cancelar
-      </button>
-    </footer>
+      <footer class="modal-footer">
+        <button type="submit" class="btn-modal-save" [disabled]="addSchoolForm.invalid">
+          <span class="material-icons">save</span>
+          Salvar
+        </button>
+        <button type="button" class="btn-modal-cancel" (click)="toggleNewSchoolModal()">
+          <span class="material-icons">cancel</span>
+          Cancelar
+        </button>
+      </footer>
+    </form>
   </div>
 
   <div class="modal-overlay" *ngIf="showSchoolModal" (click)="closeSchoolModal()"></div>
@@ -342,34 +390,52 @@
         <span class="material-icons">close</span>
       </span>
     </header>
-    <div class="modal-body">
-      <div class="input-group">
-        <span class="material-icons">business</span>
-        <input type="text" [(ngModel)]="selectedSchool.name" placeholder="Nome da Escola" />
+    <form [formGroup]="updateSchoolForm" (ngSubmit)="updateSchool()">
+      <div class="modal-body">
+        <div class="input-group" [class.error]="isFieldInvalid('name', 'school')">
+          <span class="material-icons">business</span>
+          <input type="text" formControlName="name" placeholder="Nome da Escola"
+                 [class.invalid]="isFieldInvalid('name', 'school')" />
+          <small class="error-message" *ngIf="isFieldInvalid('name', 'school')">
+            {{ getErrorMessage('name', 'school') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('email', 'school')">
+          <span class="material-icons">email</span>
+          <input type="email" formControlName="email" placeholder="E-mail de Contato"
+                 [class.invalid]="isFieldInvalid('email', 'school')" />
+          <small class="error-message" *ngIf="isFieldInvalid('email', 'school')">
+            {{ getErrorMessage('email', 'school') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('city', 'school')">
+          <span class="material-icons">location_city</span>
+          <input type="text" formControlName="city" placeholder="Cidade"
+                 [class.invalid]="isFieldInvalid('city', 'school')" />
+          <small class="error-message" *ngIf="isFieldInvalid('city', 'school')">
+            {{ getErrorMessage('city', 'school') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('federativeUnit', 'school')">
+          <span class="material-icons">map</span>
+          <input type="text" formControlName="federativeUnit" placeholder="Estado (UF)" maxlength="2"
+                 [class.invalid]="isFieldInvalid('federativeUnit', 'school')" />
+          <small class="error-message" *ngIf="isFieldInvalid('federativeUnit', 'school')">
+            {{ getErrorMessage('federativeUnit', 'school') }}
+          </small>
+        </div>
       </div>
-      <div class="input-group">
-        <span class="material-icons">email</span>
-        <input type="email" [(ngModel)]="selectedSchool.email" placeholder="E-mail de Contato"/>
-      </div>
-      <div class="input-group">
-        <span class="material-icons">location_city</span>
-        <input type="text" [(ngModel)]="selectedSchool.city" placeholder="Cidade" />
-      </div>
-      <div class="input-group">
-        <span class="material-icons">map</span>
-        <input type="text" [(ngModel)]="selectedSchool.federativeUnit" placeholder="Estado (UF)" />
-      </div>
-    </div>
-    <footer class="modal-footer">
-      <button class="btn-modal-save" (click)="updateSchool()">
-        <span class="material-icons">save</span>
-        Salvar
-      </button>
-      <button class="btn-modal-cancel" (click)="closeSchoolModal()">
-        <span class="material-icons">cancel</span>
-        Cancelar
-      </button>
-    </footer>
+      <footer class="modal-footer">
+        <button type="submit" class="btn-modal-save" [disabled]="updateSchoolForm.invalid">
+          <span class="material-icons">save</span>
+          Salvar
+        </button>
+        <button type="button" class="btn-modal-cancel" (click)="closeSchoolModal()">
+          <span class="material-icons">cancel</span>
+          Cancelar
+        </button>
+      </footer>
+    </form>
   </div>
 
   <div class="modal-overlay" *ngIf="showAddCourseModal" (click)="closeAddCourseModal()"></div>
@@ -380,35 +446,48 @@
         <span class="material-icons">close</span>
       </span>
     </header>
-    <div class="modal-body">
-      <div class="input-group">
-        <span class="material-icons">title</span>
-        <input type="text" [(ngModel)]="newCourse.name" placeholder="Título do Curso" />
+    <form [formGroup]="addCourseForm" (ngSubmit)="addCourse()">
+      <div class="modal-body">
+        <div class="input-group" [class.error]="isFieldInvalid('name', 'course')">
+          <span class="material-icons">title</span>
+          <input type="text" formControlName="name" placeholder="Título do Curso"
+                 [class.invalid]="isFieldInvalid('name', 'course')" />
+          <small class="error-message" *ngIf="isFieldInvalid('name', 'course')">
+            {{ getErrorMessage('name', 'course') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('description', 'course')">
+          <span class="material-icons">description</span>
+          <textarea formControlName="description" placeholder="Descrição do curso"
+                    [class.invalid]="isFieldInvalid('description', 'course')"></textarea>
+          <small class="error-message" *ngIf="isFieldInvalid('description', 'course')">
+            {{ getErrorMessage('description', 'course') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('instructorId', 'course')">
+          <span class="material-icons">person_outline</span>
+          <select formControlName="instructorId" [class.invalid]="isFieldInvalid('instructorId', 'course')">
+            <option [ngValue]="null">Selecione um instrutor</option>
+            <option *ngFor="let instrutor of instrutores" [ngValue]="instrutor.id">
+              {{ instrutor.name }}
+            </option>
+          </select>
+          <small class="error-message" *ngIf="isFieldInvalid('instructorId', 'course')">
+            {{ getErrorMessage('instructorId', 'course') }}
+          </small>
+        </div>
       </div>
-      <div class="input-group">
-        <span class="material-icons">description</span>
-        <textarea [(ngModel)]="newCourse.description" placeholder="Descrição do curso"></textarea>
-      </div>
-      <div class="input-group">
-        <span class="material-icons">person_outline</span>
-        <select [(ngModel)]="selectedInstructorId">
-          <option [ngValue]="null">Selecione um instrutor</option>
-          <option *ngFor="let instrutor of instrutores" [ngValue]="instrutor.id">
-            {{ instrutor.name }}
-          </option>
-        </select>
-      </div>
-    </div>
-    <footer class="modal-footer">
-      <button class="btn-modal-save" (click)="addCourse()">
-        <span class="material-icons">save</span>
-        Salvar
-      </button>
-      <button class="btn-modal-cancel" (click)="closeAddCourseModal()">
-        <span class="material-icons">cancel</span>
-        Cancelar
-      </button>
-    </footer>
+      <footer class="modal-footer">
+        <button type="submit" class="btn-modal-save" [disabled]="addCourseForm.invalid">
+          <span class="material-icons">save</span>
+          Salvar
+        </button>
+        <button type="button" class="btn-modal-cancel" (click)="closeAddCourseModal()">
+          <span class="material-icons">cancel</span>
+          Cancelar
+        </button>
+      </footer>
+    </form>
   </div>
 
   <div class="modal-overlay" *ngIf="showUpdateCourseModal" (click)="closeUpdateCourseModal()"></div>
@@ -419,35 +498,45 @@
         <span class="material-icons">close</span>
       </span>
     </header>
-    <div class="modal-body">
-      <div class="input-group">
-        <span class="material-icons">title</span>
-        <input type="text" [(ngModel)]="selectedCourse.name" placeholder="Título do Curso" />
+    <form [formGroup]="updateCourseForm" (ngSubmit)="updateCourse()">
+      <div class="modal-body">
+        <div class="input-group" [class.error]="isFieldInvalid('name', 'course')">
+          <span class="material-icons">title</span>
+          <input type="text" formControlName="name" placeholder="Título do Curso"
+                 [class.invalid]="isFieldInvalid('name', 'course')" />
+          <small class="error-message" *ngIf="isFieldInvalid('name', 'course')">
+            {{ getErrorMessage('name', 'course') }}
+          </small>
+        </div>
+        <div class="input-group" [class.error]="isFieldInvalid('description', 'course')">
+          <span class="material-icons">description</span>
+          <textarea formControlName="description" placeholder="Descrição do curso"
+                    [class.invalid]="isFieldInvalid('description', 'course')"></textarea>
+          <small class="error-message" *ngIf="isFieldInvalid('description', 'course')">
+            {{ getErrorMessage('description', 'course') }}
+          </small>
+        </div>
+        <div class="input-group">
+          <span class="material-icons">person_outline</span>
+          <select formControlName="instructorId">
+            <option [ngValue]="null">Selecione um instrutor</option>
+            <option *ngFor="let instrutor of instrutores" [ngValue]="instrutor.id">
+              {{ instrutor.name }}
+            </option>
+          </select>
+        </div>
       </div>
-      <div class="input-group">
-        <span class="material-icons">description</span>
-        <textarea [(ngModel)]="selectedCourse.description" placeholder="Descrição do curso"></textarea>
-      </div>
-      <div class="input-group">
-        <span class="material-icons">person_outline</span>
-        <select [(ngModel)]="selectedInstructorId">
-          <option [ngValue]="null">Selecione um instrutor</option>
-          <option *ngFor="let instrutor of instrutores" [ngValue]="instrutor.id">
-            {{ instrutor.name }}
-          </option>
-        </select>
-      </div>
-    </div>
-    <footer class="modal-footer">
-      <button class="btn-modal-save" (click)="updateCourse()">
-        <span class="material-icons">save</span>
-        Salvar
-      </button>
-      <button class="btn-modal-cancel" (click)="closeUpdateCourseModal()">
-        <span class="material-icons">cancel</span>
-        Cancelar
-      </button>
-    </footer>
+      <footer class="modal-footer">
+        <button type="submit" class="btn-modal-save" [disabled]="updateCourseForm.invalid">
+          <span class="material-icons">save</span>
+          Salvar
+        </button>
+        <button type="button" class="btn-modal-cancel" (click)="closeUpdateCourseModal()">
+          <span class="material-icons">cancel</span>
+          Cancelar
+        </button>
+      </footer>
+    </form>
   </div>
 
   <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmation()">

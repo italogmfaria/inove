@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -10,6 +10,8 @@ import { CommonModule } from '@angular/common';
 })
 export class VideoPlayerComponent implements OnInit, OnDestroy {
   @Input() videoUrl: string = '';
+  @Output() videoCompleted = new EventEmitter<void>();
+  @Output() progressUpdate = new EventEmitter<number>();
   @ViewChild('videoElement', { static: true }) videoElement!: ElementRef<HTMLVideoElement>;
   isPlaying: boolean = false;
   currentTime: number = 0;
@@ -20,6 +22,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   showControls: boolean = true;
   buffered: number = 0;
   isLoading: boolean = true;
+  hasEmittedCompletion: boolean = false;
 
   private hideControlsTimeout: any;
 
@@ -61,12 +64,23 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     if (video.buffered.length > 0) {
       this.buffered = (video.buffered.end(0) / video.duration) * 100;
     }
+
+    // Emite progresso
+    const progressPercentage = (this.currentTime / this.duration) * 100;
+    this.progressUpdate.emit(progressPercentage);
+
+    // Verifica se atingiu 95% para marcar como concluído
+    if (progressPercentage >= 95 && !this.hasEmittedCompletion) {
+      this.hasEmittedCompletion = true;
+      this.videoCompleted.emit();
+    }
   }
 
   onLoadedMetadata(): void {
     const video = this.videoElement.nativeElement;
     this.duration = video.duration;
     this.isLoading = false;
+    this.hasEmittedCompletion = false; // Reset ao carregar novo vídeo
   }
 
   onWaiting(): void {

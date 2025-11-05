@@ -1,5 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../common/service/auth.service';
 import { UserService } from '../common/service/user.service';
 import { FileService } from '../common/service/file.service';
@@ -31,13 +32,17 @@ export class PainelInstrutorComponent implements OnInit {
   confirmationMessage: string = '';
   private pendingAction: (() => void) | null = null;
 
+  editInstructorForm!: FormGroup;
+  editCourseForm!: FormGroup;
+
   constructor(
     private router: Router,
     private authService: AuthService,
     private userService: UserService,
     private fileService: FileService,
     private courseService: CourseService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -56,13 +61,17 @@ export class PainelInstrutorComponent implements OnInit {
         lastUpdateDate: curso.lastUpdateDate
       };
 
+      this.editCourseForm = this.fb.group({
+        name: [curso.name || '', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+        description: [curso.description || '', [Validators.maxLength(500)]]
+      });
+
       this.isLoadingImage = true;
 
       this.fileService.getCourseImage(curso.id).subscribe(
         (response) => {
           this.cursoEdit.imageUrl = response.imageUrl;
           this.isLoadingImage = false;
-          console.log("URL carregada diretamente para o S3:", this.cursoEdit.imageUrl);
         },
         (error) => {
           console.error('Erro ao carregar a imagem do curso:', error);
@@ -90,8 +99,11 @@ export class PainelInstrutorComponent implements OnInit {
   }
 
   updateCourse(): void {
-    if (!this.cursoEdit.name || this.cursoEdit.name.trim().length === 0) {
-      this.toastr.warning('O nome do curso é obrigatório.', 'Atenção');
+    if (this.editCourseForm.invalid) {
+      Object.keys(this.editCourseForm.controls).forEach(key => {
+        this.editCourseForm.get(key)?.markAsTouched();
+      });
+      this.toastr.error('Por favor, corrija os erros no formulário.', 'Erro de Validação');
       return;
     }
 
@@ -129,9 +141,11 @@ export class PainelInstrutorComponent implements OnInit {
   }
 
   private updateCourseData(): void {
+    const formValue = this.editCourseForm.value;
+
     const coursePayload = {
-      name: this.cursoEdit.name,
-      description: this.cursoEdit.description,
+      name: formValue.name,
+      description: formValue.description,
       imageUrl: this.cursoEdit.imageUrl
     };
 
@@ -198,10 +212,11 @@ export class PainelInstrutorComponent implements OnInit {
   }
 
   editInstructor(): void {
-    this.instrutorEdit = {
-      ...this.instrutor,
-      cpf: CpfValidator.formatCpf(this.instrutor.cpf)
-    };
+    this.editInstructorForm = this.fb.group({
+      name: [this.instrutor.name || '', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      email: [this.instrutor.email || '', [Validators.required, Validators.email]],
+      cpf: [CpfValidator.formatCpf(this.instrutor.cpf) || '', [Validators.required, CpfValidator.validate]]
+    });
     this.showEditInstructorModal = true;
   }
 
@@ -210,20 +225,25 @@ export class PainelInstrutorComponent implements OnInit {
   }
 
   updateInstructor(): void {
-    if (!this.instrutorEdit.name || !this.instrutorEdit.email || !this.instrutorEdit.cpf) {
-      this.toastr.warning('Nome, Email e CPF são obrigatórios!', 'Atenção');
+    if (this.editInstructorForm.invalid) {
+      Object.keys(this.editInstructorForm.controls).forEach(key => {
+        this.editInstructorForm.get(key)?.markAsTouched();
+      });
+      this.toastr.error('Por favor, corrija os erros no formulário.', 'Erro de Validação');
       return;
     }
 
+    const formValue = this.editInstructorForm.value;
+
     const userUpdate = {
       id: this.instrutor.id,
-      name: this.instrutorEdit.name,
-      email: this.instrutorEdit.email,
-      cpf: CpfValidator.cleanCpf(this.instrutorEdit.cpf)
+      name: formValue.name,
+      email: formValue.email,
+      cpf: CpfValidator.cleanCpf(formValue.cpf)
     };
 
     this.userService.updateUser(userUpdate).subscribe(() => {
-      this.instrutor = { ...this.instrutorEdit };
+      this.instrutor = { ...this.instrutor, ...formValue };
       this.toastr.success('Dados do instrutor atualizados com sucesso!', 'Sucesso');
       this.closeEditInstructorModal();
     }, error => {
@@ -259,6 +279,36 @@ export class PainelInstrutorComponent implements OnInit {
 
   navigateTo(path: string): void {
     this.router.navigate([path]);
+  }
+
+  getErrorMessage(fieldName: string, formName: 'instructor' | 'course'): string {
+    const form = formName === 'instructor' ? this.editInstructorForm : this.editCourseForm;
+    const field = form?.get(fieldName);
+
+    if (field?.hasError('required')) {
+      return 'Este campo é obrigatório';
+    }
+    if (field?.hasError('email')) {
+      return 'Digite um e-mail válido';
+    }
+    if (field?.hasError('minlength')) {
+      const minLength = field.errors?.['minlength'].requiredLength;
+      return `Deve ter no mínimo ${minLength} caracteres`;
+    }
+    if (field?.hasError('maxlength')) {
+      const maxLength = field.errors?.['maxlength'].requiredLength;
+      return `Deve ter no máximo ${maxLength} caracteres`;
+    }
+    if (field?.hasError('cpfInvalid')) {
+      return 'CPF inválido';
+    }
+    return '';
+  }
+
+  isFieldInvalid(fieldName: string, formName: 'instructor' | 'course'): boolean {
+    const form = formName === 'instructor' ? this.editInstructorForm : this.editCourseForm;
+    const field = form?.get(fieldName);
+    return !!(field && field.invalid && field.touched);
   }
 
   @HostListener('document:keydown.escape', ['$event'])

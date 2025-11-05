@@ -35,10 +35,11 @@
                         <app-video-player
                           *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.mp4') && !isContentLoading"
                           [videoUrl]="currentContentUrl"
-                          (loadeddata)="onContentLoaded()">
+                          (videoCompleted)="markContentAsCompleted()"
+                          (progressUpdate)="onVideoProgressUpdate($event)">
                         </app-video-player>
 
-                        <div class="pdf-container" *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.pdf') && !isContentLoading">
+                        <div class="pdf-container" (scroll)="onPDFScroll($event)" *ngIf="currentContentUrl.toString().toLowerCase().endsWith('.pdf') && !isContentLoading">
                             <pdf-viewer class="pdf-area"
                                         [src]="currentContentUrl"
                                         [render-text]="true">
@@ -69,11 +70,17 @@
 
                             <ul class="contents-list" *ngIf="section.isOpen">
                                 <li *ngFor="let content of section.contents" class="content-item">
-                                    <button class="content-btn" (click)="changeContent(content)">
+                                    <button class="content-btn"
+                                            (click)="changeContent(content, section.id)"
+                                            [class.completed]="isContentCompleted(content.id)"
+                                            [class.active]="isCurrentContent(content.id)">
                                         <span class="material-icons content-type-icon">
                                             {{ content.contentType === 'VIDEO' ? 'play_circle' : 'picture_as_pdf' }}
                                         </span>
                                         <span class="content-title">{{ content.title }}</span>
+                                        <span class="material-icons check-icon" *ngIf="isContentCompleted(content.id)">
+                                            check_circle
+                                        </span>
                                     </button>
                                 </li>
                             </ul>
@@ -86,6 +93,27 @@
                         <p>Este curso ainda não possui seções ou conteúdos cadastrados.</p>
                     </div>
                 </aside>
+            </div>
+
+            <!-- Barra de Progresso do Curso -->
+            <div class="course-progress-card" [class.complete]="progressPercentage === 100">
+                <div class="progress-header">
+                    <div class="progress-title">
+                        <span class="material-icons">trending_up</span>
+                        <h3>Seu Progresso no Curso</h3>
+                    </div>
+                    <span class="progress-percentage">{{ getFormattedProgress() }}</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" [style.width.%]="progressPercentage">
+                        <div class="progress-bar-shine"></div>
+                    </div>
+                </div>
+                <div class="progress-info">
+                    <span class="material-icons">task_alt</span>
+                    <p *ngIf="courseProgress">{{ completedContentIds.size }} de {{ getTotalContents() }} conteúdos concluídos</p>
+                    <p *ngIf="!courseProgress">Carregando progresso...</p>
+                </div>
             </div>
 
             <div class="course-info-card">

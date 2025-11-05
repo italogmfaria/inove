@@ -80,9 +80,25 @@ export class CadastroSecaoComponent implements OnInit {
   }
 
   listarSecoes(): void {
+    const openSectionsMap = new Map<number, boolean>();
+    this.secoes.forEach(secao => {
+      if (secao.id) {
+        openSectionsMap.set(secao.id, secao.isOpen || false);
+      }
+    });
+
     this.sectionService.getSections(this.courseId).subscribe({
       next: (secoes) => {
-        this.secoes = secoes.map(secao => ({ ...secao, isOpen: false }));
+        this.secoes = secoes.map(secao => {
+          const wasOpen = openSectionsMap.get(secao.id) || false;
+          return { ...secao, isOpen: wasOpen };
+        });
+
+        this.secoes.forEach((secao, index) => {
+          if (secao.isOpen && secao.id) {
+            this.carregarConteudos(secao.id, index);
+          }
+        });
       },
       error: () => {
         this.toastr.error('Erro ao carregar as seções do curso');
@@ -142,9 +158,15 @@ export class CadastroSecaoComponent implements OnInit {
   }
 
   salvarEdicaoSecao(): void {
-    this.sectionService.updateSection(this.courseId, this.secaoEdit.id, this.secaoEdit).subscribe(() => {
-      this.listarSecoes();
-      this.closeEditSecaoModal();
+    this.sectionService.updateSection(this.courseId, this.secaoEdit.id, this.secaoEdit).subscribe({
+      next: () => {
+        this.toastr.success('Seção atualizada com sucesso!', 'Sucesso');
+        this.listarSecoes();
+        this.closeEditSecaoModal();
+      },
+      error: () => {
+        this.toastr.error('Erro ao atualizar a seção.', 'Erro');
+      }
     });
   }
 

@@ -700,36 +700,52 @@ textarea::placeholder {
     cursor: pointer;
 }
 
+/* Validation Styles */
+.input-group.error .input-field,
+.input-field.invalid {
+    border-color: #e74c3c !important;
+    background-color: #fff5f5 !important;
+}
+
+.error-message {
+    display: block;
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    margin-left: 48px;
+    font-weight: 500;
+}
+
+.input-field:focus.invalid {
+    box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.1) !important;
+}
+
+/* Upload Section */
 .upload-section {
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 100%;
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    border: 2px dashed #e8ecef;
+    border-radius: 12px;
+    background: #f8f9fa;
 }
 
 .upload-label {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border: 2px dashed #e8ecef;
-    background: linear-gradient(145deg, #f8f9fd 0%, #ffffff 100%);
-    color: #3261a8;
+    padding: 1rem;
+    background: linear-gradient(135deg, #3261a8 0%, #2b4a8b 100%);
+    color: #fff;
+    border-radius: 10px;
     cursor: pointer;
-    width: 100%;
-    box-sizing: border-box;
-    transition: all 0.15s ease;
+    transition: all 0.3s ease;
+    font-weight: 600;
 }
 
 .upload-label:hover {
-    background: linear-gradient(145deg, #eef6ff 0%, #ffffff 100%);
-    border-color: #cfe6ff;
-}
-
-.upload-label .material-icons {
-    font-size: 20px;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(50, 97, 168, 0.3);
 }
 
 .upload-section input[type="file"] {
@@ -737,58 +753,53 @@ textarea::placeholder {
 }
 
 .upload-help {
-    color: #94a3b8;
+    display: block;
+    text-align: center;
+    color: #64748b;
     font-size: 0.85rem;
+    margin-top: 0.75rem;
 }
 
 .image-preview {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 12px;
 }
 
 .preview-title {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #64748b;
-    margin-bottom: 0.75rem;
+    color: #2c3e50;
     font-weight: 600;
+    margin-bottom: 1rem;
 }
 
 .image-preview img {
     width: 100%;
-    max-height: 240px;
-    object-fit: cover;
-    border-radius: 10px;
-    border: 2px solid #e8ecef;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .loading-image {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    text-align: center;
+    padding: 2rem;
 }
 
 .spinner {
-    width: 36px;
-    height: 36px;
     border: 4px solid #e8ecef;
-    border-top-color: #3261a8;
+    border-top: 4px solid #3261a8;
     border-radius: 50%;
+    width: 40px;
+    height: 40px;
     animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-@media (max-width: 480px) {
-    .modal {
-        padding: 1.25rem;
-    }
-
-    .input-field {
-        padding: 10px 12px 10px 36px;
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 @keyframes slideInLeft {
@@ -805,11 +816,19 @@ textarea::placeholder {
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .modal {
+        padding: 1.25rem;
+    }
+
+    .input-field {
+        padding: 10px 12px 10px 36px;
     }
 }
 

@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../common/service/auth.service';
 import { UserService } from '../common/service/user.service';
 import { FileService } from '../common/service/file.service';
 import { FeedbackService } from '../common/service/feedback.service';
+import { SchoolService } from '../common/service/school.service';
+import { UserProgressService } from '../common/service/user-progress.service';
 import { ToastrService } from 'ngx-toastr';
 import { CpfValidator } from '../common/validators/cpf.validator';
 
@@ -19,6 +22,9 @@ export class PerfilUsuarioComponent implements OnInit {
   user: any = {};
   userCourses: any[] = [];
   courseImages: { [key: number]: string } = {};
+  courseProgress: { [key: number]: number } = {};
+  schools: any[] = [];
+  editUserForm!: FormGroup;
 
   // Propriedades para o modal de confirmação
   showConfirmModal: boolean = false;
@@ -33,7 +39,10 @@ export class PerfilUsuarioComponent implements OnInit {
     private userService: UserService,
     private fileService: FileService,
     private feedbackService: FeedbackService,
-    private toastr: ToastrService
+    private schoolService: SchoolService,
+    private userProgressService: UserProgressService,
+    private toastr: ToastrService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -47,9 +56,30 @@ export class PerfilUsuarioComponent implements OnInit {
     this.userService.getUserById(userId).subscribe({
       next: (user) => {
         this.user = user;
+        if (user.id) {
+          this.userService.getUserSchool(user.id).subscribe({
+            next: (school) => {
+              this.user.school = school;
+              this.user.schoolId = school ? Number(school.id) : null;
+            },
+            error: (err) => {
+              this.user.schoolId = null;
+            }
+          });
+        }
       },
       error: (err) => {
         this.toastr.error('Não foi possível carregar seus dados. Tente novamente.', 'Erro');
+      }
+    });
+
+    // Buscar lista de escolas
+    this.schoolService.getSchools().subscribe({
+      next: (schools) => {
+        this.schools = schools;
+      },
+      error: (err) => {
+        this.toastr.warning('Não foi possível carregar a lista de escolas.', 'Aviso');
       }
     });
 
@@ -70,6 +100,7 @@ export class PerfilUsuarioComponent implements OnInit {
           if (this.userCourses.length > 0) {
             this.userCourses.forEach((course) => {
               this.loadCourseImage(course.id);
+              this.loadCourseProgress(course.id, userId);
             });
           }
         } else {
@@ -92,7 +123,6 @@ export class PerfilUsuarioComponent implements OnInit {
     });
   }
 
-  // Método para buscar a imagem do curso e armazená-la no `courseImages`
   loadCourseImage(courseId: number): void {
     this.fileService.getCourseImage(courseId).subscribe({
       next: (response) => {
@@ -114,11 +144,13 @@ export class PerfilUsuarioComponent implements OnInit {
 
   toggleEdit(): void {
     if (!this.isEditing) {
-      // Formatar o CPF ao abrir o modal
-      this.user = {
-        ...this.user,
-        cpf: CpfValidator.formatCpf(this.user.cpf)
-      };
+      // Inicializar o formulário com os dados do usuário
+      this.editUserForm = this.fb.group({
+        name: [this.user.name || '', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+        email: [this.user.email || '', [Validators.required, Validators.email]],
+        cpf: [CpfValidator.formatCpf(this.user.cpf) || '', [Validators.required, CpfValidator.validate]],
+        schoolId: [this.user.schoolId || null]
+      });
     }
     this.isEditing = !this.isEditing;
     this.showEditModal = !this.showEditModal;
@@ -130,19 +162,65 @@ export class PerfilUsuarioComponent implements OnInit {
   }
 
   saveUserData(): void {
-    const userName = this.user.name;
-    const userUpdate = {
-      ...this.user,
-      cpf: CpfValidator.cleanCpf(this.user.cpf)
+    if (this.editUserForm.invalid) {
+      Object.keys(this.editUserForm.controls).forEach(key => {
+        this.editUserForm.get(key)?.markAsTouched();
+      });
+      this.toastr.error('Por favor, corrija os erros no formulário.', 'Erro de Validação');
+      return;
+    }
+
+    const formValue = this.editUserForm.value;
+    const userName = formValue.name;
+
+    // Preparar o payload
+    const userUpdate: any = {
+      id: this.user.id,
+      name: formValue.name.trim(),
+      email: formValue.email.trim(),
+      cpf: CpfValidator.cleanCpf(formValue.cpf)
     };
+
+    // Adicionar school como objeto com id se houver escola selecionada
+    if (formValue.schoolId && formValue.schoolId !== 'null' && formValue.schoolId !== null) {
+      userUpdate.school = {
+        id: Number(formValue.schoolId)
+      };
+    } else {
+      userUpdate.school = null;
+    }
 
     this.userService.updateUser(userUpdate).subscribe({
       next: () => {
         this.toggleEdit();
         this.toastr.success(`Seus dados foram atualizados com sucesso, ${userName}!`, 'Dados Salvos');
+
+        // Recarregar os dados do usuário
+        const userId = Number(localStorage.getItem('userId'));
+        this.userService.getUserById(userId).subscribe({
+          next: (user) => {
+            this.user = user;
+
+            // Buscar escola atualizada usando o endpoint específico
+            this.userService.getUserSchool(userId).subscribe({
+              next: (school) => {
+                this.user.school = school;
+                this.user.schoolId = school ? Number(school.id) : null;
+              },
+              error: (err) => {
+                // Usuário pode não ter escola associada
+                this.user.schoolId = null;
+              }
+            });
+          },
+          error: (err) => {
+            this.toastr.error('Não foi possível recarregar seus dados.', 'Erro');
+          }
+        });
       },
       error: (err) => {
-        this.toastr.error("Não foi possível salvar seus dados. Tente novamente.", 'Erro');
+        const errorMessage = err.error?.message || err.message || 'Não foi possível salvar seus dados. Tente novamente.';
+        this.toastr.error(errorMessage, 'Erro');
       }
     });
   }
@@ -200,5 +278,66 @@ export class PerfilUsuarioComponent implements OnInit {
   cancelConfirmation(): void {
     this.pendingAction = null;
     this.showConfirmModal = false;
+  }
+
+  getSchoolName(): string {
+    // Primeiro tenta pegar do objeto school se existir
+    if (this.user.school && this.user.school.name) {
+      return this.user.school.name;
+    }
+
+    // Se não, tenta buscar pelo schoolId na lista de escolas
+    if (!this.user.schoolId) {
+      return 'Nenhuma escola vinculada';
+    }
+
+    const schoolId = Number(this.user.schoolId);
+    const school = this.schools.find(s => s.id === schoolId);
+    return school ? school.name : 'Carregando...';
+  }
+
+  getErrorMessage(fieldName: string): string {
+    const field = this.editUserForm?.get(fieldName);
+    if (field?.hasError('required')) {
+      return 'Este campo é obrigatório';
+    }
+    if (field?.hasError('email')) {
+      return 'Digite um e-mail válido';
+    }
+    if (field?.hasError('minlength')) {
+      const minLength = field.errors?.['minlength'].requiredLength;
+      return `Deve ter no mínimo ${minLength} caracteres`;
+    }
+    if (field?.hasError('maxlength')) {
+      const maxLength = field.errors?.['maxlength'].requiredLength;
+      return `Deve ter no máximo ${maxLength} caracteres`;
+    }
+    if (field?.hasError('cpfInvalid')) {
+      return 'CPF inválido';
+    }
+    return '';
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.editUserForm?.get(fieldName);
+    return !!(field && field.invalid && field.touched);
+  }
+
+  loadCourseProgress(courseId: number, userId: number): void {
+    // Usando a mesma implementação do painel-curso.component.ts
+    this.userProgressService.getCurrentUserProgress(courseId).subscribe({
+      next: (progress) => {
+        const progressPercentage = this.userProgressService.getPercentageAsNumber(progress);
+        this.courseProgress[courseId] = progressPercentage;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar progresso do curso:', error);
+        this.courseProgress[courseId] = 0;
+      }
+    });
+  }
+
+  getCourseProgress(courseId: number): number {
+    return this.courseProgress[courseId] || 0;
   }
 }

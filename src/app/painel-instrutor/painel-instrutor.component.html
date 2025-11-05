@@ -17,9 +17,6 @@
   <div class="content">
     <aside class="side-menu">
       <div class="instructor-profile">
-        <div class="profile-avatar">
-          <span class="material-icons">person</span>
-        </div>
         <h3>{{ instrutor.name || 'Instrutor' }}</h3>
         <p class="profile-role">Instrutor</p>
       </div>
@@ -135,16 +132,32 @@
         </button>
       </div>
 
-      <form class="modal-form" (ngSubmit)="updateCourse()">
+      <form class="modal-form" [formGroup]="editCourseForm" (ngSubmit)="updateCourse()">
         <div class="modal-body">
-          <div class="input-group">
+          <div class="input-group" [class.error]="isFieldInvalid('name', 'course')">
             <span class="material-icons input-icon">title</span>
-            <input class="input-field" type="text" [(ngModel)]="cursoEdit.name" name="courseName" placeholder="Nome do Curso" required />
+            <input
+              class="input-field"
+              type="text"
+              formControlName="name"
+              placeholder="Nome do Curso"
+              [class.invalid]="isFieldInvalid('name', 'course')" />
+            <small class="error-message" *ngIf="isFieldInvalid('name', 'course')">
+              {{ getErrorMessage('name', 'course') }}
+            </small>
           </div>
 
-          <div class="input-group textarea-group">
+          <div class="input-group textarea-group" [class.error]="isFieldInvalid('description', 'course')">
             <span class="material-icons input-icon">description</span>
-            <textarea class="input-field" [(ngModel)]="cursoEdit.description" name="courseDescription" placeholder="Descrição do curso" rows="4"></textarea>
+            <textarea
+              class="input-field"
+              formControlName="description"
+              placeholder="Descrição do curso"
+              rows="4"
+              [class.invalid]="isFieldInvalid('description', 'course')"></textarea>
+            <small class="error-message" *ngIf="isFieldInvalid('description', 'course')">
+              {{ getErrorMessage('description', 'course') }}
+            </small>
           </div>
 
           <div class="upload-section">
@@ -153,7 +166,7 @@
               <span>Selecionar imagem do curso</span>
             </label>
             <input id="courseImage" type="file" accept="image/*" (change)="handleImageUpload($event)" />
-            <small class="upload-help">PNG, JPG até 50MB. Melhor proporção 16:9.</small>
+            <small class="upload-help">PNG, JPG até 5MB. Melhor proporção 16:9.</small>
           </div>
 
           <div class="image-preview" *ngIf="cursoEdit.imageUrl || isLoadingImage">
@@ -167,7 +180,7 @@
         </div>
 
         <footer class="modal-footer">
-          <button type="submit" class="btn-modal-save" [disabled]="isLoading">
+          <button type="submit" class="btn-modal-save" [disabled]="isLoading || editCourseForm.invalid">
             <span class="material-icons">save</span>
             Salvar
           </button>
@@ -193,45 +206,51 @@
         </button>
       </div>
 
-      <form class="modal-form" (ngSubmit)="updateInstructor()">
+      <form class="modal-form" [formGroup]="editInstructorForm" (ngSubmit)="updateInstructor()">
         <div class="modal-body">
-          <div class="input-group">
+          <div class="input-group" [class.error]="isFieldInvalid('name', 'instructor')">
             <span class="material-icons input-icon">person</span>
             <input
               type="text"
-              name="instructorName"
-              [(ngModel)]="instrutorEdit.name"
+              formControlName="name"
               placeholder="Nome completo"
               class="input-field"
-              required />
+              [class.invalid]="isFieldInvalid('name', 'instructor')" />
+            <small class="error-message" *ngIf="isFieldInvalid('name', 'instructor')">
+              {{ getErrorMessage('name', 'instructor') }}
+            </small>
           </div>
 
-          <div class="input-group">
+          <div class="input-group" [class.error]="isFieldInvalid('email', 'instructor')">
             <span class="material-icons input-icon">email</span>
             <input
               type="email"
-              name="instructorEmail"
-              [(ngModel)]="instrutorEdit.email"
+              formControlName="email"
               placeholder="E-mail"
               class="input-field"
-              required />
+              [class.invalid]="isFieldInvalid('email', 'instructor')" />
+            <small class="error-message" *ngIf="isFieldInvalid('email', 'instructor')">
+              {{ getErrorMessage('email', 'instructor') }}
+            </small>
           </div>
 
-          <div class="input-group">
+          <div class="input-group" [class.error]="isFieldInvalid('cpf', 'instructor')">
             <span class="material-icons input-icon">credit_card</span>
             <input
               type="text"
-              name="instructorCpf"
-              [(ngModel)]="instrutorEdit.cpf"
+              formControlName="cpf"
               cpfMask
               placeholder="CPF"
               class="input-field"
-              required />
+              [class.invalid]="isFieldInvalid('cpf', 'instructor')" />
+            <small class="error-message" *ngIf="isFieldInvalid('cpf', 'instructor')">
+              {{ getErrorMessage('cpf', 'instructor') }}
+            </small>
           </div>
         </div>
 
         <footer class="modal-footer">
-          <button type="submit" class="btn-modal-save">
+          <button type="submit" class="btn-modal-save" [disabled]="editInstructorForm.invalid">
             <span class="material-icons">save</span>
             Salvar
           </button>

@@ -612,20 +612,25 @@ tbody tr:last-child td {
     position: relative;
     margin-bottom: 1.5rem;
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    gap: 0;
 }
 
-.input-group .material-icons {
+.input-group > .material-icons {
+    position: absolute;
+    left: 15px;
+    top: 15px;
     color: #95a5a6;
     font-size: 24px;
+    z-index: 2;
+    pointer-events: none;
 }
 
 .input-group input,
 .input-group textarea,
 .input-group select {
-    flex: 1;
-    padding: 0.875rem 1rem;
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 50px;
     border: 2px solid #e8ecef;
     border-radius: 10px;
     font-size: 1rem;
@@ -660,14 +665,14 @@ tbody tr:last-child td {
 /* Password Wrapper */
 .password-wrapper {
     position: relative;
-    flex: 1;
+    width: 100%;
     display: flex;
     align-items: center;
 }
 
 .password-wrapper input {
-    flex: 1;
-    padding: 0.875rem 3rem 0.875rem 1rem;
+    width: 100%;
+    padding: 0.875rem 3rem 0.875rem 50px;
     border: 2px solid #e8ecef;
     border-radius: 10px;
     font-size: 1rem;
@@ -686,16 +691,19 @@ tbody tr:last-child td {
 .password-toggle-icon {
     position: absolute;
     right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
     color: #95a5a6;
     font-size: 22px;
     cursor: pointer;
     transition: all 0.3s ease;
     user-select: none;
+    z-index: 3;
 }
 
 .password-toggle-icon:hover {
     color: #3261a8;
-    transform: scale(1.1);
+    transform: translateY(-50%) scale(1.1);
 }
 
 /* Selected Instructors */
@@ -846,6 +854,48 @@ tbody tr:last-child td {
 .btn-modal-save .material-icons,
 .btn-modal-cancel .material-icons {
     font-size: 20px;
+}
+
+/* Validation Styles */
+.input-group.error input,
+.input-group.error textarea,
+.input-group.error select,
+input.invalid,
+textarea.invalid,
+select.invalid {
+    border-color: #e74c3c !important;
+    background-color: #fff5f5 !important;
+}
+
+.error-message {
+    display: block;
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    margin-left: 50px;
+    font-weight: 500;
+}
+
+.input-group.error input:focus,
+.input-group.error textarea:focus,
+.input-group.error select:focus,
+input.invalid:focus,
+textarea.invalid:focus,
+select.invalid:focus {
+    box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.1) !important;
+}
+
+.btn-modal-save:disabled,
+.btn-modal-cancel:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.password-wrapper .input-group.error input {
+    border-color: #e74c3c !important;
+    background-color: #fff5f5 !important;
 }
 
 /* Responsive Design */

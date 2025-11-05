@@ -15,9 +15,6 @@ export class UserService {
 
   private createHeaders(): HttpHeaders {
     const token = localStorage.getItem('authToken');
-    if (!token) {
-      console.error("Erro: Token de autenticação não encontrado.");
-    }
 
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'
@@ -92,7 +89,12 @@ export class UserService {
     return this.http.delete<void>(`${this.baseUrl}/${userId}/cursos/${courseId}`, { headers });
   }
 
-  updateUser(user: { id: number; name: string; email: string; cpf: string }): Observable<void> {
+  getUserSchool(userId: number): Observable<any> {
+    const headers = this.createHeaders();
+    return this.http.get<any>(`${this.baseUrl}/${userId}/school`, { headers });
+  }
+
+  updateUser(user: { id: number; name: string; email: string; cpf: string; school?: { id: number } | null }): Observable<void> {
     const headers = this.createHeaders();
     return this.http.put<void>(`${this.baseUrl}/${user.id}`, user, { headers });
   }

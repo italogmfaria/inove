@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
 import { CursoDTO } from '../dto/CursoDTO';
+import { CompletedContentResponseDTO } from '../dto/CompletedContentDTO';
 
 @Injectable({
   providedIn: 'root',
@@ -75,6 +76,22 @@ export class CourseService {
   deleteCourse(courseId: number): Observable<void> {
     const headers = this.createHeaders();
     return this.http.delete<void>(`${this.baseUrl}/${courseId}`, { headers });
+  }
+
+  getStudentProgress(courseId: number, userId: number): Observable<CompletedContentResponseDTO> {
+    const headers = this.createHeaders();
+    return this.http.get<CompletedContentResponseDTO>(
+      `${this.baseUrl}/${courseId}/discente/${userId}/progresso`,
+      { headers }
+    );
+  }
+
+  getCurrentUserProgress(courseId: number): Observable<CompletedContentResponseDTO> {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      return throwError(() => new Error('Usuário não está logado.'));
+    }
+    return this.getStudentProgress(courseId, parseInt(userId, 10));
   }
 
   private createHeaders(): HttpHeaders {

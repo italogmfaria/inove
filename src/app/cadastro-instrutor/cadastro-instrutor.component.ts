@@ -84,9 +84,68 @@ export class CadastroInstrutorComponent {
         }, 1500);
       },
       error: (error) => {
-        console.error(error);
-        this.toastr.error(error.error || 'Erro ao enviar solicitação.', 'Erro');
+        console.error('Erro ao criar instrutor:', error);
         this.isSubmitting = false;
+
+        if (error.status === 0) {
+          this.toastr.error('Não foi possível conectar ao servidor. Verifique sua conexão.', 'Erro de Conexão');
+          return;
+        }
+
+        if (error.status === 400) {
+          let errorMessage = '';
+
+          if (typeof error.error === 'string') {
+            errorMessage = error.error;
+          } else if (error.error?.message) {
+            errorMessage = error.error.message;
+          }
+
+          if (errorMessage.includes('E-mail já cadastrado') ||
+              errorMessage.includes('e-mail') ||
+              errorMessage.includes('email')) {
+            this.toastr.error('O e-mail informado já está cadastrado no sistema.', 'E-mail Duplicado');
+            return;
+          }
+
+          if (errorMessage.includes('CPF já cadastrado') ||
+              errorMessage.includes('cpf')) {
+            this.toastr.error('O CPF informado já está cadastrado no sistema.', 'CPF Duplicado');
+            return;
+          }
+
+          if (errorMessage.includes('solicitação de cadastro') ||
+              errorMessage.includes('solicitação')) {
+            this.toastr.warning(errorMessage, 'Solicitação Pendente');
+            return;
+          }
+
+          const message = errorMessage || 'Verifique os dados informados e tente novamente.';
+          this.toastr.warning(message, 'Dados Inválidos');
+          return;
+        }
+
+        if (error.status === 409) {
+          this.toastr.error('Já existe uma solicitação pendente com esses dados.', 'Conflito');
+          return;
+        }
+
+        if (error.status === 422) {
+          const errorMessage = error.error?.message || 'Verifique os dados informados.';
+          this.toastr.warning(errorMessage, 'Validação');
+          return;
+        }
+
+        if (error.status >= 500) {
+          this.toastr.error(
+            'Ocorreu um erro no servidor. Tente novamente mais tarde.',
+            'Erro no Servidor'
+          );
+          return;
+        }
+
+        // Erro genérico para casos não tratados
+        this.toastr.error('Não foi possível enviar a solicitação. Tente novamente.', 'Erro');
       }
     });
   }

@@ -1,5 +1,6 @@
 import {CursoDTO} from "./CursoDTO";
 import {UserRole} from "./UserRole";
+import {SchoolDTO} from "./SchoolDTO";
 
 export interface UserDTO {
   id: number;
@@ -8,7 +9,8 @@ export interface UserDTO {
   email: string;
   password: string;
   birthDate: Date;
-  schoolId: number;
+  schoolId?: number;
+  school?: SchoolDTO;
   studentCourses: CursoDTO[];
   adminCourses: CursoDTO[];
   instructorCourses: CursoDTO[];

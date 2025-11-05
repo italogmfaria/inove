@@ -502,6 +502,58 @@ body {
     overflow: hidden;
 }
 
+/* Course Progress */
+.course-progress {
+    margin-bottom: 1rem;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.progress-label {
+    font-size: 0.85rem;
+    color: #5a6c7d;
+    font-weight: 500;
+}
+
+.progress-percentage {
+    font-size: 0.85rem;
+    color: #3261a8;
+    font-weight: 600;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: #e8ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #3261a8;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.2) 100%);
+    border-radius: 4px;
+}
+
 .course-actions {
     display: flex;
     gap: 0.75rem;
@@ -752,6 +804,55 @@ body {
     box-shadow: 0 0 0 4px rgba(50, 97, 168, 0.1);
 }
 
+/* Validation Styles */
+.input-group.error .input-field,
+.input-field.invalid {
+    border-color: #e74c3c !important;
+    background-color: #fff5f5 !important;
+}
+
+.error-message {
+    display: block;
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    margin-left: 48px;
+    font-weight: 500;
+}
+
+.input-field:focus.invalid {
+    box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.1) !important;
+}
+
+.btn-save:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.school-register-link {
+    text-align: center;
+    font-size: 0.95em;
+    color: #7f8c8d;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.btn-link {
+    color: #3261a8;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.btn-link:hover {
+    color: #f9a826;
+    border-bottom-color: #f9a826;
+}
+
 .btn-save {
     margin-top: 1rem;
     padding: 1rem;
@@ -821,7 +922,7 @@ body {
 }
 
 .confirm-icon.logout .material-icons {
-  color: white;
+    color: white;
 }
 
 .confirm-content h2 {
@@ -946,6 +1047,21 @@ body {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
+    }
+
+    .progress-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .progress-label,
+    .progress-percentage {
+        font-size: 0.8rem;
+    }
+
+    .progress-bar {
+        height: 6px;
     }
 }
 

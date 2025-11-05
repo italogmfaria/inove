@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { ContentDTO } from '../dto/ContentDTO';
+import { CompletedContentMinDTO } from '../dto/CompletedContentDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -76,6 +77,11 @@ export class ContentService {
       formData,
       { headers: this.getAuthHeaders(), responseType: 'text' }
     );
+  }
+
+  markAsCompleted(courseId: number, sectionId: number, contentId: number, userId: number): Observable<CompletedContentMinDTO> {
+    const url = `${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos/${contentId}/discente/${userId}/progresso`;
+    return this.http.post<CompletedContentMinDTO>(url, {}, { headers: this.getHeaders() });
   }
 
   private getHeaders(): HttpHeaders {

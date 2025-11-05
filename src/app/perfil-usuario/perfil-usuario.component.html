@@ -66,6 +66,18 @@
                             <div class="course-content">
                                 <h3 class="course-title" (click)="navigateToCourse(course.id)">{{ course.name }}</h3>
                                 <p class="course-description">{{ course.description }}</p>
+
+                                <!-- Progress Bar -->
+                                <div class="course-progress">
+                                    <div class="progress-header">
+                                        <span class="progress-label">Progresso do curso</span>
+                                        <span class="progress-percentage">{{ getCourseProgress(course.id) }}%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" [style.width.%]="getCourseProgress(course.id)"></div>
+                                    </div>
+                                </div>
+
                                 <div class="course-actions">
                                     <button class="btn-continue" (click)="navigateToCourse(course.id)">
                                         <span class="material-icons">play_arrow</span>
@@ -108,6 +120,13 @@
                             </div>
                             <div class="info-value">{{ user.cpf | mask: '000.000.000-00' }}</div>
                         </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <span class="material-icons">school</span>
+                                <span>Escola</span>
+                            </div>
+                            <div class="info-value">{{ getSchoolName() }}</div>
+                        </div>
 
                         <button class="btn-edit" (click)="toggleEdit()">
                             <span class="material-icons">edit</span>
@@ -132,45 +151,67 @@
                 </button>
             </div>
 
-            <form class="modal-form" (ngSubmit)="saveUserData()">
-                <div class="input-group">
+            <form class="modal-form" [formGroup]="editUserForm" (ngSubmit)="saveUserData()">
+                <div class="input-group" [class.error]="isFieldInvalid('name')">
                     <span class="material-icons input-icon">person</span>
                     <input
                         id="edit-nome"
                         type="text"
-                        name="userName"
-                        [(ngModel)]="user.name"
+                        formControlName="name"
                         placeholder="Digite seu nome completo"
                         class="input-field"
-                        required />
+                        [class.invalid]="isFieldInvalid('name')" />
+                    <small class="error-message" *ngIf="isFieldInvalid('name')">
+                        {{ getErrorMessage('name') }}
+                    </small>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group" [class.error]="isFieldInvalid('email')">
                     <span class="material-icons input-icon">email</span>
                     <input
                         id="edit-email"
                         type="email"
-                        name="userEmail"
-                        [(ngModel)]="user.email"
+                        formControlName="email"
                         placeholder="Digite seu e-mail"
                         class="input-field"
-                        required />
+                        [class.invalid]="isFieldInvalid('email')" />
+                    <small class="error-message" *ngIf="isFieldInvalid('email')">
+                        {{ getErrorMessage('email') }}
+                    </small>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group" [class.error]="isFieldInvalid('cpf')">
                     <span class="material-icons input-icon">credit_card</span>
                     <input
                         id="edit-cpf"
                         type="text"
-                        name="userCpf"
-                        [(ngModel)]="user.cpf"
+                        formControlName="cpf"
                         cpfMask
                         placeholder="000.000.000-00"
                         class="input-field"
-                        required />
+                        [class.invalid]="isFieldInvalid('cpf')" />
+                    <small class="error-message" *ngIf="isFieldInvalid('cpf')">
+                        {{ getErrorMessage('cpf') }}
+                    </small>
                 </div>
 
-                <button type="submit" class="btn-save">
+                <div class="input-group">
+                    <span class="material-icons input-icon">school</span>
+                    <select
+                        id="edit-school"
+                        formControlName="schoolId"
+                        class="input-field">
+                        <option [ngValue]="null">Selecione sua escola</option>
+                        <option *ngFor="let school of schools" [ngValue]="school.id">{{ school.name }}</option>
+                    </select>
+                </div>
+
+                <p class="school-register-link">
+                    Não tem sua escola cadastrada?
+                    <a (click)="navigateTo('/cadastro-escola')" class="btn-link">Cadastre sua Escola!</a>
+                </p>
+
+                <button type="submit" class="btn-save" [disabled]="editUserForm.invalid">
                     <span class="material-icons">save</span>
                     <span>Salvar Alterações</span>
                 </button>
