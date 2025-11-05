@@ -38,10 +38,11 @@ export class UserService {
     return this.http.get<UserDTO[]>(`${this.baseUrl}/instrutor`, { headers });
   }
 
-  addUser(user: UserDTO): Observable<void> {
+  addUser(user: any): Observable<void> {
     const headers = this.createHeaders();
     let endpoint: string;
 
+    // Determinar o endpoint baseado no role
     if (['ADMINISTRATOR', 'INSTRUCTOR'].includes(user.role)) {
         endpoint = `${this.baseUrl}/admin`;
     } else if (user.role === 'STUDENT') {
@@ -51,7 +52,7 @@ export class UserService {
     }
 
     return this.http.post<void>(endpoint, user, { headers });
-}
+  }
 
   getUserById(userId: number): Observable<UserDTO> {
     const headers = this.createHeaders();

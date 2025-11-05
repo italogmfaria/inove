@@ -42,24 +42,14 @@ export class CourseService {
   }
 
 
-  addCourse(course: CursoDTO): Observable<void> {
+  addCourse(course: any): Observable<void> {
     const headers = this.createHeaders();
-    const payload = {
-      name: course.name,
-      description: course.description,
-      instructors: course.instructors
-    };
-    return this.http.post<void>(this.baseUrl, payload, { headers });
+    return this.http.post<void>(this.baseUrl, course, { headers });
   }
 
   updateCourse(id: number, courseData: any): Observable<void> {
     const headers = this.createHeaders();
-    const payload = {
-      name: courseData.name,
-      description: courseData.description,
-      instructors: courseData.instructors
-    };
-    return this.http.put<void>(`${this.baseUrl}/${id}`, payload, { headers });
+    return this.http.put<void>(`${this.baseUrl}/${id}`, courseData, { headers });
   }
 
   updateCourseInstructor(id: number, coursePayload: { name: string; description: string; imageUrl?: string }): Observable<void> {

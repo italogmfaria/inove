@@ -133,22 +133,32 @@ export class PainelAdminComponent {
         return;
     }
 
-    // Preparar o payload sem o campo school
-    const userPayload: any = {
-        name: this.newUser.name,
-        email: this.newUser.email,
-        cpf: this.newUser.cpf,
-        password: this.newUser.password,
-        role: this.newUser.role,
-        birthDate: this.newUser.birthDate,
-        studentCourses: [],
-        adminCourses: [],
-        instructorCourses: []
-    };
+    let userPayload: any;
 
-    // Adicionar schoolId apenas se for STUDENT e tiver escola selecionada
-    if (this.newUser.role === 'STUDENT' && this.newUser.schoolId) {
-        userPayload.schoolId = this.newUser.schoolId;
+    if (this.newUser.role === 'STUDENT') {
+        if (!this.newUser.schoolId) {
+            this.toastr.warning('Por favor, selecione uma escola para o estudante.', 'Atenção');
+            return;
+        }
+        userPayload = {
+            name: this.newUser.name,
+            email: this.newUser.email,
+            cpf: this.newUser.cpf,
+            password: this.newUser.password,
+            birthDate: this.newUser.birthDate,
+            school: {
+                id: this.newUser.schoolId
+            },
+            role: 'STUDENT'
+        };
+    } else {
+        userPayload = {
+            name: this.newUser.name,
+            email: this.newUser.email,
+            cpf: this.newUser.cpf,
+            password: this.newUser.password,
+            role: this.newUser.role
+        };
     }
 
     this.userService.addUser(userPayload).subscribe(
@@ -176,6 +186,16 @@ export class PainelAdminComponent {
       role: [UserRole.STUDENT, [Validators.required]],
       schoolId: [null]
     });
+
+    this.addUserForm.valueChanges.subscribe(values => {
+      this.newUser.name = values.name;
+      this.newUser.email = values.email;
+      this.newUser.cpf = values.cpf;
+      this.newUser.password = values.password;
+      this.newUser.role = values.role;
+      this.newUser.schoolId = values.schoolId;
+    });
+
     this.showAddUserModal = true;
   }
 
@@ -230,6 +250,14 @@ export class PainelAdminComponent {
       email: [user.email || '', [Validators.required, Validators.email]],
       cpf: [user.cpf || '', [CpfValidator.validate]]
     });
+
+    // Subscribe to form value changes to update selectedUser
+    this.updateUserForm.valueChanges.subscribe(values => {
+      this.selectedUser.name = values.name;
+      this.selectedUser.email = values.email;
+      this.selectedUser.cpf = values.cpf;
+    });
+
     this.showAddUserModal = false;
     this.showUpdateUserModal = true;
   }
@@ -310,6 +338,14 @@ export class PainelAdminComponent {
       city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       federativeUnit: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]]
     });
+
+    this.addSchoolForm.valueChanges.subscribe(values => {
+      this.newSchool.name = values.name;
+      this.newSchool.email = values.email;
+      this.newSchool.city = values.city;
+      this.newSchool.federativeUnit = values.federativeUnit;
+    });
+
     this.showNewSchoolModal = !this.showNewSchoolModal;
   }
 
@@ -321,6 +357,15 @@ export class PainelAdminComponent {
       city: [school.city || '', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       federativeUnit: [school.federativeUnit || '', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]]
     });
+
+    // Subscribe to form value changes to update selectedSchool
+    this.updateSchoolForm.valueChanges.subscribe(values => {
+      this.selectedSchool.name = values.name;
+      this.selectedSchool.email = values.email;
+      this.selectedSchool.city = values.city;
+      this.selectedSchool.federativeUnit = values.federativeUnit;
+    });
+
     this.showSchoolModal = true;
   }
 
@@ -378,8 +423,14 @@ getCourses(): void {
     }
 
     const coursePayload = {
-      ...this.newCourse,
-      instructors: [instructor]
+      name: this.newCourse.name,
+      description: this.newCourse.description,
+      instructors: [{
+        id: instructor.id,
+        name: instructor.name,
+        email: instructor.email,
+        role: instructor.role
+      }]
     };
 
     this.courseService.addCourse(coursePayload).subscribe(
@@ -401,16 +452,20 @@ getCourses(): void {
       return;
     }
 
-    // Find the selected instructor from the list
+    // Find the selected instructor from the list if one is selected
     const instructor = this.selectedInstructorId ?
       this.instrutores.find(i => i.id === Number(this.selectedInstructorId)) :
       null;
 
     const coursePayload = {
-      id: this.selectedCourse.id,
       name: this.selectedCourse.name,
       description: this.selectedCourse.description,
-      instructors: instructor ? [instructor] : []
+      instructors: instructor ? [{
+        id: instructor.id,
+        name: instructor.name,
+        email: instructor.email,
+        role: instructor.role
+      }] : []
     };
 
     this.courseService.updateCourse(this.selectedCourse.id, coursePayload).subscribe(
@@ -435,6 +490,14 @@ getCourses(): void {
       description: ['', [Validators.required, Validators.maxLength(1000)]],
       instructorId: [null, [Validators.required]]
     });
+
+    // Subscribe to form value changes to update newCourse
+    this.addCourseForm.valueChanges.subscribe(values => {
+      this.newCourse.name = values.name;
+      this.newCourse.description = values.description;
+      this.selectedInstructorId = values.instructorId;
+    });
+
     this.showAddCourseModal = true;
   }
 
@@ -448,6 +511,14 @@ getCourses(): void {
       description: [course.description || '', [Validators.required, Validators.maxLength(1000)]],
       instructorId: [this.selectedInstructorId]
     });
+
+    // Subscribe to form value changes to update selectedCourse
+    this.updateCourseForm.valueChanges.subscribe(values => {
+      this.selectedCourse.name = values.name;
+      this.selectedCourse.description = values.description;
+      this.selectedInstructorId = values.instructorId;
+    });
+
     this.showUpdateCourseModal = true;
   }
 
