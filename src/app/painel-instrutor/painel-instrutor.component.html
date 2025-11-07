@@ -154,7 +154,9 @@
               formControlName="description"
               placeholder="Descrição do curso"
               rows="4"
+              maxlength="255"
               [class.invalid]="isFieldInvalid('description', 'course')"></textarea>
+            <small class="char-counter">{{ editCourseForm.get('description')?.value?.length || 0 }}/255 caracteres</small>
             <small class="error-message" *ngIf="isFieldInvalid('description', 'course')">
               {{ getErrorMessage('description', 'course') }}
             </small>

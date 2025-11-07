@@ -487,7 +487,7 @@ getCourses(): void {
     this.selectedInstructorId = null;
     this.addCourseForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
-      description: ['', [Validators.required, Validators.maxLength(1000)]],
+      description: ['', [Validators.required, Validators.maxLength(255)]],
       instructorId: [null, [Validators.required]]
     });
 
@@ -508,7 +508,7 @@ getCourses(): void {
     this.selectedInstructorId = currentInstructor ? currentInstructor.id : null;
     this.updateCourseForm = this.fb.group({
       name: [course.name || '', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
-      description: [course.description || '', [Validators.required, Validators.maxLength(1000)]],
+      description: [course.description || '', [Validators.required, Validators.maxLength(255)]],
       instructorId: [this.selectedInstructorId]
     });
 

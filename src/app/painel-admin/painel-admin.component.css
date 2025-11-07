@@ -876,6 +876,16 @@ select.invalid {
     font-weight: 500;
 }
 
+.char-counter {
+    display: block;
+    color: #7f8c8d;
+    font-size: 0.8rem;
+    margin-top: 0.4rem;
+    margin-left: 50px;
+    font-weight: 500;
+    text-align: right;
+}
+
 .input-group.error input:focus,
 .input-group.error textarea:focus,
 .input-group.error select:focus,

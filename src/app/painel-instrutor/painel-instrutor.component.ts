@@ -63,7 +63,7 @@ export class PainelInstrutorComponent implements OnInit {
 
       this.editCourseForm = this.fb.group({
         name: [curso.name || '', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
-        description: [curso.description || '', [Validators.maxLength(500)]]
+        description: [curso.description || '', [Validators.maxLength(255)]]
       });
 
       this.isLoadingImage = true;

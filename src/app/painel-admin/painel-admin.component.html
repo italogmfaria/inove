@@ -458,8 +458,9 @@
         </div>
         <div class="input-group" [class.error]="isFieldInvalid('description', 'course')">
           <span class="material-icons">description</span>
-          <textarea formControlName="description" placeholder="Descrição do curso"
+          <textarea formControlName="description" placeholder="Descrição do curso" maxlength="255"
                     [class.invalid]="isFieldInvalid('description', 'course')"></textarea>
+          <small class="char-counter">{{ addCourseForm.get('description')?.value?.length || 0 }}/255 caracteres</small>
           <small class="error-message" *ngIf="isFieldInvalid('description', 'course')">
             {{ getErrorMessage('description', 'course') }}
           </small>
@@ -510,8 +511,9 @@
         </div>
         <div class="input-group" [class.error]="isFieldInvalid('description', 'course')">
           <span class="material-icons">description</span>
-          <textarea formControlName="description" placeholder="Descrição do curso"
+          <textarea formControlName="description" placeholder="Descrição do curso" maxlength="255"
                     [class.invalid]="isFieldInvalid('description', 'course')"></textarea>
+          <small class="char-counter">{{ updateCourseForm.get('description')?.value?.length || 0 }}/255 caracteres</small>
           <small class="error-message" *ngIf="isFieldInvalid('description', 'course')">
             {{ getErrorMessage('description', 'course') }}
           </small>

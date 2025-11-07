@@ -52,7 +52,6 @@ export class PerfilUsuarioComponent implements OnInit {
       return;
     }
 
-    // Buscar dados do usuário
     this.userService.getUserById(userId).subscribe({
       next: (user) => {
         this.user = user;
@@ -73,7 +72,6 @@ export class PerfilUsuarioComponent implements OnInit {
       }
     });
 
-    // Buscar lista de escolas
     this.schoolService.getSchools().subscribe({
       next: (schools) => {
         this.schools = schools;
@@ -83,13 +81,11 @@ export class PerfilUsuarioComponent implements OnInit {
       }
     });
 
-    // Buscar os cursos do usuário e carregar as imagens
-    this.userCourses = []; // Inicializar como array vazio
+    this.userCourses = [];
 
     this.userService.getUserCourses(userId).subscribe({
       next: (courses) => {
         if (courses && Array.isArray(courses) && courses.length > 0) {
-          // Filtrar cursos válidos (que tenham pelo menos id e name)
           this.userCourses = courses.filter(course =>
             course &&
             course.id !== undefined &&
@@ -136,6 +132,10 @@ export class PerfilUsuarioComponent implements OnInit {
 
   navigateTo(path: string): void {
     this.router.navigate([path]);
+  }
+
+  navigateToRegisterSchool(): void {
+    this.router.navigate(['/cadastro-escola'], { queryParams: { returnUrl: '/perfil-usuario' } });
   }
 
   switchPanel(panel: 'cursos' | 'dados'): void {

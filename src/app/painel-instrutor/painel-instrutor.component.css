@@ -716,6 +716,16 @@ textarea::placeholder {
     font-weight: 500;
 }
 
+.char-counter {
+    display: block;
+    color: #7f8c8d;
+    font-size: 0.8rem;
+    margin-top: 0.4rem;
+    margin-left: 48px;
+    font-weight: 500;
+    text-align: right;
+}
+
 .input-field:focus.invalid {
     box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.1) !important;
 }

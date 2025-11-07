@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SchoolService } from '../common/service/school.service';
 import { ToastrService } from 'ngx-toastr';
@@ -13,13 +13,22 @@ import { ToastrService } from 'ngx-toastr';
 export class CadastroEscolaComponent {
   schoolForm: FormGroup;
   isSubmitting = false;
+  returnUrl: string = '/cadastro-estudante';
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private schoolService: SchoolService,
     private toastr: ToastrService,
     private fb: FormBuilder
   ) {
+    // Verificar se há returnUrl nos query params
+    this.route.queryParams.subscribe(params => {
+      if (params['returnUrl']) {
+        this.returnUrl = params['returnUrl'];
+      }
+    });
+
     this.schoolForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
@@ -30,6 +39,14 @@ export class CadastroEscolaComponent {
 
   navigateTo(path: string) {
     this.router.navigate([path]);
+  }
+
+  goBack() {
+    if (this.returnUrl !== '/cadastro-estudante') {
+      this.router.navigate([this.returnUrl]);
+    } else {
+      this.router.navigate(['/cadastro-estudante']);
+    }
   }
 
   getErrorMessage(fieldName: string): string {
@@ -59,7 +76,6 @@ export class CadastroEscolaComponent {
   }
 
   registerSchool() {
-    // Marcar todos os campos como touched
     Object.keys(this.schoolForm.controls).forEach(key => {
       this.schoolForm.get(key)?.markAsTouched();
     });
@@ -80,7 +96,7 @@ export class CadastroEscolaComponent {
     this.schoolService.addSchool(schoolData).subscribe({
       next: () => {
         this.toastr.success('Escola cadastrada com sucesso!', 'Sucesso');
-        this.router.navigate(['/cadastro-estudante']);
+        this.router.navigate([this.returnUrl]);
         this.isSubmitting = false;
       },
       error: (err) => {
