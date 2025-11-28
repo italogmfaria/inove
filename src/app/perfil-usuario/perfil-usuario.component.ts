@@ -48,7 +48,14 @@ export class PerfilUsuarioComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const userId = Number(localStorage.getItem('userId'));
+    // Obtém o userId do token JWT (mais confiável que localStorage)
+    let userId = this.getUserIdFromToken();
+
+    // Se não conseguir do token, tenta do localStorage como fallback
+    if (!userId) {
+      userId = Number(localStorage.getItem('userId'));
+    }
+
     if (!userId || userId === 0) {
       this.router.navigate(['/login']);
       return;
@@ -251,7 +258,15 @@ export class PerfilUsuarioComponent implements OnInit {
     this.confirmationMessage = `Tem certeza que deseja remover "${courseName}" dos seus cursos? Esta ação não pode ser desfeita.`;
 
     this.pendingAction = () => {
-      const userId = Number(localStorage.getItem('userId'));
+      let userId = this.getUserIdFromToken();
+      if (!userId) {
+        userId = Number(localStorage.getItem('userId'));
+      }
+
+      if (!userId) {
+        this.toastr.error('Erro ao identificar usuário. Faça login novamente.', 'Erro');
+        return;
+      }
 
       this.userService.removeUserCourse(userId, courseId).subscribe({
         next: () => {
@@ -385,5 +400,29 @@ export class PerfilUsuarioComponent implements OnInit {
 
   getCourseProgress(courseId: number): number {
     return this.courseProgress[courseId] || 0;
+  }
+
+  /**
+   * Extrai o userId do token JWT
+   * Isto é mais confiável que usar o localStorage
+   */
+  private getUserIdFromToken(): number | null {
+    try {
+      const token = this.authService.getToken();
+      if (!token) {
+        return null;
+      }
+
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const userId = payload.sub || payload.userId || payload.id;
+
+      if (userId && !isNaN(Number(userId))) {
+        return Number(userId);
+      }
+
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 }
