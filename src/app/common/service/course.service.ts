@@ -4,7 +4,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
 import { CursoDTO } from '../dto/CursoDTO';
 import { CompletedContentResponseDTO } from '../dto/CompletedContentDTO';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,10 +11,8 @@ import { AuthService } from './auth.service';
 export class CourseService {
   private baseUrl = `${environment.apiBaseUrl}/cursos`;
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) {}
+
+  constructor(private http: HttpClient) {}
 
   getCourses(): Observable<any[]> {
     const headers = this.createHeaders();
@@ -88,7 +85,7 @@ export class CourseService {
   }
 
   private createHeaders(): HttpHeaders {
-    const token = this.authService.getToken();
+    const token = localStorage.getItem('authToken');
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });

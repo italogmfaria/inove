@@ -10,8 +10,6 @@ import { FeedbackService } from "./common/service/feedback.service";
 import { provideNgxMask } from 'ngx-mask';
 import { RECAPTCHA_SETTINGS, RecaptchaSettings } from 'ng-recaptcha';
 import { environment } from '../environments/environment';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { SessionInterceptor } from './common/interceptor/session.interceptor';
 
 export const APP_PROVIDERS = [
   LoginService,
@@ -29,10 +27,5 @@ export const APP_PROVIDERS = [
     useValue: {
       siteKey: environment.recaptchaSiteKey,
     } as RecaptchaSettings,
-  },
-  {
-    provide: HTTP_INTERCEPTORS,
-    useClass: SessionInterceptor,
-    multi: true
   }
 ];
