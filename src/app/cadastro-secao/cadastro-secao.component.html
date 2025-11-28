@@ -168,10 +168,11 @@
         <textarea [(ngModel)]="currentContent.description" placeholder="Descrição do conteúdo"></textarea>
       </div>
 
-      <div class="content-type-selector">
+      <div class="content-type-selector" [class.error]="!currentContent.contentType">
         <label>
           <span class="material-icons">category</span>
           Tipo de Conteúdo
+          <span class="required-indicator" *ngIf="!currentContent.contentType">*</span>
         </label>
         <div class="type-options">
           <button
@@ -191,6 +192,10 @@
             <span>PDF (Teórico)</span>
           </button>
         </div>
+        <p class="error-message" *ngIf="!currentContent.contentType">
+          <span class="material-icons">error_outline</span>
+          Selecione um tipo de conteúdo para continuar
+        </p>
       </div>
 
       <div class="upload-section">
@@ -213,10 +218,10 @@
           </div>
           <div class="existing-content-info">
             <div class="content-details">
-              <span class="material-icons">{{ isVideo() ? 'play_circle' : 'picture_as_pdf' }}</span>
+              <span class="material-icons">{{ isExistingFileVideo() ? 'play_circle' : 'picture_as_pdf' }}</span>
               <div class="content-text">
                 <strong>{{ currentContent.title }}</strong>
-                <small>{{ isVideo() ? 'Vídeo' : 'Documento PDF' }}</small>
+                <small>{{ isExistingFileVideo() ? 'Vídeo' : 'Documento PDF' }}</small>
               </div>
             </div>
             <button type="button" class="btn-preview" (click)="openPreviewModal()">

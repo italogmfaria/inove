@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../service/auth.service';
+import { SessionService } from '../service/session.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
@@ -10,6 +11,7 @@ export class AuthGuard implements CanActivate {
 
   constructor(
     private authService: AuthService,
+    private sessionService: SessionService,
     private router: Router,
     private toastr: ToastrService
   ) {}
@@ -22,12 +24,23 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
+    // Verifica se a sessão é válida
+    if (!this.sessionService.isSessionValid()) {
+      this.toastr.error('Sua sessão expirou ou você foi desconectado em outra aba!', 'Sessão Inválida');
+      this.authService.logout().subscribe({
+        complete: () => this.router.navigate(['/login'])
+      });
+      return false;
+    }
+
     const userRole = this.authService.getRole();
     const allowedRole = route.data['role'];
 
     if (allowedRole && userRole !== allowedRole) {
       this.toastr.error('Você não tem permissão para acessar essa página!', 'Acesso Negado');
-      this.router.navigate(['/login']);
+      this.authService.logout().subscribe({
+        complete: () => this.router.navigate(['/login'])
+      });
       return false;
     }
     return true;

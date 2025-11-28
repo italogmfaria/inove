@@ -257,8 +257,16 @@ export class PainelInstrutorComponent implements OnInit {
     this.confirmationMessage = 'Tem certeza que deseja sair do painel do instrutor? Você precisará fazer login novamente para acessar.';
 
     this.pendingAction = () => {
-      this.authService.logout();
-      this.router.navigate(['/login']);
+      this.authService.logout().subscribe({
+        next: () => {
+          this.toastr.success('Você foi desconectado com sucesso!', 'Logout Realizado');
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          this.toastr.error('Erro ao fazer logout. Tente novamente.', 'Erro');
+          console.error('Erro no logout:', err);
+        }
+      });
     };
 
     this.showConfirmModal = true;

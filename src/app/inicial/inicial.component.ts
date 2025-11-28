@@ -139,4 +139,31 @@ export class InicialComponent implements OnInit {
     this.navigateTo(path);
     this.isMenuOpen = false;
   }
+
+  downloadAPK() {
+    const apkUrl = '/assets/apk/inove-app.apk';
+
+    fetch(apkUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Erro ao baixar APK: ${response.statusText}`);
+        }
+        return response.blob();
+      })
+      .then(blob => {
+        // Cria um link temporário para download
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'inove-app.apk';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch(error => {
+        console.error('Erro ao fazer download do APK:', error);
+        alert('Erro ao fazer download do APK. Tente novamente.');
+      });
+  }
 }

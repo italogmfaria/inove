@@ -21,6 +21,8 @@ export class PerfilUsuarioComponent implements OnInit {
   showEditModal: boolean = false;
   user: any = {};
   userCourses: any[] = [];
+  coursesEmAndamento: any[] = [];
+  coursesConcluidos: any[] = [];
   courseImages: { [key: number]: string } = {};
   courseProgress: { [key: number]: number } = {};
   schools: any[] = [];
@@ -98,9 +100,14 @@ export class PerfilUsuarioComponent implements OnInit {
               this.loadCourseImage(course.id);
               this.loadCourseProgress(course.id, userId);
             });
+
+            // Dividir cursos em andamento e concluídos após carregar o progresso
+            this.updateCourseCategories();
           }
         } else {
           this.userCourses = [];
+          this.coursesEmAndamento = [];
+          this.coursesConcluidos = [];
         }
       },
       error: (err) => {
@@ -108,8 +115,14 @@ export class PerfilUsuarioComponent implements OnInit {
 
         if (err.status === 401) {
           this.toastr.error('Sua sessão expirou. Faça login novamente.', 'Erro de Autenticação');
-          this.authService.logout();
-          this.router.navigate(['/login']);
+          this.authService.logout().subscribe({
+            next: () => {
+              this.router.navigate(['/login']);
+            },
+            error: () => {
+              this.router.navigate(['/login']);
+            }
+          });
         } else if (err.status === 404) {
           // Não mostrar erro ao usuário, pode ser normal não ter cursos
         } else {
@@ -243,6 +256,8 @@ export class PerfilUsuarioComponent implements OnInit {
       this.userService.removeUserCourse(userId, courseId).subscribe({
         next: () => {
           this.userCourses = this.userCourses.filter((course) => course.id !== courseId);
+          delete this.courseProgress[courseId];
+          this.updateCourseCategories();
           this.toastr.success(`O curso "${courseName}" foi removido com sucesso!`, 'Curso Removido');
         },
         error: (err) => {
@@ -260,8 +275,16 @@ export class PerfilUsuarioComponent implements OnInit {
     this.confirmationMessage = 'Tem certeza que deseja sair? Você precisará fazer login novamente para acessar a plataforma.';
 
     this.pendingAction = () => {
-      this.authService.logout();
-      this.router.navigate(['/login']);
+      this.authService.logout().subscribe({
+        next: () => {
+          this.toastr.success('Você foi desconectado com sucesso!', 'Logout Realizado');
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          this.toastr.error('Erro ao fazer logout. Tente novamente.', 'Erro');
+          console.error('Erro no logout:', err);
+        }
+      });
     };
 
     this.showConfirmModal = true;
@@ -329,11 +352,34 @@ export class PerfilUsuarioComponent implements OnInit {
       next: (progress) => {
         const progressPercentage = this.userProgressService.getPercentageAsNumber(progress);
         this.courseProgress[courseId] = progressPercentage;
+
+        // Atualizar categorias quando o progresso é carregado
+        this.updateCourseCategories();
       },
       error: (error) => {
         console.error('Erro ao carregar progresso do curso:', error);
         this.courseProgress[courseId] = 0;
+
+        // Atualizar categorias mesmo em caso de erro
+        this.updateCourseCategories();
       }
+    });
+  }
+
+  /**
+   * Divide os cursos em duas categorias:
+   * - Em Andamento: progress < 100%
+   * - Concluídos: progress = 100%
+   */
+  updateCourseCategories(): void {
+    this.coursesEmAndamento = this.userCourses.filter(course => {
+      const progress = this.getCourseProgress(course.id);
+      return progress < 100;
+    });
+
+    this.coursesConcluidos = this.userCourses.filter(course => {
+      const progress = this.getCourseProgress(course.id);
+      return progress === 100;
     });
   }
 

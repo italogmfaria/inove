@@ -54,38 +54,91 @@
                         </button>
                     </div>
 
-                    <div class="course-grid" *ngIf="userCourses.length > 0">
-                        <div *ngFor="let course of userCourses" class="course-card">
-                            <div class="course-image-container" (click)="navigateToCourse(course.id)">
-                                <img [src]="courseImages[course.id] || 'assets/placeholder.png'" alt="{{ course.name }}" class="course-image">
-                                <div class="course-overlay">
-                                    <span class="material-icons">play_circle</span>
-                                    <span>Continuar Curso</span>
+                    <!-- Cursos Em Andamento -->
+                    <div class="courses-section" *ngIf="coursesEmAndamento.length > 0">
+                        <div class="section-header">
+                            <span class="material-icons section-icon">schedule</span>
+                            <h2>Em Andamento</h2>
+                            <span class="course-count">{{ coursesEmAndamento.length }}</span>
+                        </div>
+                        <div class="course-grid">
+                            <div *ngFor="let course of coursesEmAndamento" class="course-card">
+                                <div class="course-image-container" (click)="navigateToCourse(course.id)">
+                                    <img [src]="courseImages[course.id] || 'assets/placeholder.png'" alt="{{ course.name }}" class="course-image">
+                                    <div class="course-overlay">
+                                        <span class="material-icons">play_circle</span>
+                                        <span>Continuar Curso</span>
+                                    </div>
+                                </div>
+                                <div class="course-content">
+                                    <h3 class="course-title" (click)="navigateToCourse(course.id)">{{ course.name }}</h3>
+                                    <p class="course-description">{{ course.description }}</p>
+
+                                    <!-- Progress Bar -->
+                                    <div class="course-progress">
+                                        <div class="progress-header">
+                                            <span class="progress-label">Progresso do curso</span>
+                                            <span class="progress-percentage">{{ getCourseProgress(course.id) }}%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" [style.width.%]="getCourseProgress(course.id)"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="course-actions">
+                                        <button class="btn-continue" (click)="navigateToCourse(course.id)">
+                                            <span class="material-icons">play_arrow</span>
+                                            <span>Continuar</span>
+                                        </button>
+                                        <button class="btn-remove" (click)="removeCourse(course.id); $event.stopPropagation();">
+                                            <span class="material-icons">delete</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="course-content">
-                                <h3 class="course-title" (click)="navigateToCourse(course.id)">{{ course.name }}</h3>
-                                <p class="course-description">{{ course.description }}</p>
+                        </div>
+                    </div>
 
-                                <!-- Progress Bar -->
-                                <div class="course-progress">
-                                    <div class="progress-header">
-                                        <span class="progress-label">Progresso do curso</span>
-                                        <span class="progress-percentage">{{ getCourseProgress(course.id) }}%</span>
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" [style.width.%]="getCourseProgress(course.id)"></div>
+                    <!-- Cursos Concluídos -->
+                    <div class="courses-section" *ngIf="coursesConcluidos.length > 0">
+                        <div class="section-header">
+                            <span class="material-icons section-icon">check_circle</span>
+                            <h2>Concluídos</h2>
+                            <span class="course-count">{{ coursesConcluidos.length }}</span>
+                        </div>
+                        <div class="course-grid">
+                            <div *ngFor="let course of coursesConcluidos" class="course-card completed">
+                                <div class="course-image-container" (click)="navigateToCourse(course.id)">
+                                    <img [src]="courseImages[course.id] || 'assets/placeholder.png'" alt="{{ course.name }}" class="course-image">
+                                    <div class="course-overlay">
+                                        <span class="material-icons">check_circle</span>
+                                        <span>Curso Concluído</span>
                                     </div>
                                 </div>
+                                <div class="course-content">
+                                    <h3 class="course-title" (click)="navigateToCourse(course.id)">{{ course.name }}</h3>
+                                    <p class="course-description">{{ course.description }}</p>
 
-                                <div class="course-actions">
-                                    <button class="btn-continue" (click)="navigateToCourse(course.id)">
-                                        <span class="material-icons">play_arrow</span>
-                                        <span>Continuar</span>
-                                    </button>
-                                    <button class="btn-remove" (click)="removeCourse(course.id); $event.stopPropagation();">
-                                        <span class="material-icons">delete</span>
-                                    </button>
+                                    <!-- Progress Bar -->
+                                    <div class="course-progress">
+                                        <div class="progress-header">
+                                            <span class="progress-label">Progresso do curso</span>
+                                            <span class="progress-percentage completed-badge">{{ getCourseProgress(course.id) }}%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill completed" [style.width.%]="getCourseProgress(course.id)"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="course-actions">
+                                        <button class="btn-continue" (click)="navigateToCourse(course.id)">
+                                            <span class="material-icons">visibility</span>
+                                            <span>Revisar</span>
+                                        </button>
+                                        <button class="btn-remove" (click)="removeCourse(course.id); $event.stopPropagation();">
+                                            <span class="material-icons">delete</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

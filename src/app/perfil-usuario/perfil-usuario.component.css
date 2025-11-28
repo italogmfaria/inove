@@ -319,6 +319,45 @@ body {
     font-weight: 700;
 }
 
+/* Courses Section */
+.courses-section {
+    margin-bottom: 3rem;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e8ecef;
+}
+
+.section-icon {
+    font-size: 28px;
+    color: #3261a8;
+}
+
+.section-header h2 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    font-weight: 600;
+    flex: 1;
+}
+
+.course-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #3261a8 0%, #2b4a8b 100%);
+    color: #fff;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
 /* Empty State */
 .empty-state {
     text-align: center;
@@ -1024,6 +1063,7 @@ body {
 @media (max-width: 768px) {
     .header {
         padding: 15px 1.5rem;
+        min-height: 90px;
     }
 
     .content {

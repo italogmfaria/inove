@@ -1357,6 +1357,7 @@ app-video-player {
 @media (max-width: 768px) {
     .header {
         padding: 15px 1.5rem;
+        min-height: 90px;
     }
 
     .logo {
