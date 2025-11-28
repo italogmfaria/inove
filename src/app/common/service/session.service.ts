@@ -26,15 +26,20 @@ export class SessionService {
   private initializeSession(): void {
     // Tenta recuperar do sessionStorage (apenas desta aba)
     let sessionId = this.getSessionIdFromStorage();
+    let sessionActive = this.getSessionActiveFromStorage();
 
     // Se não tem sessionId, gera um novo
     if (!sessionId) {
       sessionId = this.generateSessionId();
       this.setSessionIdToStorage(sessionId);
+      this.isSessionActive = true;
+      this.markSessionAsActive();
+    } else {
+      // Se já tinha sessionId, mantém o estado de ativo do sessionStorage
+      this.isSessionActive = sessionActive;
     }
 
     this.sessionId = sessionId;
-    this.isSessionActive = true;
     this.sessionIdSubject.next(sessionId);
   }
 
@@ -111,6 +116,19 @@ export class SessionService {
     } catch (e) {
       console.warn('sessionStorage não disponível', e);
       return null;
+    }
+  }
+
+  /**
+   * Obtém o estado ativo da sessão do sessionStorage
+   */
+  private getSessionActiveFromStorage(): boolean {
+    try {
+      const active = sessionStorage.getItem(this.sessionActiveKey);
+      return active === 'true';
+    } catch (e) {
+      console.warn('sessionStorage não disponível', e);
+      return true; // Por padrão, assume que está ativo
     }
   }
 

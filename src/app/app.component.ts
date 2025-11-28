@@ -30,8 +30,14 @@ export class AppComponent implements OnInit {
     const token = this.authService.getToken();
 
     if (token) {
-      // Token existe (do cookie), inicializa a sessão
-      this.sessionService.createSession();
+      // Token existe (do cookie)
+      // Se a sessão já é válida (caso de refresh de página), não cria nova
+      if (!this.sessionService.isSessionValid()) {
+        // Se sessão foi invalidada, cria uma nova
+        this.sessionService.createSession();
+      }
+      // Senão, mantém a sessão atual
     }
   }
 }
+
