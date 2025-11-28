@@ -484,6 +484,7 @@ body {
         padding: 15px 1.5rem;
         flex-wrap: wrap;
         gap: 1rem;
+        min-height: 90px;
     }
 
     .header-center {

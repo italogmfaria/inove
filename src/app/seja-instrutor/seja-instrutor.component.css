@@ -327,6 +327,10 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .header {
+        min-height: 90px;
+    }
+
     .content-box {
         padding: 35px 25px;
         margin: 20px;

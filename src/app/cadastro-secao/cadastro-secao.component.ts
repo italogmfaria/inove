@@ -318,10 +318,30 @@ export class CadastroSecaoComponent implements OnInit {
     return this.currentContent.contentType === ContentType.PDF;
   }
 
+  isExistingFileVideo(): boolean {
+    if (!this.currentContent.fileName) return false;
+    const fileName = this.currentContent.fileName.toLowerCase();
+    return fileName.endsWith('.mp4') || fileName.endsWith('.avi') ||
+           fileName.endsWith('.mov') || fileName.endsWith('.mkv') ||
+           fileName.endsWith('.webm');
+  }
+
+  isExistingFilePDF(): boolean {
+    if (!this.currentContent.fileName) return false;
+    return this.currentContent.fileName.toLowerCase().endsWith('.pdf');
+  }
+
   saveContent(): void {
     // Validações antes de iniciar o upload
     if (!this.currentContent.title || !this.currentContent.description) {
       this.toastr.warning("Por favor, preencha todos os campos.", 'Atenção');
+      this.isUploading = false;
+      return;
+    }
+
+    // Validar se um tipo de conteúdo foi selecionado
+    if (!this.currentContent.contentType) {
+      this.toastr.warning("Por favor, selecione um tipo de conteúdo (Vídeo ou PDF).", 'Atenção');
       this.isUploading = false;
       return;
     }
