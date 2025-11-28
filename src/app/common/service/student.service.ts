@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UserDTO } from '../dto/UserDTO';
 import { environment } from '../../../environments/environment';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +11,13 @@ import { environment } from '../../../environments/environment';
 export class StudentService {
   private baseUrl = `${environment.apiBaseUrl}/usuarios/discente`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
   private createHeaders(): HttpHeaders {
-    const token = localStorage.getItem('authToken');
+    const token = this.authService.getToken();
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });

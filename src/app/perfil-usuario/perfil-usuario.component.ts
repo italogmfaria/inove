@@ -21,6 +21,8 @@ export class PerfilUsuarioComponent implements OnInit {
   showEditModal: boolean = false;
   user: any = {};
   userCourses: any[] = [];
+  coursesEmAndamento: any[] = [];
+  coursesConcluidos: any[] = [];
   courseImages: { [key: number]: string } = {};
   courseProgress: { [key: number]: number } = {};
   schools: any[] = [];
@@ -46,7 +48,14 @@ export class PerfilUsuarioComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const userId = Number(localStorage.getItem('userId'));
+    // Obtém o userId do token JWT (mais confiável que localStorage)
+    let userId = this.getUserIdFromToken();
+
+    // Se não conseguir do token, tenta do localStorage como fallback
+    if (!userId) {
+      userId = Number(localStorage.getItem('userId'));
+    }
+
     if (!userId || userId === 0) {
       this.router.navigate(['/login']);
       return;
@@ -98,9 +107,14 @@ export class PerfilUsuarioComponent implements OnInit {
               this.loadCourseImage(course.id);
               this.loadCourseProgress(course.id, userId);
             });
+
+            // Dividir cursos em andamento e concluídos após carregar o progresso
+            this.updateCourseCategories();
           }
         } else {
           this.userCourses = [];
+          this.coursesEmAndamento = [];
+          this.coursesConcluidos = [];
         }
       },
       error: (err) => {
@@ -108,8 +122,14 @@ export class PerfilUsuarioComponent implements OnInit {
 
         if (err.status === 401) {
           this.toastr.error('Sua sessão expirou. Faça login novamente.', 'Erro de Autenticação');
-          this.authService.logout();
-          this.router.navigate(['/login']);
+          this.authService.logout().subscribe({
+            next: () => {
+              this.router.navigate(['/login']);
+            },
+            error: () => {
+              this.router.navigate(['/login']);
+            }
+          });
         } else if (err.status === 404) {
           // Não mostrar erro ao usuário, pode ser normal não ter cursos
         } else {
@@ -238,11 +258,21 @@ export class PerfilUsuarioComponent implements OnInit {
     this.confirmationMessage = `Tem certeza que deseja remover "${courseName}" dos seus cursos? Esta ação não pode ser desfeita.`;
 
     this.pendingAction = () => {
-      const userId = Number(localStorage.getItem('userId'));
+      let userId = this.getUserIdFromToken();
+      if (!userId) {
+        userId = Number(localStorage.getItem('userId'));
+      }
+
+      if (!userId) {
+        this.toastr.error('Erro ao identificar usuário. Faça login novamente.', 'Erro');
+        return;
+      }
 
       this.userService.removeUserCourse(userId, courseId).subscribe({
         next: () => {
           this.userCourses = this.userCourses.filter((course) => course.id !== courseId);
+          delete this.courseProgress[courseId];
+          this.updateCourseCategories();
           this.toastr.success(`O curso "${courseName}" foi removido com sucesso!`, 'Curso Removido');
         },
         error: (err) => {
@@ -260,8 +290,16 @@ export class PerfilUsuarioComponent implements OnInit {
     this.confirmationMessage = 'Tem certeza que deseja sair? Você precisará fazer login novamente para acessar a plataforma.';
 
     this.pendingAction = () => {
-      this.authService.logout();
-      this.router.navigate(['/login']);
+      this.authService.logout().subscribe({
+        next: () => {
+          this.toastr.success('Você foi desconectado com sucesso!', 'Logout Realizado');
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          this.toastr.error('Erro ao fazer logout. Tente novamente.', 'Erro');
+          console.error('Erro no logout:', err);
+        }
+      });
     };
 
     this.showConfirmModal = true;
@@ -329,15 +367,62 @@ export class PerfilUsuarioComponent implements OnInit {
       next: (progress) => {
         const progressPercentage = this.userProgressService.getPercentageAsNumber(progress);
         this.courseProgress[courseId] = progressPercentage;
+
+        // Atualizar categorias quando o progresso é carregado
+        this.updateCourseCategories();
       },
       error: (error) => {
         console.error('Erro ao carregar progresso do curso:', error);
         this.courseProgress[courseId] = 0;
+
+        // Atualizar categorias mesmo em caso de erro
+        this.updateCourseCategories();
       }
+    });
+  }
+
+  /**
+   * Divide os cursos em duas categorias:
+   * - Em Andamento: progress < 100%
+   * - Concluídos: progress = 100%
+   */
+  updateCourseCategories(): void {
+    this.coursesEmAndamento = this.userCourses.filter(course => {
+      const progress = this.getCourseProgress(course.id);
+      return progress < 100;
+    });
+
+    this.coursesConcluidos = this.userCourses.filter(course => {
+      const progress = this.getCourseProgress(course.id);
+      return progress === 100;
     });
   }
 
   getCourseProgress(courseId: number): number {
     return this.courseProgress[courseId] || 0;
+  }
+
+  /**
+   * Extrai o userId do token JWT
+   * Isto é mais confiável que usar o localStorage
+   */
+  private getUserIdFromToken(): number | null {
+    try {
+      const token = this.authService.getToken();
+      if (!token) {
+        return null;
+      }
+
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const userId = payload.sub || payload.userId || payload.id;
+
+      if (userId && !isNaN(Number(userId))) {
+        return Number(userId);
+      }
+
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 }

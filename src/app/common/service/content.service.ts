@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { ContentDTO } from '../dto/ContentDTO';
 import { CompletedContentMinDTO } from '../dto/CompletedContentDTO';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,10 @@ export class ContentService {
 
   private baseUrl = `${environment.apiBaseUrl}/cursos`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
   getContents(courseId: number, sectionId: number): Observable<ContentDTO[]> {
     return this.http.get<ContentDTO[]>(`${this.baseUrl}/${courseId}/secoes/${sectionId}/conteudos`, { headers: this.getHeaders() });
@@ -85,7 +89,7 @@ export class ContentService {
   }
 
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('authToken');
+    const token = this.authService.getToken();
     return new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -93,7 +97,7 @@ export class ContentService {
   }
 
   private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('authToken');
+    const token = this.authService.getToken();
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });

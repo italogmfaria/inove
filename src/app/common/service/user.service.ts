@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { UserDTO } from '../dto/UserDTO';
 import { environment } from '../../../environments/environment';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +12,13 @@ import { environment } from '../../../environments/environment';
 export class UserService {
   private baseUrl = `${environment.apiBaseUrl}/usuarios`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
   private createHeaders(): HttpHeaders {
-    const token = localStorage.getItem('authToken');
+    const token = this.authService.getToken();
 
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'
