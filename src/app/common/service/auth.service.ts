@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Observable, BehaviorSubject} from "rxjs";
-import {environment} from "../../../environments/environment";
-import {LoginResponseDTO} from "../dto/LoginResponseDTO";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Observable, BehaviorSubject } from "rxjs";
+import { environment } from "../../../environments/environment";
+import { LoginResponseDTO } from "../dto/LoginResponseDTO";
 import { SessionService } from './session.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
@@ -11,53 +12,23 @@ import { SessionService } from './session.service';
 export class AuthService {
 
   private baseUrl = `${environment.apiBaseUrl}/auth/login`;
-  private tokenSubject = new BehaviorSubject<string | null>(null);
+  private tokenSubject = new BehaviorSubject<string | null>(this.getStoredToken());
   public token$ = this.tokenSubject.asObservable();
+
+  // Chaves para armazenamento
+  private readonly TOKEN_KEY = 'auth_token';
+  private readonly REFRESH_TOKEN_KEY = 'refresh_token';
+  private readonly USER_ID_KEY = 'user_id';
 
   constructor(
     private http: HttpClient,
-    private sessionService: SessionService
-  ) {
-    // Tenta recuperar o token da memória ou do cookie ao inicializar
-    this.initializeToken();
-
-    // Sincroniza token do cookie continuamente
-    this.startTokenSync();
-  }
+    private sessionService: SessionService,
+    private toastr: ToastrService
+  ) {}
 
   /**
-   * Sincroniza o token do cookie para memória periodicamente
-   * Garante que mudanças em outras abas sejam detectadas
+   * Faz login e retorna os tokens
    */
-  private startTokenSync(): void {
-    setInterval(() => {
-      const cookieToken = this.getTokenFromCookie();
-      const memoryToken = this.tokenSubject.value;
-
-      // Se o cookie mudou (login em outra aba), atualiza memória
-      if (cookieToken && cookieToken !== memoryToken) {
-        this.tokenSubject.next(cookieToken);
-      }
-
-      // Se não tem cookie mas tem em memória (logout em outra aba), limpa
-      if (!cookieToken && memoryToken) {
-        this.tokenSubject.next(null);
-        this.sessionService.clearSession();
-      }
-    }, 1000); // Verifica a cada segundo
-  }
-
-  /**
-   * Inicializa o token da memória ou do cookie
-   */
-  private initializeToken(): void {
-    // Tenta obter do cookie (mais seguro)
-    const token = this.getTokenFromCookie();
-    if (token) {
-      this.tokenSubject.next(token);
-    }
-  }
-
   login(email: string, password: string, recaptchaToken?: string): Observable<LoginResponseDTO> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
@@ -65,7 +36,6 @@ export class AuthService {
 
     const body: any = { email, password };
 
-    // Adiciona o token do reCAPTCHA se estiver presente
     if (recaptchaToken) {
       body.recaptchaToken = recaptchaToken;
     }
@@ -74,121 +44,86 @@ export class AuthService {
   }
 
   /**
-   * Salva os tokens de forma segura
-   * O servidor DEVE enviar os tokens como HttpOnly Cookies
-   * Esta função armazena o token em memória para uso da aplicação
+   * Salva os tokens no localStorage
    */
-  saveTokens(token: string, refreshToken: string) {
-    // Armazena em memória (não persiste ao recarregar)
+  saveTokens(token: string, refreshToken: string): void {
+    localStorage.setItem(this.TOKEN_KEY, token);
+    localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
     this.tokenSubject.next(token);
-
-    // IMPORTANTE: O servidor deve enviar os tokens como HttpOnly Cookies automaticamente
-    // Se não estiver fazendo isso, configure no backend:
-    // - Set-Cookie: authToken=<token>; HttpOnly; Secure; SameSite=Strict; Path=/
-    // - Set-Cookie: refreshToken=<refreshToken>; HttpOnly; Secure; SameSite=Strict; Path=/
-
-    // Cria uma nova sessão ao fazer login
     this.sessionService.createSession();
   }
 
-  saveUserId(userId: number | undefined) {
-    if (userId !== undefined && userId !== null) {
-      // NOTA: userId pode ser armazenado em localStorage se não contiver dados sensíveis
-      localStorage.setItem('userId', userId.toString());
-    } else {
-      console.error('Erro: userId está indefinido ou nulo.');
-    }
-  }
-
-  getUserId(): number | null {
-    const userId = localStorage.getItem('userId');
-    return userId ? parseInt(userId, 10) : null;
-  }
-
+  /**
+   * Obtém o token do localStorage
+   */
   getToken(): string | null {
-    // Prioridade: memória -> cookie -> null
-    const memoryToken = this.tokenSubject.value;
-    if (memoryToken) {
-      return memoryToken;
-    }
-    return this.getTokenFromCookie();
+    return this.getStoredToken();
   }
 
   /**
-   * Obtém o token do cookie
-   * Tenta ler authTokenReadable (sem HttpOnly) para sincronização
-   * O navegador também envia authToken (HttpOnly) automaticamente nas requisições
+   * Método privado para obter token do storage
    */
-  private getTokenFromCookie(): string | null {
-    // Primeira tentativa: authTokenReadable (para leitura no frontend)
-    const readableName = 'authTokenReadable=';
-    const decodedCookie = decodeURIComponent(document.cookie);
-    const cookieArray = decodedCookie.split(';');
-
-    for (let cookie of cookieArray) {
-      cookie = cookie.trim();
-      if (cookie.indexOf(readableName) === 0) {
-        return cookie.substring(readableName.length, cookie.length);
-      }
+  private getStoredToken(): string | null {
+    try {
+      const token = localStorage.getItem(this.TOKEN_KEY);
+      return token ? token : null;
+    } catch (e) {
+      this.toastr.error('Erro ao acessar armazenamento local', 'Erro');
+      return null;
     }
-
-    // Se não encontrar authTokenReadable, tenta authToken
-    // (Este será nulo porque HttpOnly não pode ser lido via JS,
-    // mas mantém a compatibilidade)
-    const authName = 'authToken=';
-    for (let cookie of cookieArray) {
-      cookie = cookie.trim();
-      if (cookie.indexOf(authName) === 0) {
-        return cookie.substring(authName.length, cookie.length);
-      }
-    }
-
-    return null;
   }
 
+  /**
+   * Obtém o refresh token
+   */
   getRefreshToken(): string | null {
-    // O refresh token também deve vir de um HttpOnly Cookie
-    // O navegador o envia automaticamente nas requisições
-    const name = 'refreshToken=';
-    const decodedCookie = decodeURIComponent(document.cookie);
-    const cookieArray = decodedCookie.split(';');
-
-    for (let cookie of cookieArray) {
-      cookie = cookie.trim();
-      if (cookie.indexOf(name) === 0) {
-        return cookie.substring(name.length, cookie.length);
-      }
+    try {
+      return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+    } catch (e) {
+      this.toastr.error('Erro ao obter token de atualização', 'Erro');
+      return null;
     }
-    return null;
   }
 
+  /**
+   * Salva o ID do usuário
+   */
+  saveUserId(userId: number | undefined): void {
+    if (userId !== undefined && userId !== null) {
+      localStorage.setItem(this.USER_ID_KEY, userId.toString());
+    } else {
+      this.toastr.error('Erro: Informações de usuário inválidas', 'Erro');
+    }
+  }
+
+  /**
+   * Obtém o ID do usuário
+   */
+  getUserId(): number | null {
+    try {
+      const userId = localStorage.getItem(this.USER_ID_KEY);
+      return userId ? parseInt(userId, 10) : null;
+    } catch (e) {
+      this.toastr.error('Erro ao obter ID do usuário', 'Erro');
+      return null;
+    }
+  }
+
+  /**
+   * Faz logout
+   */
   logout(): Observable<void> {
-    // Chamada ao backend para limpar cookies
     const logoutUrl = `${environment.apiBaseUrl}/auth/logout`;
 
     return new Observable(observer => {
       this.http.post<void>(logoutUrl, {}).subscribe({
         next: () => {
-          // Limpa a memória
-          this.tokenSubject.next(null);
-          localStorage.removeItem('userId');
-
-          // Limpa os cookies localmente
-          this.clearTokenCookies();
-
-          // Limpa a sessão
-          this.sessionService.clearSession();
-
+          this.clearAuth();
           observer.next();
           observer.complete();
         },
         error: (err) => {
-          // Mesmo com erro, limpa localmente
-          this.tokenSubject.next(null);
-          localStorage.removeItem('userId');
-          this.clearTokenCookies();
-          this.sessionService.clearSession();
-
+          this.clearAuth();
           observer.error(err);
         }
       });
@@ -196,31 +131,27 @@ export class AuthService {
   }
 
   /**
-   * Limpa os cookies de autenticação
+   * Limpa todos os dados de autenticação
    */
-  private clearTokenCookies(): void {
-    // Tenta limpar os cookies localmente (o servidor deve fazer isso)
-    // Limpa com diferentes configurações para garantir remoção
-    const expiryDate = 'Thu, 01 Jan 1970 00:00:00 UTC';
-
-    // Limpar authToken (HttpOnly)
-    document.cookie = `authToken=; expires=${expiryDate}; path=/; SameSite=Strict;`;
-
-    // Limpar refreshToken (HttpOnly)
-    document.cookie = `refreshToken=; expires=${expiryDate}; path=/; SameSite=Strict;`;
-
-    // Limpar authTokenReadable (sem HttpOnly, para sincronização frontend)
-    document.cookie = `authTokenReadable=; expires=${expiryDate}; path=/; SameSite=Strict;`;
+  private clearAuth(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    localStorage.removeItem(this.USER_ID_KEY);
+    this.tokenSubject.next(null);
+    this.sessionService.clearSession();
   }
 
+  /**
+   * Obtém a role do usuário decodificando o JWT
+   */
   getRole(): string | null {
     const token = this.getToken();
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.role;
+        return payload.role || payload.authorities?.[0]?.authority;
       } catch (e) {
-        console.error('Erro ao decodificar o token:', e);
+        this.toastr.error('Erro ao processar dados de autenticação', 'Erro');
         return null;
       }
     }
@@ -228,9 +159,24 @@ export class AuthService {
   }
 
   /**
-   * Verifica se o token está armazenado
+   * Verifica se o token existe e é válido
    */
-  isTokenStored(): boolean {
-    return !!this.getToken();
+  isAuthenticated(): boolean {
+    const token = this.getToken();
+    return !!token && !this.isTokenExpired(token);
+  }
+
+  /**
+   * Verifica se o token está expirado
+   */
+  isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expirationTime = payload.exp * 1000;
+      return Date.now() >= expirationTime;
+    } catch (e) {
+      this.toastr.error('Erro ao validar autenticação', 'Erro');
+      return true;
+    }
   }
 }
