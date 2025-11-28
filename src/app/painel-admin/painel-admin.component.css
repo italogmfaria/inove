@@ -1001,6 +1001,7 @@ select.invalid:focus {
 .confirm-modal {
     max-width: 450px;
     text-align: center;
+    padding: 2.5rem;
 }
 
 .confirm-modal .modal-header {
@@ -1008,6 +1009,9 @@ select.invalid:focus {
     border-bottom: none;
     padding-bottom: 0;
     margin-bottom: 1rem;
+    padding: 0;
+    background: none;
+    border: none;
 }
 
 .confirm-icon {

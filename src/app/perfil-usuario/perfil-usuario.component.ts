@@ -21,6 +21,8 @@ export class PerfilUsuarioComponent implements OnInit {
   showEditModal: boolean = false;
   user: any = {};
   userCourses: any[] = [];
+  coursesEmAndamento: any[] = [];
+  coursesConcluidos: any[] = [];
   courseImages: { [key: number]: string } = {};
   courseProgress: { [key: number]: number } = {};
   schools: any[] = [];
@@ -82,6 +84,8 @@ export class PerfilUsuarioComponent implements OnInit {
     });
 
     this.userCourses = [];
+    this.coursesEmAndamento = [];
+    this.coursesConcluidos = [];
 
     this.userService.getUserCourses(userId).subscribe({
       next: (courses) => {
@@ -243,6 +247,8 @@ export class PerfilUsuarioComponent implements OnInit {
       this.userService.removeUserCourse(userId, courseId).subscribe({
         next: () => {
           this.userCourses = this.userCourses.filter((course) => course.id !== courseId);
+          this.coursesEmAndamento = this.coursesEmAndamento.filter((course) => course.id !== courseId);
+          this.coursesConcluidos = this.coursesConcluidos.filter((course) => course.id !== courseId);
           this.toastr.success(`O curso "${courseName}" foi removido com sucesso!`, 'Curso Removido');
         },
         error: (err) => {
@@ -329,10 +335,34 @@ export class PerfilUsuarioComponent implements OnInit {
       next: (progress) => {
         const progressPercentage = this.userProgressService.getPercentageAsNumber(progress);
         this.courseProgress[courseId] = progressPercentage;
+
+        // Categorize the course based on progress
+        const course = this.userCourses.find(c => c.id === courseId);
+        if (course) {
+          if (progressPercentage >= 100) {
+            // Remove from em andamento and add to concluidos
+            this.coursesEmAndamento = this.coursesEmAndamento.filter(c => c.id !== courseId);
+            if (!this.coursesConcluidos.find(c => c.id === courseId)) {
+              this.coursesConcluidos.push(course);
+            }
+          } else {
+            // Remove from concluidos and add to em andamento
+            this.coursesConcluidos = this.coursesConcluidos.filter(c => c.id !== courseId);
+            if (!this.coursesEmAndamento.find(c => c.id === courseId)) {
+              this.coursesEmAndamento.push(course);
+            }
+          }
+        }
       },
       error: (error) => {
         console.error('Erro ao carregar progresso do curso:', error);
         this.courseProgress[courseId] = 0;
+
+        // Add to em andamento if not loaded successfully
+        const course = this.userCourses.find(c => c.id === courseId);
+        if (course && !this.coursesEmAndamento.find(c => c.id === courseId)) {
+          this.coursesEmAndamento.push(course);
+        }
       }
     });
   }

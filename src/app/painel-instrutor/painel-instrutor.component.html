@@ -269,8 +269,8 @@
   <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmation()">
     <div class="modal confirm-modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <div class="confirm-icon logout">
-          <span class="material-icons">logout</span>
+        <div class="confirm-icon" [ngClass]="confirmationType">
+          <span class="material-icons">{{ confirmationType === 'delete' ? 'warning' : 'logout' }}</span>
         </div>
       </div>
 
@@ -284,9 +284,9 @@
           <span class="material-icons">close</span>
           <span>Cancelar</span>
         </button>
-        <button class="btn-confirm logout" (click)="confirmAction()">
-          <span class="material-icons">logout</span>
-          <span>Sair</span>
+        <button class="btn-confirm" [ngClass]="confirmationType" (click)="confirmAction()">
+          <span class="material-icons">{{ confirmationType === 'delete' ? 'delete_forever' : 'logout' }}</span>
+          <span>{{ confirmationType === 'delete' ? 'Remover' : 'Sair' }}</span>
         </button>
       </div>
     </div>

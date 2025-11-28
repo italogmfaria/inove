@@ -28,6 +28,7 @@ export class PainelInstrutorComponent implements OnInit {
   selectedImageFile: File | null = null;
 
   showConfirmModal: boolean = false;
+  confirmationType: 'delete' | 'logout' = 'delete';
   confirmationTitle: string = '';
   confirmationMessage: string = '';
   private pendingAction: (() => void) | null = null;
@@ -253,20 +254,14 @@ export class PainelInstrutorComponent implements OnInit {
   }
 
   logout(): void {
+    this.confirmationType = 'logout';
     this.confirmationTitle = 'Sair da Plataforma';
     this.confirmationMessage = 'Tem certeza que deseja sair do painel do instrutor? Você precisará fazer login novamente para acessar.';
 
     this.pendingAction = () => {
-      this.authService.logout().subscribe({
-        next: () => {
-          this.toastr.success('Você foi desconectado com sucesso!', 'Logout Realizado');
-          this.router.navigate(['/login']);
-        },
-        error: (err) => {
-          this.toastr.error('Erro ao fazer logout. Tente novamente.', 'Erro');
-          console.error('Erro no logout:', err);
-        }
-      });
+      this.authService.logout();
+      this.toastr.success('Você foi desconectado com sucesso!', 'Logout Realizado');
+      this.router.navigate(['/login']);
     };
 
     this.showConfirmModal = true;
